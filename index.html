@@ -1,0 +1,2196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaStral Dashboard</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* ================================
+           CSS Variables - Forest Theme
+           ================================ */
+        :root {
+            /* Primary Colors */
+            --primary: #059669;
+            --primary-light: #10b981;
+            --primary-dark: #047857;
+            
+            /* Secondary Colors */
+            --secondary: #0d9488;
+            --secondary-light: #14b8a6;
+            
+            /* Accent Colors */
+            --accent: #d97706;
+            --accent-light: #fbbf24;
+            
+            /* Background Colors */
+            --bg-dark: #022c22;
+            --bg-darker: #011a14;
+            --bg-card: #033a2d;
+            --bg-card-hover: #044d3a;
+            --bg-elevated: #055540;
+            
+            /* Text Colors */
+            --text-primary: #f0fdf4;
+            --text-secondary: #a7f3d0;
+            --text-muted: #6ee7b7;
+            --text-dim: #4ade80;
+            
+            /* Status Colors */
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            
+            /* Border & Surface */
+            --border: rgba(16, 185, 129, 0.15);
+            --border-hover: rgba(16, 185, 129, 0.3);
+            --surface-glass: rgba(5, 150, 105, 0.08);
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+            --shadow-glow: 0 0 20px rgba(5, 150, 105, 0.3);
+            
+            /* Sizing */
+            --sidebar-width: 260px;
+            --sidebar-collapsed: 72px;
+            --header-height: 64px;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+            --transition-slow: 400ms ease;
+        }
+
+        /* ================================
+           Reset & Base Styles
+           ================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-darker);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(5, 150, 105, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(13, 148, 136, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(5, 150, 105, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* ================================
+           Layout Structure
+           ================================ */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ================================
+           Sidebar
+           ================================ */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-dark);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+            transition: width var(--transition-base);
+        }
+
+        .sidebar-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            position: relative;
+        }
+
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .logo-text {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.375rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .logo-text span {
+            color: var(--primary-light);
+        }
+
+        /* Navigation */
+        .nav-section {
+            flex: 1;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            padding: 8px 12px;
+            margin-top: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9375rem;
+            transition: all var(--transition-fast);
+            position: relative;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: var(--surface-glass);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 24px;
+            background: var(--text-primary);
+            border-radius: 0 2px 2px 0;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.85;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--error);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+            min-width: 22px;
+            text-align: center;
+        }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .integration-status {
+            margin-bottom: 12px;
+        }
+
+        .integration-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        .integration-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        .integration-dot.disconnected {
+            background: var(--error);
+            box-shadow: 0 0 8px var(--error);
+        }
+
+        .sidebar-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sidebar-link {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            background: var(--surface-glass);
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.8125rem;
+            transition: all var(--transition-fast);
+        }
+
+        .sidebar-link:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        /* ================================
+           Main Content Area
+           ================================ */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ================================
+           Header
+           ================================ */
+        .header {
+            height: var(--header-height);
+            background: rgba(2, 44, 34, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-title {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .header-welcome {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .search-box:hover {
+            border-color: var(--border-hover);
+            background: var(--bg-card-hover);
+        }
+
+        .search-shortcut {
+            background: var(--bg-dark);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .header-icon-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+
+        .header-icon-btn:hover {
+            background: var(--bg-card);
+            border-color: var(--border);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 8px;
+            height: 8px;
+            background: var(--error);
+            border-radius: 50%;
+            border: 2px solid var(--bg-dark);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: transform var(--transition-fast);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        /* ================================
+           Dashboard Content
+           ================================ */
+        .dashboard {
+            flex: 1;
+            padding: 32px;
+            max-width: 1600px;
+        }
+
+        /* ================================
+           KPI Cards
+           ================================ */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .kpi-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .kpi-card:hover::before {
+            opacity: 1;
+        }
+
+        .kpi-card.highlight {
+            background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(251, 191, 36, 0.05) 100%);
+            border-color: rgba(217, 119, 6, 0.3);
+        }
+
+        .kpi-card.highlight::before {
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 100%);
+            opacity: 1;
+        }
+
+        .kpi-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .kpi-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: var(--surface-glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-light);
+        }
+
+        .kpi-card.highlight .kpi-icon {
+            background: rgba(217, 119, 6, 0.15);
+            color: var(--accent-light);
+        }
+
+        .kpi-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .kpi-trend.up {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .kpi-trend.down {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--error);
+        }
+
+        .kpi-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            letter-spacing: -0.02em;
+        }
+
+        .kpi-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .kpi-subtitle {
+            font-size: 0.8125rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .kpi-subtitle .warning-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--warning);
+        }
+
+        /* ================================
+           Charts & Alerts Row
+           ================================ */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-family: 'Sora', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .card-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .time-selector {
+            display: flex;
+            background: var(--bg-dark);
+            border-radius: var(--radius-sm);
+            padding: 3px;
+        }
+
+        .time-btn {
+            padding: 6px 12px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .time-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .time-btn.active {
+            background: var(--primary);
+            color: var(--text-primary);
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            height: 280px;
+            position: relative;
+        }
+
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* ================================
+           Alerts Panel
+           ================================ */
+        .alerts-panel .card-body {
+            padding: 0;
+            max-height: 380px;
+            overflow-y: auto;
+        }
+
+        .alerts-panel .card-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .alerts-panel .card-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .alerts-panel .card-body::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            transition: background var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .alert-item:hover {
+            background: var(--surface-glass);
+        }
+
+        .alert-item:last-child {
+            border-bottom: none;
+        }
+
+        .alert-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .alert-icon.high {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--error);
+        }
+
+        .alert-icon.medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .alert-icon.low {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--info);
+        }
+
+        .alert-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .alert-title {
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .alert-subtitle {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        .alert-action {
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+        }
+
+        .alert-action:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--text-primary);
+        }
+
+        .alerts-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .alerts-footer a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+
+        .alerts-footer a:hover {
+            color: var(--text-primary);
+        }
+
+        /* ================================
+           Subscriptions Table
+           ================================ */
+        .table-card .card-header {
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .table-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            width: 280px;
+        }
+
+        .table-search input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-family: inherit;
+        }
+
+        .table-search input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .table-search svg {
+            color: var(--text-muted);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 14px 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+
+        .data-table th:hover {
+            color: var(--text-primary);
+        }
+
+        .data-table th svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0.5;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+
+        .data-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+            vertical-align: middle;
+        }
+
+        .data-table tbody tr {
+            transition: background var(--transition-fast);
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--surface-glass);
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* App Cell */
+        .app-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .app-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .app-name {
+            font-weight: 500;
+        }
+
+        /* Category Badge */
+        .category-badge {
+            display: inline-flex;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: var(--surface-glass);
+            color: var(--text-secondary);
+        }
+
+        .category-badge.productivity { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .category-badge.design { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+        .category-badge.development { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+        .category-badge.sales { background: rgba(249, 115, 22, 0.15); color: #fb923c; }
+        .category-badge.infrastructure { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
+        .category-badge.video { background: rgba(14, 165, 233, 0.15); color: #38bdf8; }
+
+        /* Cost Cell */
+        .cost-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+        }
+
+        /* Seats Cell */
+        .seats-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .seats-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8125rem;
+        }
+
+        .seats-bar {
+            width: 80px;
+            height: 4px;
+            background: var(--bg-dark);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .seats-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width var(--transition-base);
+        }
+
+        .seats-bar-fill.high { background: var(--success); }
+        .seats-bar-fill.medium { background: var(--warning); }
+        .seats-bar-fill.low { background: var(--error); }
+
+        /* Adoption Cell */
+        .adoption-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .adoption-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            min-width: 40px;
+        }
+
+        .adoption-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .adoption-indicator.high { background: var(--success); }
+        .adoption-indicator.medium { background: var(--warning); }
+        .adoption-indicator.low { background: var(--error); }
+
+        /* Renewal Cell */
+        .renewal-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .renewal-date {
+            font-size: 0.875rem;
+        }
+
+        .renewal-days {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .renewal-days.urgent {
+            color: var(--warning);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status-badge.active {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .status-badge.active .dot { background: var(--success); }
+
+        .status-badge.warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .status-badge.warning .dot { background: var(--warning); }
+
+        .status-badge.critical {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--error);
+        }
+
+        .status-badge.critical .dot { background: var(--error); }
+
+        /* Actions Cell */
+        .actions-cell {
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .data-table tbody tr:hover .actions-cell {
+            opacity: 1;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .action-btn:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        /* Table Pagination */
+        .table-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .table-info {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all var(--transition-fast);
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--bg-elevated);
+            border-color: var(--border-hover);
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--text-primary);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* ================================
+           Footer
+           ================================ */
+        .dashboard-footer {
+            padding: 24px 32px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .version-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: var(--surface-glass);
+            border-radius: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        .oss-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+        }
+
+        .oss-badge svg {
+            color: var(--primary-light);
+        }
+
+        .footer-right a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .footer-right a:hover {
+            color: var(--primary-light);
+        }
+
+        /* ================================
+           Animations
+           ================================ */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .kpi-card, .card {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .kpi-card:nth-child(1) { animation-delay: 0.1s; }
+        .kpi-card:nth-child(2) { animation-delay: 0.15s; }
+        .kpi-card:nth-child(3) { animation-delay: 0.2s; }
+        .kpi-card:nth-child(4) { animation-delay: 0.25s; }
+
+        .charts-row .card:nth-child(1) { animation-delay: 0.3s; }
+        .charts-row .card:nth-child(2) { animation-delay: 0.35s; }
+
+        .table-card { animation-delay: 0.4s; }
+
+        /* ================================
+           Responsive
+           ================================ */
+        @media (max-width: 1400px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: var(--sidebar-collapsed);
+            }
+            
+            .main-content {
+                margin-left: var(--sidebar-collapsed);
+            }
+            
+            .logo-text,
+            .nav-item span,
+            .nav-label,
+            .integration-item span,
+            .sidebar-link span {
+                display: none;
+            }
+            
+            .nav-item {
+                justify-content: center;
+                padding: 14px;
+            }
+            
+            .nav-badge {
+                position: absolute;
+                top: 6px;
+                right: 6px;
+                padding: 2px 5px;
+                min-width: 16px;
+                font-size: 0.65rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 20px;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 0 20px;
+            }
+            
+            .search-box {
+                display: none;
+            }
+            
+            .table-search {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Outer ring -->
+                            <circle cx="20" cy="20" r="18" stroke="#10b981" stroke-width="2" stroke-dasharray="4 2" opacity="0.4"/>
+                            <!-- Middle ring -->
+                            <circle cx="20" cy="20" r="12" stroke="#10b981" stroke-width="2" opacity="0.6"/>
+                            <!-- Inner circle -->
+                            <circle cx="20" cy="20" r="6" fill="#059669"/>
+                            <!-- Orbital dots -->
+                            <circle cx="20" cy="2" r="3" fill="#10b981"/>
+                            <circle cx="35" cy="14" r="2.5" fill="#14b8a6"/>
+                            <circle cx="8" cy="28" r="2" fill="#10b981" opacity="0.7"/>
+                        </svg>
+                    </div>
+                    <span class="logo-text">Saa<span>Stral</span></span>
+                </a>
+            </div>
+            
+            <nav class="nav-section">
+                <a href="index.html" class="nav-item active">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="saastral-employees.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>Funcionários</span>
+                </a>
+                <a href="saastral-subscriptions-v2.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                    <span>Assinaturas</span>
+                </a>
+                <a href="saastral-alerts.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <span>Alertas</span>
+                    <span class="nav-badge">5</span>
+                </a>
+                <a href="saastral-reports.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    <span>Relatórios</span>
+                </a>
+                
+                <div class="nav-label">Configuração</div>
+                
+                <a href="#" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span>Configurações</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="integration-status">
+                    <div class="integration-item">
+                        <span class="integration-dot"></span>
+                        <span>Google Workspace</span>
+                    </div>
+                    <div class="integration-item">
+                        <span class="integration-dot"></span>
+                        <span>Okta</span>
+                    </div>
+                </div>
+                <div class="sidebar-links">
+                    <a href="#" class="sidebar-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <span>Ajuda</span>
+                    </a>
+                    <a href="#" class="sidebar-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                            <polyline points="15 3 21 3 21 9"/>
+                            <line x1="10" y1="14" x2="21" y2="3"/>
+                        </svg>
+                        <span>Docs</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">Dashboard</h1>
+                    <span class="header-welcome">Bom dia, Maria</span>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <span>Buscar...</span>
+                        <span class="search-shortcut">⌘K</span>
+                    </div>
+                    <button class="header-icon-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <span class="notification-badge"></span>
+                    </button>
+                    <div class="user-avatar">MA</div>
+                </div>
+            </header>
+            
+            <!-- Dashboard Content -->
+            <div class="dashboard">
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="1" x2="12" y2="23"/>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                </svg>
+                            </div>
+                            <span class="kpi-trend up">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="18 15 12 9 6 15"/>
+                                </svg>
+                                +12%
+                            </span>
+                        </div>
+                        <div class="kpi-label">Gasto Mensal Total</div>
+                        <div class="kpi-value">R$ 45.230</div>
+                        <div class="kpi-subtitle">vs mês anterior</div>
+                    </div>
+                    
+                    <div class="kpi-card highlight">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2V5z"/>
+                                    <path d="M2 9v1c0 1.1.9 2 2 2h1"/>
+                                    <path d="M16 11h.01"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="kpi-label">Economia Potencial</div>
+                        <div class="kpi-value">R$ 4.850</div>
+                        <div class="kpi-subtitle">23 oportunidades de otimização</div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="kpi-label">Funcionários Ativos</div>
+                        <div class="kpi-value">127</div>
+                        <div class="kpi-subtitle">
+                            <span class="warning-dot"></span>
+                            3 pendentes de offboarding
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7"/>
+                                    <rect x="14" y="3" width="7" height="7"/>
+                                    <rect x="14" y="14" width="7" height="7"/>
+                                    <rect x="3" y="14" width="7" height="7"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="kpi-label">Assinaturas Rastreadas</div>
+                        <div class="kpi-value">34</div>
+                        <div class="kpi-subtitle">28 conectadas via SSO</div>
+                    </div>
+                </div>
+                
+                <!-- Charts Row -->
+                <div class="charts-row">
+                    <!-- Spending Chart -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Gastos ao Longo do Tempo</h2>
+                            <div class="card-actions">
+                                <div class="time-selector">
+                                    <button class="time-btn">7d</button>
+                                    <button class="time-btn active">30d</button>
+                                    <button class="time-btn">90d</button>
+                                    <button class="time-btn">12m</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="spendingChart"></canvas>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <span class="legend-dot" style="background: #10b981;"></span>
+                                    Produtividade
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-dot" style="background: #8b5cf6;"></span>
+                                    Design
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-dot" style="background: #22c55e;"></span>
+                                    Desenvolvimento
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-dot" style="background: #f97316;"></span>
+                                    Vendas & Marketing
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-dot" style="background: #ec4899;"></span>
+                                    Infraestrutura
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Alerts Panel -->
+                    <div class="card alerts-panel">
+                        <div class="card-header">
+                            <h2 class="card-title">Alertas Recentes</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert-item">
+                                <div class="alert-icon high">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="8.5" cy="7" r="4"/>
+                                        <line x1="18" y1="8" x2="23" y2="13"/>
+                                        <line x1="23" y1="8" x2="18" y2="13"/>
+                                    </svg>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title">João Silva tem 5 licenças ativas</div>
+                                    <div class="alert-subtitle">Saiu da empresa há 3 dias</div>
+                                </div>
+                                <button class="alert-action">Revisar</button>
+                            </div>
+                            
+                            <div class="alert-item">
+                                <div class="alert-icon medium">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="16" y1="2" x2="16" y2="6"/>
+                                        <line x1="8" y1="2" x2="8" y2="6"/>
+                                        <line x1="3" y1="10" x2="21" y2="10"/>
+                                    </svg>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title">Slack renova em 7 dias</div>
+                                    <div class="alert-subtitle">R$ 2.340/mês • 45 seats</div>
+                                </div>
+                                <button class="alert-action">Revisar</button>
+                            </div>
+                            
+                            <div class="alert-item">
+                                <div class="alert-icon medium">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M12 6v6l4 2"/>
+                                    </svg>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title">15 licenças Figma sem uso</div>
+                                    <div class="alert-subtitle">Sem login há mais de 30 dias</div>
+                                </div>
+                                <button class="alert-action">Ver usuários</button>
+                            </div>
+                            
+                            <div class="alert-item">
+                                <div class="alert-icon low">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="18" y1="20" x2="18" y2="10"/>
+                                        <line x1="12" y1="20" x2="12" y2="4"/>
+                                        <line x1="6" y1="20" x2="6" y2="14"/>
+                                    </svg>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title">Notion tem 32% de adoção</div>
+                                    <div class="alert-subtitle">Apenas 12 de 38 usuários ativos</div>
+                                </div>
+                                <button class="alert-action">Ver detalhes</button>
+                            </div>
+                            
+                            <div class="alert-item">
+                                <div class="alert-icon low">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                                        <path d="M9 14h.01"/>
+                                        <path d="M15 14h.01"/>
+                                    </svg>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title">Duplicidade: Zoom + Google Meet</div>
+                                    <div class="alert-subtitle">Ambos na categoria Vídeo</div>
+                                </div>
+                                <button class="alert-action">Comparar</button>
+                            </div>
+                        </div>
+                        <div class="alerts-footer">
+                            <a href="#">Ver todos os alertas (12) →</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Subscriptions Table -->
+                <div class="card table-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Assinaturas</h2>
+                        <div class="table-search">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <input type="text" placeholder="Buscar assinaturas...">
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>App</th>
+                                    <th>Categoria</th>
+                                    <th>Custo Mensal</th>
+                                    <th>Seats</th>
+                                    <th>Adoção</th>
+                                    <th>Renovação</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="app-cell">
+                                            <div class="app-icon" style="background: linear-gradient(135deg, #611f69 0%, #89539c 100%); color: white;">S</div>
+                                            <span class="app-name">Slack</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="category-badge productivity">Produtividade</span></td>
+                                    <td><span class="cost-value">R$ 2.340</span></td>
+                                    <td>
+                                        <div class="seats-cell">
+                                            <span class="seats-text">42 / 50</span>
+                                            <div class="seats-bar">
+                                                <div class="seats-bar-fill high" style="width: 84%;"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="adoption-cell">
+                                            <span class="adoption-value">84%</span>
+                                            <span class="adoption-indicator high"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="renewal-cell">
+                                            <span class="renewal-date">15/01/2025</span>
+                                            <span class="renewal-days urgent">em 17 dias</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="status-badge active"><span class="dot"></span>Ativo</span></td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <button class="action-btn" title="Editar">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                                </svg>
+                                            </button>
+                                            <button class="action-btn" title="Ver detalhes">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="1"/>
+                                                    <circle cx="19" cy="12" r="1"/>
+                                                    <circle cx="5" cy="12" r="1"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div class="app-cell">
+                                            <div class="app-icon" style="background: linear-gradient(135deg, #1e1e1e 0%, #2c2c2c 100%); color: #f24e1e;">F</div>
+                                            <span class="app-name">Figma</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="category-badge design">Design</span></td>
+                                    <td><span class="cost-value">R$ 1.890</span></td>
+                                    <td>
+                                        <div class="seats-cell">
+                                            <span class="seats-text">15 / 20</span>
+                                            <div class="seats-bar">
+                                                <div class="seats-bar-fill medium" style="width: 75%;"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="adoption-cell">
+                                            <span class="adoption-value">53%</span>
+                                            <span class="adoption-indicator medium"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="renewal-cell">
+                                            <span class="renewal-date">01/02/2025</span>
+                                            <span class="renewal-days">em 34 dias</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="status-badge warning"><span class="dot"></span>Baixa adoção</span></td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <button class="action-btn" title="Editar">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                                </svg>
+                                            </button>
+                                            <button class="action-btn" title="Ver detalhes">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="1"/>
+                                                    <circle cx="19" cy="12" r="1"/>
+                                                    <circle cx="5" cy="12" r="1"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div class="app-cell">
+                                            <div class="app-icon" style="background: linear-gradient(135deg, #24292f 0%, #333 100%); color: white;">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                                </svg>
+                                            </div>
+                                            <span class="app-name">GitHub</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="category-badge development">Desenvolvimento</span></td>
+                                    <td><span class="cost-value">R$ 3.200</span></td>
+                                    <td>
+                                        <div class="seats-cell">
+                                            <span class="seats-text">28 / 30</span>
+                                            <div class="seats-bar">
+                                                <div class="seats-bar-fill high" style="width: 93%;"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="adoption-cell">
+                                            <span class="adoption-value">93%</span>
+                                            <span class="adoption-indicator high"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="renewal-cell">
+                                            <span class="renewal-date">10/03/2025</span>
+                                            <span class="renewal-days">em 71 dias</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="status-badge active"><span class="dot"></span>Ativo</span></td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <button class="action-btn" title="Editar">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                                </svg>
+                                            </button>
+                                            <button class="action-btn" title="Ver detalhes">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="1"/>
+                                                    <circle cx="19" cy="12" r="1"/>
+                                                    <circle cx="5" cy="12" r="1"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div class="app-cell">
+                                            <div class="app-icon" style="background: linear-gradient(135deg, #000 0%, #191919 100%); color: white;">N</div>
+                                            <span class="app-name">Notion</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="category-badge productivity">Produtividade</span></td>
+                                    <td><span class="cost-value">R$ 980</span></td>
+                                    <td>
+                                        <div class="seats-cell">
+                                            <span class="seats-text">12 / 38</span>
+                                            <div class="seats-bar">
+                                                <div class="seats-bar-fill low" style="width: 32%;"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="adoption-cell">
+                                            <span class="adoption-value">32%</span>
+                                            <span class="adoption-indicator low"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="renewal-cell">
+                                            <span class="renewal-date">28/01/2025</span>
+                                            <span class="renewal-days urgent">em 30 dias</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="status-badge critical"><span class="dot"></span>Crítico</span></td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <button class="action-btn" title="Editar">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                                </svg>
+                                            </button>
+                                            <button class="action-btn" title="Ver detalhes">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="1"/>
+                                                    <circle cx="19" cy="12" r="1"/>
+                                                    <circle cx="5" cy="12" r="1"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div class="app-cell">
+                                            <div class="app-icon" style="background: linear-gradient(135deg, #ff7a59 0%, #ff5c35 100%); color: white;">H</div>
+                                            <span class="app-name">HubSpot</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="category-badge sales">Vendas & Marketing</span></td>
+                                    <td><span class="cost-value">R$ 4.500</span></td>
+                                    <td>
+                                        <div class="seats-cell">
+                                            <span class="seats-text">8 / 10</span>
+                                            <div class="seats-bar">
+                                                <div class="seats-bar-fill high" style="width: 80%;"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="adoption-cell">
+                                            <span class="adoption-value">80%</span>
+                                            <span class="adoption-indicator high"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="renewal-cell">
+                                            <span class="renewal-date">05/04/2025</span>
+                                            <span class="renewal-days">em 97 dias</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="status-badge active"><span class="dot"></span>Ativo</span></td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <button class="action-btn" title="Editar">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                                </svg>
+                                            </button>
+                                            <button class="action-btn" title="Ver detalhes">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="1"/>
+                                                    <circle cx="19" cy="12" r="1"/>
+                                                    <circle cx="5" cy="12" r="1"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div class="app-cell">
+                                            <div class="app-icon" style="background: linear-gradient(135deg, #ff9900 0%, #ec7211 100%); color: white;">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M13.527 15.307a.953.953 0 01-.317-.137c-.053-.037-.103-.074-.153-.109l-.027-.019c-.099-.072-.185-.135-.26-.187-.107-.075-.193-.129-.26-.16a1.078 1.078 0 00-.318-.082c-.107-.01-.239.009-.35.045-.03.01-.06.019-.091.03l-.053.019c-.057.02-.112.04-.168.061l-.019.007c-.102.038-.199.076-.292.115l-.163.073c-.054.024-.11.05-.167.077a12.44 12.44 0 00-.257.125l-.26.135c-.092.05-.188.103-.284.159-.085.05-.17.1-.259.154-.094.058-.192.12-.294.187-.089.058-.182.12-.28.186-.1.068-.204.14-.314.217l-.026.019c-.075.053-.153.108-.233.166l-.123.09c-.077.057-.156.116-.237.177-.088.067-.178.136-.27.208l-.018.014c-.09.071-.182.143-.275.218-.053.043-.105.084-.159.127l-.076.062c-.097.08-.196.162-.296.245l-.042.036c-.049.041-.098.082-.147.125-.082.071-.166.145-.252.221l-.122.11c-.08.072-.162.146-.245.222-.044.04-.089.082-.134.124-.076.071-.153.144-.231.218-.042.04-.086.082-.13.125-.066.064-.132.128-.199.193l-.138.138c-.063.064-.127.129-.192.195-.041.042-.082.084-.123.127l-.029.031c-.066.069-.133.139-.2.21-.058.061-.116.123-.174.185-.077.082-.154.166-.232.251l-.013.015c-.117.129-.234.261-.352.396l-.083.097c-.063.074-.127.15-.191.226-.053.064-.107.13-.162.196-.072.089-.146.18-.22.271-.061.077-.123.154-.184.233-.115.147-.231.299-.349.453-.028.037-.056.074-.084.112-.036.048-.072.096-.108.145-.101.138-.204.28-.308.426l-.006.008c-.101.142-.204.288-.307.437-.067.098-.136.198-.204.299-.087.13-.176.262-.264.396l-.145.226c-.071.111-.142.224-.213.337-.051.082-.103.166-.155.25-.128.21-.257.422-.386.637-.1.167-.2.337-.299.508-.069.118-.137.236-.206.356l-.209.375c-.04.072-.08.144-.119.216-.04.072-.078.145-.117.217-.092.174-.183.348-.273.523-.03.058-.06.117-.089.175a28.21 28.21 0 01-.266.526l-.016.034c-.101.204-.2.406-.296.607-.088.183-.173.365-.256.546-.047.102-.093.204-.138.305-.084.187-.165.372-.242.555-.073.173-.143.343-.21.512-.047.117-.092.232-.136.347-.045.118-.089.235-.131.351-.028.077-.055.153-.082.229-.061.175-.118.346-.172.516-.032.101-.063.201-.093.3-.065.217-.125.43-.18.639l-.007.027a15.444 15.444 0 00-.167.699c-.029.134-.056.267-.081.399-.041.215-.078.426-.11.631-.017.107-.033.213-.048.318-.024.173-.045.344-.062.511-.011.108-.021.215-.029.321-.016.208-.028.413-.035.614-.003.101-.005.202-.005.301v.013c0 .1.002.2.005.3.007.199.019.401.035.606.009.109.019.219.03.328.018.172.04.347.064.523.015.105.03.21.048.317.032.204.069.412.111.624.025.131.052.263.081.397.053.248.112.502.18.761.039.15.081.302.124.455.088.307.186.62.293.937.064.19.132.381.202.574.097.266.201.536.31.809.096.24.196.48.301.724.036.083.072.167.109.252.049.111.099.223.15.336.087.193.178.388.271.584.052.109.105.218.158.328.11.226.224.454.341.683.063.122.127.245.192.368.08.152.163.304.246.457.07.128.141.256.213.385.157.281.32.565.487.851.093.159.188.318.283.479.092.155.186.31.28.467.036.06.073.12.11.18.204.334.415.672.632 1.014.124.196.251.394.38.593.164.253.331.509.502.768.055.084.111.168.168.253.191.286.388.576.589.87l.004.005a34.82 34.82 0 002.136 2.826c.094.115.189.23.285.346l.019.023c.192.232.388.466.588.702.113.134.228.27.344.405.067.078.135.157.203.236.187.216.377.433.57.653l.08.09c.2.226.403.454.609.685.073.082.147.165.222.248.157.174.316.35.477.528.104.115.21.232.316.348l.127.14c.173.19.349.382.527.575.051.055.102.11.153.165.155.167.312.335.47.504.101.108.203.217.306.326l.175.187c.134.142.269.285.405.429.143.152.287.304.434.458l.011.012c.103.109.207.218.313.328.141.148.285.298.43.448.163.168.328.338.496.51l.02.02c.11.112.22.225.331.339.122.123.244.248.368.373.111.113.224.227.337.341.221.224.446.45.674.68.136.137.273.276.412.415.108.109.217.218.326.328.15.151.302.303.456.457l.012.012c.085.085.17.17.256.256.145.145.291.29.439.438l.003.002c.144.143.289.287.435.432.239.236.481.475.727.717.11.108.221.218.332.327.181.177.364.356.549.537l.165.16c.178.173.358.348.541.525.073.071.147.142.22.213l.066.064c.19.183.382.368.577.554l.199.19c.255.243.513.489.776.738.176.166.355.335.536.505.158.148.318.298.479.449.167.156.335.313.506.472l.127.118c.173.16.348.322.525.485.071.065.143.131.215.198l.054.05c.196.179.394.36.595.542l.049.045c.227.205.457.413.69.623.184.165.37.332.558.501l.109.098c.104.094.21.188.315.282.067.06.134.12.202.18.111.099.222.199.335.299.131.116.263.233.396.352l.006.005c.115.102.231.205.348.308l.016.014c.143.126.288.254.434.382.045.039.09.079.135.118.115.101.23.202.347.304.157.136.316.274.477.414.078.067.156.135.235.203.165.143.332.286.5.431.06.051.119.103.179.154.14.12.282.241.424.363.15.128.302.257.454.387l.18.153c.146.124.294.249.443.374l.051.043c.158.132.317.266.478.4l.004.003c.184.153.369.307.556.463.124.103.249.207.375.31.102.085.206.17.309.255.14.115.281.231.424.348l.104.085c.108.088.217.177.327.266l.026.021c.174.141.35.283.527.426l.093.075c.118.095.237.19.357.286.187.149.376.3.566.45.101.08.203.161.306.241.142.112.285.224.429.338l.172.134c.22.172.443.346.668.52.138.107.278.215.418.323l.071.055c.077.059.155.118.232.177l.086.065c.142.108.286.217.43.326.165.124.33.248.498.374l.086.064c.13.097.261.195.393.293l.152.113c.129.095.259.191.39.287.118.086.236.172.355.26l.146.106c.139.101.28.203.421.305.125.09.252.181.379.272.172.123.346.247.521.372.122.086.245.173.368.261.139.098.279.197.42.296.148.104.297.209.448.314.143.1.287.2.432.301.124.086.249.172.375.26l.108.074c.133.092.268.185.403.277.139.096.28.192.421.288.149.101.299.203.45.306l.103.07c.135.091.27.182.406.274l.1.067c.143.096.287.193.432.29.085.057.171.114.257.172.128.085.258.17.388.257l.167.11c.15.098.301.197.453.297.106.069.213.139.32.209l.156.101c.159.103.319.207.481.312l.023.015c.135.087.271.174.408.262l.11.07c.155.1.312.2.469.3.161.102.324.206.487.31.106.067.213.135.32.203.158.1.318.2.479.302l.044.027c.16.1.32.2.482.301.147.092.295.184.444.277.117.073.235.147.353.22.117.073.234.146.352.22.167.103.336.208.506.313.103.064.206.128.31.193.163.1.328.202.494.304l.02.012c.146.089.294.179.443.27.166.102.334.204.503.307l.046.028c.133.081.267.163.402.245.118.072.237.144.357.216.15.091.302.183.454.275.129.078.26.157.39.236.161.097.323.195.486.293l.04.024c.129.077.26.156.391.234.138.083.278.166.418.25l.087.052c.157.093.315.187.474.282.164.097.33.195.496.293.145.086.292.172.439.259l.103.06c.137.08.275.161.414.242.151.088.304.177.458.266.129.075.259.15.389.226.143.083.288.166.433.25l.087.05c.139.08.28.161.42.242l.139.08c.134.076.269.153.404.23l.102.058c.145.082.291.165.438.249l.045.025c.145.082.29.164.437.247.158.089.318.179.478.269l.03.017c.139.078.28.157.421.236l.104.058c.157.088.316.176.476.265.149.083.3.166.451.25l.112.062c.153.084.308.169.463.255l.046.025c.144.079.29.158.436.238.157.085.314.171.473.258l.065.035c.134.073.27.147.405.22.15.081.301.163.453.245.157.085.316.171.476.257l.046.025c.15.081.301.162.453.244l.05.027c.148.079.296.159.446.24.149.08.3.16.45.241l.08.043c.142.076.285.152.428.229.156.083.314.167.472.251l.055.029c.14.074.28.149.422.224l.077.04c.152.08.305.16.459.242.145.076.292.152.439.229l.097.05c.139.073.28.146.42.22l.099.051c.154.08.309.161.464.242.135.07.27.14.407.212l.118.06c.137.071.275.143.413.214l.065.034c.157.081.315.162.474.244.132.068.266.136.4.205l.114.058c.14.071.281.143.422.215l.08.04c.15.076.302.153.453.23.136.069.272.138.41.207l.106.054c.15.076.301.151.453.228l.041.02c.154.077.308.155.464.233l.072.036c.151.075.304.151.457.228.142.07.286.142.43.213l.084.042c.147.072.295.145.444.218l.064.032c.155.076.311.152.468.229l.049.024c.152.074.306.148.459.223.147.071.295.142.443.214l.082.039c.143.069.288.138.432.208l.088.042c.154.074.309.148.464.222l.046.022c.156.074.314.149.472.224l.039.018c.153.072.306.144.46.217l.081.038c.156.073.313.147.47.221l.031.014c.152.071.305.143.459.215l.084.039c.154.072.31.144.466.216l.04.019c.156.072.314.145.472.218l.029.013c.154.071.31.142.465.214l.067.031c.158.072.317.145.477.218l.006.003c.156.071.313.143.47.215l.058.026c.158.072.317.144.477.217l.015.007c.156.071.314.142.472.214l.049.022c.159.072.319.144.48.216l.008.004c.157.07.315.141.474.213l.051.023c.16.071.32.143.481.215l.009.004c.156.069.313.139.471.21l.06.026c.16.071.322.142.484.214l.001.001c.155.068.312.137.469.206l.068.03c.16.07.322.14.484.211l.004.002c.156.068.312.135.469.203l.073.032c.16.068.322.137.484.207l.006.002c.155.066.31.132.467.199l.08.034c.16.068.322.135.485.204l.008.003c.155.065.31.13.466.196l.084.035c.16.067.322.134.485.201l.011.005c.155.064.311.128.467.193l.085.035c.16.066.321.132.484.198l.015.006c.155.063.311.126.468.19l.086.035c.16.064.321.129.484.194l.02.008c.155.062.311.124.468.186l.086.034c.159.063.32.126.481.19l.025.01c.155.061.31.122.467.183l.087.034c.159.062.32.124.481.186l.029.012c.155.059.311.119.468.179l.086.033c.16.06.32.121.482.182l.034.013c.154.058.31.116.466.175l.087.032c.159.06.32.118.481.178l.04.015c.154.056.309.113.465.17l.086.031c.159.058.32.116.481.174l.044.016c.154.055.309.111.465.167l.086.031c.159.056.319.113.48.17l.048.017c.154.054.309.109.465.164l.085.029c.159.056.32.111.48.167l.052.018c.154.053.309.107.464.161l.085.029c.159.054.319.109.48.163l.056.02c.154.052.309.104.464.157l.084.028c.159.053.319.106.479.16l.061.02c.153.051.308.102.463.154l.083.027c.159.052.319.104.479.157l.065.021c.153.05.307.1.462.151l.082.026c.159.051.318.102.479.154l.069.022c.153.049.307.098.462.148l.081.025c.158.05.318.1.478.151l.073.023c.153.048.306.096.46.145l.081.025c.158.049.317.098.477.148l.076.023c.152.047.305.094.459.142l.08.024c.158.048.317.096.476.145l.08.024c.152.046.304.092.457.139l.079.024c.158.047.316.094.476.142l.083.025c.152.045.303.09.456.136l.078.023c.158.046.316.093.475.14l.086.025c.152.044.303.089.456.133l.078.023c.157.046.315.091.474.137l.089.026c.151.043.303.087.455.131l.077.022c.157.045.315.09.473.135l.091.026c.15.042.302.085.454.128l.076.021c.157.044.315.088.472.133l.094.026c.15.042.301.084.453.126l.076.021c.157.043.314.086.472.13l.095.026c.15.041.3.082.452.124l.075.02c.156.043.314.085.471.128l.097.026c.15.04.3.081.451.122l.075.02c.156.042.313.084.47.126l.099.027c.15.039.299.079.45.119l.074.019c.156.041.312.082.469.124l.1.026c.149.039.299.078.449.117l.074.02c.155.04.312.08.468.121l.102.026c.149.038.298.076.448.115l.073.019c.155.039.311.079.468.119l.103.026c.149.037.298.075.447.113l.073.018c.155.039.311.077.467.117l.104.026c.149.037.297.074.447.111l.072.018c.155.038.31.076.466.115l.105.025c.148.036.297.073.446.109l.072.017c.154.038.31.075.466.113l.106.026c.148.036.296.072.445.108l.071.017c.154.037.309.074.464.111l.108.026c.147.035.295.07.443.106l.071.017c.154.036.308.072.464.109l.108.025c.147.035.295.069.443.104l.07.016c.154.036.308.071.463.107l.109.025c.147.034.294.068.442.103l.07.016c.153.035.307.07.462.105l.11.025c.146.033.293.067.44.101l.07.016c.153.035.307.069.461.104l.111.025c.146.033.292.066.439.099l.069.016c.153.034.306.068.46.102l.112.025c.146.032.292.065.438.098l.069.015c.152.034.306.067.459.101l.112.024c.145.032.291.064.437.096l.069.015c.152.033.305.066.458.099l.113.024c.145.031.29.063.436.095l.068.015c.152.033.305.065.458.097l.113.024c.145.031.29.062.435.093l.068.014c.152.032.304.064.457.096l.114.024c.144.03.289.061.434.092l.067.014c.151.032.303.063.456.094l.114.024c.144.03.288.06.433.09l.067.014c.151.031.303.062.455.093l.115.023c.143.029.287.059.432.089l.067.013c.151.031.302.061.454.092l.115.023c.143.029.287.058.431.088l.066.013c.15.03.302.06.453.09l.116.023c.143.028.286.057.43.086l.066.013c.15.03.301.059.453.089l.116.023c.142.028.285.056.429.085l.065.013c.15.029.301.058.452.087l.116.022c.142.028.285.056.428.084l.065.012c.15.029.3.057.451.086l.116.022c.141.027.284.054.427.082l.065.012c.149.028.3.056.45.084l.117.022c.141.027.283.054.425.081l.064.012c.149.028.299.055.449.083l.117.021c.141.026.282.053.424.08l.064.012c.149.027.299.054.449.082l.117.021c.14.026.282.052.423.079l.064.011c.148.027.298.054.448.08l.117.021c.14.025.281.051.422.077l.064.011c.148.027.297.053.447.079l.117.021c.14.025.28.05.421.076l.063.011c.148.026.296.052.446.078l.117.02c.14.025.28.05.42.075l.063.011c.147.026.296.051.445.077l.117.02c.139.024.279.048.419.073l.063.011c.147.025.295.05.444.075l.118.02c.139.024.278.048.418.072l.062.01c.147.025.295.049.443.074l.117.02c.139.023.278.047.417.071l.062.01c.146.024.294.048.442.073l.118.019c.138.023.277.046.416.07l.062.01c.146.024.293.048.441.072l.118.019c.138.022.276.045.415.068l.061.01c.146.024.293.047.44.071l.118.019c.138.022.276.045.414.068l.061.01c.145.023.292.046.439.07l.118.018c.137.022.275.044.413.066l.061.01c.145.023.291.046.438.069l.118.018c.137.022.274.044.412.066l.06.01c.145.023.291.045.437.068l.118.018c.137.021.274.043.411.065l.06.009c.144.022.29.045.436.067l.118.018c.136.021.273.043.41.064l.06.009c.144.022.29.044.435.067l.118.017c.136.021.273.042.409.063l.06.009c.144.022.289.043.434.066l.118.017c.136.021.272.041.408.062l.059.009c.143.021.288.043.433.065l.118.017c.135.02.271.041.407.062l.059.009c.143.021.288.042.432.064l.118.017c.135.02.271.041.407.061l.059.008c.143.021.287.042.431.063l.118.017c.135.02.27.04.406.06l.058.008c.143.021.287.041.431.063l.117.016c.135.02.27.039.405.059l.058.008c.142.02.286.041.43.062l.117.016c.134.02.269.039.404.058l.058.008c.142.02.285.04.429.061l.117.016c.134.019.269.038.403.058l.058.008c.142.02.285.039.428.059l.117.016c.134.019.268.038.402.057l.057.008c.142.02.284.039.427.059l.117.016c.133.018.267.037.401.056l.057.008c.141.019.284.038.427.057l.117.016c.133.018.267.036.4.055l.057.007c.141.019.283.038.426.057l.117.015c.133.018.266.036.399.054l.057.007c.141.019.283.037.425.056l.117.015c.132.018.265.035.398.053l.056.007c.141.019.283.037.425.055l.117.015c.132.017.265.035.397.053l.056.007c.14.018.282.036.424.054l.116.015c.132.017.264.034.396.052l.056.007c.14.018.281.035.423.053l.116.015c.132.017.264.034.395.051l.056.007c.14.018.281.035.422.052l.116.015c.131.017.263.033.394.051l.055.007c.14.017.28.034.421.052l.116.014c.131.017.263.033.394.05l.055.006c.139.017.28.034.421.051l.116.014c.131.016.262.033.393.049l.055.007c.139.017.279.033.42.05l.116.014c.13.016.262.032.392.049l.055.006c.139.017.279.033.419.049l.116.014c.13.016.261.032.391.048l.054.006c.139.017.278.032.418.049l.116.013c.13.016.26.031.39.047l.054.006c.138.016.278.032.418.048l.115.013c.13.015.26.031.39.047l.054.006c.138.016.277.032.417.048l.115.013c.13.015.259.03.389.046l.054.006c.138.016.277.031.416.047l.115.013c.129.015.259.03.388.045l.054.006c.138.016.276.031.416.047l.115.013c.129.015.258.029.387.044l.053.006c.137.015.276.03.415.046l.115.013c.128.014.258.029.386.044l.053.006c.137.015.275.03.414.045l.115.012c.128.014.257.029.385.043l.053.006c.137.015.275.029.413.044l.115.012c.128.014.256.028.385.043l.052.006c.137.015.274.029.413.044l.114.012c.128.014.256.028.384.042l.052.006c.136.014.274.029.412.043l.114.012c.127.013.255.027.383.041l.052.006c.136.014.273.028.411.043l.114.012c.127.013.255.027.382.04l.052.006c.136.014.273.028.41.042l.114.012c.127.013.254.026.381.04l.051.005c.136.014.272.027.41.042l.114.011c.126.013.254.026.38.039l.051.005c.135.014.272.027.409.041l.114.011c.126.013.253.025.38.039l.051.005c.135.013.271.027.408.04l.114.011c.126.013.252.025.379.038l.051.005c.135.013.27.026.407.04l.113.011c.126.012.252.025.378.037l.05.005c.135.013.27.026.406.039l.113.011c.125.012.251.024.377.037l.05.005c.134.013.27.025.406.038l.113.011c.125.012.251.024.376.036l.05.005c.134.013.269.025.405.038l.113.011c.125.012.25.024.375.036l.05.005c.134.012.269.025.404.037l.113.01c.124.012.249.023.374.035l.049.005c.134.012.268.024.404.037l.112.01c.124.012.249.023.374.035l.049.005c.133.012.268.024.403.036l.112.01c.124.011.248.023.373.034l.049.005c.133.012.267.023.402.035l.112.01c.123.011.248.022.372.034l.049.004c.133.012.267.023.401.035l.112.01c.123.011.247.022.371.033l.049.004c.133.012.266.023.4.034l.112.01c.123.011.246.022.37.033l.048.004c.132.012.266.023.4.034l.111.01c.123.011.246.021.369.032l.048.004c.132.011.265.022.399.034l.111.009c.122.01.245.021.368.032l.048.004c.132.011.265.022.398.033l.111.009c.122.01.245.021.367.031l.048.004c.132.011.264.022.397.033l.111.009c.122.01.244.02.366.031l.047.004c.131.011.264.021.397.032l.111.009c.121.01.243.02.365.03l.047.004c.131.011.263.021.396.032l.11.009c.121.01.243.019.365.03l.047.004c.131.01.263.021.395.031l.11.009c.121.01.242.019.364.029l.047.004c.131.01.262.02.394.031l.11.009c.121.009.242.019.363.029l.047.003c.13.01.262.02.394.03l.11.009c.12.009.241.018.362.028l.046.003c.13.01.261.02.393.03l.11.008c.12.009.24.018.361.027l.046.004c.13.01.261.019.392.029l.11.008c.12.009.24.018.36.027l.046.003c.13.01.26.019.392.029l.11.008c.12.009.239.017.36.026l.046.003c.13.01.26.019.391.028l.109.008c.119.009.239.017.359.026l.045.003c.129.009.259.018.39.028l.109.008c.119.008.238.017.358.026l.045.003c.129.009.259.018.39.027l.109.008c.119.008.238.017.357.025l.045.003c.129.009.258.018.389.027l.109.008c.118.008.237.016.356.025l.045.003c.128.009.258.017.388.026l.108.008c.118.008.237.016.356.024l.044.003c.128.009.258.017.388.026l.108.007c.118.008.236.016.355.024l.044.003c.128.009.257.017.387.025l.108.007c.118.008.236.015.354.023l.044.003c.128.008.256.016.386.025l.108.007c.117.008.235.015.353.023l.044.003c.127.008.256.016.385.024l.108.007c.117.007.235.015.352.022l.044.003c.127.008.255.016.384.024l.108.007c.117.007.234.014.352.022l.043.003c.127.008.255.015.384.023l.107.007c.117.007.234.014.351.021l.043.003c.126.008.254.015.383.023l.107.007c.116.007.233.014.35.021l.043.003c.126.008.254.015.382.023l.107.006c.116.007.233.014.35.02l.043.003c.126.007.253.015.381.022l.107.006c.116.007.232.013.349.02l.043.003c.126.007.253.014.381.022l.107.006c.115.007.232.013.348.02l.042.002c.126.008.252.014.38.022l.106.006c.115.007.231.013.347.019l.042.002c.125.007.252.014.379.021l.106.006c.115.007.231.013.347.019l.042.002c.125.007.251.014.378.021l.106.006c.115.006.23.012.346.018l.042.002c.125.007.251.014.378.021l.106.006c.114.006.23.012.345.018l.042.002c.124.007.25.013.377.02l.106.006c.114.006.229.012.344.018l.041.002c.124.007.25.013.376.02l.106.005c.114.006.229.012.343.017l.041.002c.124.007.25.013.375.019l.106.006c.114.006.228.011.343.017l.041.002c.124.006.249.013.375.019l.105.005c.114.006.228.011.342.017l.041.002c.123.006.248.013.374.019l.105.005c.113.006.227.011.341.017l.041.002c.123.006.248.012.374.018l.105.005c.113.006.227.011.341.016l.04.002c.123.006.247.012.373.018l.105.005c.113.005.227.011.34.016l.04.002c.123.006.247.012.372.018l.105.005c.112.005.226.01.339.016l.04.002c.122.006.246.011.371.017l.105.005c.112.005.226.01.339.015l.04.002c.122.006.246.011.37.017l.105.005c.112.005.225.01.338.015l.04.002c.122.006.245.011.37.017l.104.005c.112.005.225.01.337.015l.04.002c.122.005.245.011.369.016l.104.005c.112.005.224.009.337.014l.04.002c.121.005.244.01.368.016l.104.004c.111.005.224.009.336.014l.039.002c.121.005.244.01.367.015l.104.005c.111.005.223.009.335.014l.039.002c.121.005.243.01.366.015l.104.004c.111.005.223.009.334.013l.039.002c.121.005.243.01.366.015l.104.004c.11.004.222.009.334.013l.039.002c.12.005.242.009.365.014l.103.004c.11.004.222.008.333.013l.039.002c.12.005.242.009.364.014l.103.004c.11.004.221.008.332.012l.038.002c.12.005.241.009.364.014l.103.004c.11.004.221.008.332.012l.038.001c.12.005.241.009.363.013l.103.004c.11.004.221.008.331.012l.038.001c.12.005.24.009.362.013l.103.004c.109.004.22.008.33.011l.038.002c.119.004.24.008.361.013l.103.004c.109.004.22.007.33.011l.038.001c.119.005.239.008.361.013l.102.003c.109.004.219.008.329.011l.037.001c.119.004.239.008.36.012l.102.004c.109.004.218.007.328.011l.037.001c.119.004.238.008.359.012l.102.003c.109.003.218.007.328.01l.037.001c.118.004.238.008.358.012l.102.003c.108.003.218.007.327.01l.037.001c.118.004.237.008.358.011l.102.003c.108.003.217.007.326.01l.037.001c.118.004.237.007.357.011l.102.003c.108.003.217.006.325.01l.036.001c.118.004.237.007.356.011l.101.003c.108.003.216.006.325.009l.036.001c.117.004.236.007.356.011l.101.003c.107.003.216.006.324.009l.036.001c.117.004.236.007.355.01l.101.003c.107.003.215.006.323.009l.036.001c.117.004.235.007.354.01l.101.003c.107.003.215.006.323.009l.036.001c.117.003.235.006.354.01l.1.003c.107.003.215.005.322.008l.035.001c.116.003.234.006.353.009l.1.003c.107.003.214.005.321.008l.035.001c.116.003.234.006.352.009l.1.003c.106.003.214.005.32.008l.035.001c.116.003.233.006.352.009l.1.002c.106.003.213.005.32.008l.035.001c.116.003.233.006.351.009l.1.002c.106.003.213.005.319.007l.035.001c.115.003.232.006.35.008l.1.003c.105.002.212.005.319.007l.035.001c.115.003.232.005.35.008l.099.002c.105.003.212.005.318.007l.034.001c.115.003.231.005.349.008l.099.002c.105.003.211.005.317.007l.034.001c.115.003.231.005.349.008l.099.002c.105.003.211.005.316.007l.034.001c.114.003.23.005.348.008l.099.002c.104.002.21.005.316.006l.034.001c.114.003.23.005.347.007l.099.002c.104.002.21.004.315.006l.034.001c.114.003.229.005.346.007l.099.002c.104.002.209.004.314.006l.034.001c.114.002.229.005.346.007l.098.002c.104.002.209.004.314.006l.033.001c.113.002.228.004.345.006l.098.002c.103.002.208.004.313.005l.033.001c.113.002.228.004.344.006l.098.002c.103.002.208.004.312.005l.033.001c.113.002.227.004.344.006l.098.002c.103.002.207.004.311.005l.033.001c.113.002.227.004.343.006l.098.002c.102.002.207.003.311.005l.033.001c.112.002.226.004.342.006l.098.001c.102.002.206.003.31.005l.032.001c.112.002.226.004.342.005l.097.002c.102.002.206.003.309.005l.032.001c.112.002.226.003.341.005l.097.001c.102.002.205.003.309.005l.032.001c.112.002.225.003.34.005l.097.001c.102.002.205.003.308.004l.032.001c.111.002.225.003.339.005l.097.001c.101.001.204.003.307.004l.032.001c.111.002.224.003.339.004l.097.001c.101.002.204.003.306.004l.031.001c.111.002.224.003.338.004l.097.001c.101.001.203.002.306.004l.031.001c.111.001.223.003.337.004l.096.001c.101.001.203.002.305.004l.031.001c.111.001.223.003.337.004l.096.001c.1.001.202.002.304.003l.031.001c.11.001.222.002.336.003l.096.001c.1.001.202.002.304.003l.031.001c.11.001.222.002.335.003l.096.001c.1.001.201.002.303.003l.03.001c.11.001.221.002.334.003l.096.001c.1.001.201.002.302.003l.03.001c.11.001.221.002.334.003l.096.001c.099.001.2.002.302.002l.03.001c.109.001.221.002.333.003l.095.001c.099.001.2.001.301.002l.03.001c.109.001.22.002.332.002l.095.001c.099.001.199.001.3.002l.03.001c.109.001.22.001.332.002l.095.001c.099.001.199.001.299.002l.03.001c.109.001.22.001.331.002l.095.001c.098.001.198.001.299.002l.029.001c.109.001.219.001.33.002l.095.001c.098.001.198.001.298.002l.029.001c.108.001.218.001.329.002l.095.001c.098.001.197.001.297.002h.029c.108.001.218.001.329.001l.094.001c.098 0 .197.001.296.001h.029c.108 0 .217.001.328.001l.094.001c.098 0 .197 0 .296.001h.029c.107 0 .217.001.327.001l.094.001c.097 0 .196 0 .295.001h.029c.107 0 .217 0 .327.001l.094.001c.097 0 .196 0 .294.001h.028c.107 0 .216 0 .326.001l.094.001h.294l.028.001c.107 0 .216 0 .325.001l.094.001h.294l.028.001h.325l.094.001h.293l.028.001h.325l.093.001h.293l.028.001h.325l.093.001h.293l.028.001h.324l.093.001h.292l.028.001h.324l.093.001h.292l.027.001h.324l.093.001h.292l.027.001h.323l.093.001h.291l.027.001h.323l.092.001h.291l.027.001h.322l.092.001h.291l.027.001h.322l.092.001h.29l.026.001h.322l.092.001h.29l.026.001h.321l.091.001h.29l.026.001h.321l.091.001h.29l.025.001h.32l.091.001h.289l.025.001h.32l.091.001h.289l.025.001h.32l.09.001h.288l.025.001h.319l.09.001h.288l.025.001h.319l.09.001h.288l.024.001h.318l.09.001h.287l.024.001h.318l.089.001h.287l.024.001h.317l.089.001h.286l.024.001h.317l.089.001h.286l.023.001h.317l.088.001h.286l.023.001h.316l.088.001h.285l.023.001h.316l.088.001h.285l.023.001h.315l.088.001h.284l.023.001h.315l.087.001h.284l.022.001h.314l.087.001h.284l.022.001h.314l.087.001h.283l.022.001h.314l.086.001h.283l.022.001h.313l.086.001h.282l.022.001h.313l.086.001h.282l.021.001h.312l.086.001h.282l.021.001h.312l.085.001h.281l.021.001h.311l.085.001h.281l.021.001h.311l.085.001h.28l.021.001h.311l.084.001h.28l.02.001h.31l.084.001h.28l.02.001h.31l.084.001h.279l.02.001h.309l.084.001h.279l.02.001h.309l.083.001h.278l.02.001h.309l.083.001h.278l.019.001h.308l.083.001h.278l.019.001h.308l.082.001h.277l.019.001h.307l.082.001h.277l.019.001h.307l.082.001h.276l.019.001h.307l.081.001h.276l.018.001h.306l.081.001h.275l.018.001h.306l.081.001h.275l.018.001h.305l.08.001h.275l.018.001h.305l.08.001h.274l.018.001h.305l.08.001h.274l.017.001h.304l.08.001h.273l.017.001h.304l.079.001h.273l.017.001h.303l.079.001h.273l.017.001h.303l.079.001h.272l.017.001h.303l.078.001h.272l.016.001h.302l.078.001h.271l.016.001h.302l.078.001h.271l.016.001h.301l.078.001h.271l.016.001h.301l.077.001h.27l.016.001h.3l.077.001h.27l.015.001h.3l.077.001h.27l.015.001h.3l.076.001h.269l.015.001h.299l.076.001h.269l.015.001h.299l.076.001h.268l.015.001h.298l.076.001h.268l.014.001h.298l.075.001h.268l.014.001h.298l.075.001h.267l.014.001h.297l.075.001h.267l.014.001h.297l.074.001h.266l.014.001h.296l.074.001h.266l.014.001h.296l.074.001h.266l.013.001h.295l.074.001h.265l.013.001h.295l.073.001h.265l.013.001h.295l.073.001h.264l.013.001h.294l.073.001h.264l.013.001h.294l.072.001h.264l.012.001h.293l.072.001h.263l.012.001h.293l.072.001h.263l.012.001h.293l.071.001h.262l.012.001h.292l.071.001h.262l.012.001h.292l.071.001h.262l.011.001h.291l.071.001h.261l.011.001h.291l.07.001h.261l.011.001h.29l.07.001h.26l.011.001h.29l.07.001h.26l.011.001h.29l.07.001h.26l.01.001h.289l.069.001h.259l.01.001h.289l.069.001h.259l.01.001h.288l.069.001h.258l.01.001h.288l.068.001h.258l.01.001h.288l.068.001h.258l.01.001h.287l.068.001h.257l.009.001h.287l.068.001h.257l.009.001h.286l.067.001h.256l.009.001h.286l.067.001h.256l.009.001h.286l.067.001h.256l.009.001h.285l.066.001h.255l.009.001h.285l.066.001h.255l.008.001h.284l.066.001h.254l.008.001h.284l.066.001h.254l.008.001h.284l.065.001h.254l.008.001h.283l.065.001h.253l.008.001h.283l.065.001h.253l.008.001h.282l.065.001h.252l.008.001h.282l.064.001h.252l.007.001h.282l.064.001h.252l.007.001h.281l.064.001h.251l.007.001h.281l.063.001h.251l.007.001h.28l.063.001h.25l.007.001h.28l.063.001h.25l.007.001h.28l.063.001h.25l.006.001h.279l.062.001h.249l.006.001h.279l.062.001h.249l.006.001h.278l.062.001h.249l.006.001h.278l.061.001h.248l.006.001h.278l.061.001h.248l.006.001h.277l.061.001h.247l.006.001h.277l.061.001h.247l.006.001h.276l.06.001h.247l.005.001h.276l.06.001h.246l.005.001h.276l.06.001h.246l.005.001h.275l.06.001h.246l.005.001h.275l.059.001h.245l.005.001h.274l.059.001h.245l.005.001h.274l.059.001h.245l.005.001h.274l.058.001h.244l.004.001h.273l.058.001h.244l.004.001h.273l.058.001h.244l.004.001h.272l.058.001h.243l.004.001h.272l.057.001h.243l.004.001h.272l.057.001h.243l.004.001h.271l.057.001h.242l.004.001h.271l.057.001h.242l.003.001h.27l.056.001h.241l.003.001h.27l.056.001h.241l.003.001h.27l.056.001h.241l.003.001h.269l.056.001h.24l.003.001h.269l.055.001h.24l.003.001h.269l.055.001h.239l.003.001h.268l.055.001h.239l.003.001h.268l.055.001h.239l.002.001h.267l.054.001h.238l.002.001h.267l.054.001h.238l.002.001h.267l.054.001h.238l.002.001h.266l.054.001h.237l.002.001h.266l.053.001h.237l.002.001h.265l.053.001h.237l.002.001h.265l.053.001h.236l.002.001h.265l.053.001h.236l.001.001h.264l.052.001h.235l.001.001h.264l.052.001h.235l.001.001h.263l.052.001h.235l.001.001h.263l.052.001h.234l.001.001h.263l.051.001h.234l.001.001h.262l.051.001h.234l.001.001h.262l.051.001h.233l.001.001h.261l.05.001h.233l.001.001h.261l.05.001h.233l.001.001h.261l.05.001h.232z"/>
+                                                </svg>
+                                            </div>
+                                            <span class="app-name">AWS</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="category-badge infrastructure">Infraestrutura</span></td>
+                                    <td><span class="cost-value">R$ 8.450</span></td>
+                                    <td>
+                                        <div class="seats-cell">
+                                            <span class="seats-text">N/A</span>
+                                            <div class="seats-bar">
+                                                <div class="seats-bar-fill high" style="width: 100%;"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="adoption-cell">
+                                            <span class="adoption-value">N/A</span>
+                                            <span class="adoption-indicator high"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="renewal-cell">
+                                            <span class="renewal-date">Mensal</span>
+                                            <span class="renewal-days">uso sob demanda</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="status-badge active"><span class="dot"></span>Ativo</span></td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <button class="action-btn" title="Editar">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                                </svg>
+                                            </button>
+                                            <button class="action-btn" title="Ver detalhes">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="1"/>
+                                                    <circle cx="19" cy="12" r="1"/>
+                                                    <circle cx="5" cy="12" r="1"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div class="app-cell">
+                                            <div class="app-icon" style="background: linear-gradient(135deg, #2d8cff 0%, #0055ff 100%); color: white;">Z</div>
+                                            <span class="app-name">Zoom</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="category-badge video">Vídeo</span></td>
+                                    <td><span class="cost-value">R$ 890</span></td>
+                                    <td>
+                                        <div class="seats-cell">
+                                            <span class="seats-text">25 / 30</span>
+                                            <div class="seats-bar">
+                                                <div class="seats-bar-fill medium" style="width: 83%;"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="adoption-cell">
+                                            <span class="adoption-value">67%</span>
+                                            <span class="adoption-indicator medium"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="renewal-cell">
+                                            <span class="renewal-date">20/02/2025</span>
+                                            <span class="renewal-days">em 53 dias</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="status-badge warning"><span class="dot"></span>Duplicidade</span></td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <button class="action-btn" title="Editar">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                                </svg>
+                                            </button>
+                                            <button class="action-btn" title="Ver detalhes">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="1"/>
+                                                    <circle cx="19" cy="12" r="1"/>
+                                                    <circle cx="5" cy="12" r="1"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <span class="table-info">Mostrando 7 de 34 assinaturas</span>
+                        <div class="pagination">
+                            <button class="page-btn" disabled>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="15 18 9 12 15 6"/>
+                                </svg>
+                            </button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <button class="page-btn">4</button>
+                            <button class="page-btn">5</button>
+                            <button class="page-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <footer class="dashboard-footer">
+                <div class="footer-left">
+                    <span class="version-badge">v1.0.0</span>
+                    <span class="oss-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                        Open Source • Self-hosted
+                    </span>
+                </div>
+                <div class="footer-right">
+                    <a href="#">Documentação</a>
+                </div>
+            </footer>
+        </main>
+    </div>
+    
+    <script>
+        // Initialize Chart.js
+        const ctx = document.getElementById('spendingChart').getContext('2d');
+        
+        // Chart gradient
+        const gradientPrimary = ctx.createLinearGradient(0, 0, 0, 280);
+        gradientPrimary.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
+        gradientPrimary.addColorStop(1, 'rgba(16, 185, 129, 0)');
+        
+        const gradientDesign = ctx.createLinearGradient(0, 0, 0, 280);
+        gradientDesign.addColorStop(0, 'rgba(139, 92, 246, 0.2)');
+        gradientDesign.addColorStop(1, 'rgba(139, 92, 246, 0)');
+        
+        // Sample data for 30 days
+        const labels = ['01/12', '05/12', '10/12', '15/12', '20/12', '25/12', '29/12'];
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Produtividade',
+                        data: [8200, 8400, 8100, 8500, 8300, 8600, 8800],
+                        borderColor: '#10b981',
+                        backgroundColor: gradientPrimary,
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#10b981',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2
+                    },
+                    {
+                        label: 'Infraestrutura',
+                        data: [8450, 8200, 8600, 8300, 8700, 8400, 8450],
+                        borderColor: '#ec4899',
+                        backgroundColor: 'transparent',
+                        fill: false,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#ec4899',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2
+                    },
+                    {
+                        label: 'Vendas & Marketing',
+                        data: [4500, 4500, 4500, 4500, 4500, 4500, 4500],
+                        borderColor: '#f97316',
+                        backgroundColor: 'transparent',
+                        fill: false,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#f97316',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2
+                    },
+                    {
+                        label: 'Desenvolvimento',
+                        data: [3200, 3200, 3200, 3200, 3200, 3200, 3200],
+                        borderColor: '#22c55e',
+                        backgroundColor: 'transparent',
+                        fill: false,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#22c55e',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2
+                    },
+                    {
+                        label: 'Design',
+                        data: [1890, 1890, 1890, 1890, 1890, 1890, 1890],
+                        borderColor: '#8b5cf6',
+                        backgroundColor: gradientDesign,
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#8b5cf6',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#033a2d',
+                        titleColor: '#f0fdf4',
+                        bodyColor: '#a7f3d0',
+                        borderColor: 'rgba(16, 185, 129, 0.3)',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: true,
+                        boxWidth: 8,
+                        boxHeight: 8,
+                        boxPadding: 4,
+                        usePointStyle: true,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': R$ ' + context.parsed.y.toLocaleString('pt-BR');
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#6ee7b7',
+                            font: {
+                                family: "'Outfit', sans-serif",
+                                size: 12
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(16, 185, 129, 0.1)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#6ee7b7',
+                            font: {
+                                family: "'JetBrains Mono', monospace",
+                                size: 11
+                            },
+                            callback: function(value) {
+                                return 'R$ ' + (value / 1000).toFixed(1) + 'k';
+                            }
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // Time selector interaction
+        document.querySelectorAll('.time-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelector('.time-btn.active').classList.remove('active');
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
