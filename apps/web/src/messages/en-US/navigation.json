@@ -1,0 +1,17 @@
+{
+  "main": {
+    "dashboard": "Dashboard",
+    "employees": "Employees",
+    "subscriptions": "Subscriptions",
+    "alerts": "Alerts",
+    "reports": "Reports"
+  },
+  "config": {
+    "title": "Configuration",
+    "settings": "Settings"
+  },
+  "footer": {
+    "help": "Help",
+    "docs": "Docs"
+  }
+}

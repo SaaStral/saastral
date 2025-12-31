@@ -1,22 +1,25 @@
 'use client'
 
 import { Users } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { EmptyState } from '@/components/ui/EmptyState'
 
 export default function EmployeesPage() {
+  const t = useTranslations('employees')
+
   return (
     <div>
       <EmptyState
         icon={Users}
-        title="Gerencie sua Equipe"
-        description="Aqui você poderá visualizar todos os funcionários, suas licenças ativas e detectar automaticamente quando alguém sai da empresa."
+        title={t('manageTeam')}
+        description={t('subtitle')}
         action={{
-          label: 'Adicionar Funcionário',
+          label: t('form.create'),
           onClick: () => console.log('Add employee'),
         }}
       >
         <div className="mt-8 text-sm text-[#6ee7b7] max-w-md">
-          <p>Conecte o Google Workspace para sincronizar automaticamente seus funcionários.</p>
+          <p>{t('getStarted')}</p>
         </div>
       </EmptyState>
     </div>

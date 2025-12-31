@@ -1,0 +1,79 @@
+{
+  "title": "Integrações",
+  "subtitle": "Conecte suas ferramentas para sincronizar dados automaticamente",
+
+  "providers": {
+    "google": {
+      "name": "Google Workspace",
+      "description": "Sincronize funcionários e departamentos do Google Workspace"
+    },
+    "okta": {
+      "name": "Okta",
+      "description": "Monitore uso de aplicações via SSO do Okta"
+    },
+    "microsoft": {
+      "name": "Microsoft 365",
+      "description": "Sincronize funcionários do Azure Active Directory"
+    },
+    "keycloak": {
+      "name": "Keycloak",
+      "description": "Integração com Keycloak para SSO"
+    }
+  },
+
+  "status": {
+    "active": "Conectado",
+    "pending": "Pendente",
+    "error": "Erro",
+    "disabled": "Desativado"
+  },
+
+  "actions": {
+    "connect": "Conectar",
+    "configure": "Configurar",
+    "disconnect": "Desconectar",
+    "test": "Testar Conexão",
+    "sync": "Sincronizar Agora"
+  },
+
+  "form": {
+    "title": "Configurar {provider}",
+    "credentials": "Credenciais",
+    "credentialsHint": "As credenciais são armazenadas de forma segura e encriptada",
+    "save": "Salvar Configuração",
+    "update": "Atualizar Credenciais"
+  },
+
+  "test": {
+    "testing": "Testando conexão...",
+    "success": "Conexão bem-sucedida!",
+    "failed": "Falha na conexão"
+  },
+
+  "sync": {
+    "lastSync": "Última sincronização: {date}",
+    "nextSync": "Próxima sincronização: {date}",
+    "inProgress": "Sincronização em andamento...",
+    "success": "Sincronização concluída",
+    "interval": "Intervalo de sincronização",
+    "intervals": {
+      "15min": "A cada 15 minutos",
+      "30min": "A cada 30 minutos",
+      "1hour": "A cada hora",
+      "6hours": "A cada 6 horas",
+      "daily": "Uma vez por dia"
+    }
+  },
+
+  "errors": {
+    "invalidCredentials": "Credenciais inválidas",
+    "connectionFailed": "Falha ao conectar: {error}",
+    "tokenExpired": "Token expirado. Por favor, reconecte.",
+    "permissionDenied": "Permissão negada. Verifique as permissões da aplicação."
+  },
+
+  "enterprise": {
+    "badge": "Enterprise",
+    "upgradeRequired": "Disponível no plano Enterprise"
+  }
+}

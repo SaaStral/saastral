@@ -1,0 +1,67 @@
+{
+  "title": "Employees",
+  "subtitle": "Manage your organization's employees",
+  "manageTeam": "Manage Your Team",
+  "getStarted": "Get started by adding employees or connecting your Google Workspace to automatically sync your team.",
+
+  "list": {
+    "search": "Search employees...",
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "offboarded": "Offboarded",
+      "department": "Department"
+    },
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "department": "Department",
+      "status": "Status",
+      "subscriptions": "Subscriptions",
+      "lastActivity": "Last Activity"
+    },
+    "empty": "No employees found"
+  },
+
+  "detail": {
+    "title": "Employee Details",
+    "info": "Information",
+    "subscriptions": "Linked Subscriptions",
+    "activity": "Activity History",
+    "noSubscriptions": "No linked subscriptions"
+  },
+
+  "form": {
+    "create": "Add Employee",
+    "edit": "Edit Employee",
+    "name": "Full name",
+    "email": "Email",
+    "department": "Department",
+    "jobTitle": "Job Title",
+    "startDate": "Start Date",
+    "manager": "Manager"
+  },
+
+  "offboarding": {
+    "title": "Offboarding",
+    "button": "Start Offboarding",
+    "confirm": "Confirm offboarding of {name}?",
+    "warning": "This action will mark the employee as offboarded and create alerts to revoke access.",
+    "date": "Offboarding Date",
+    "reason": "Reason",
+    "success": "Offboarding started successfully"
+  },
+
+  "sync": {
+    "button": "Sync from Google Workspace",
+    "inProgress": "Syncing...",
+    "success": "{count, plural, one {# employee synced} other {# employees synced}}",
+    "error": "Error syncing employees"
+  },
+
+  "status": {
+    "active": "Active",
+    "offboarded": "Offboarded",
+    "onLeave": "On Leave"
+  }
+}

@@ -1,48 +1,50 @@
 'use client'
 
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import { usePathname } from 'next/navigation'
 import { Users, Package, Bell, FileText, LayoutDashboard, Settings } from 'lucide-react'
 
-const navigation = [
-  {
-    name: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-  },
-  {
-    name: 'Funcionários',
-    href: '/employees',
-    icon: Users,
-  },
-  {
-    name: 'Assinaturas',
-    href: '/subscriptions',
-    icon: Package,
-  },
-  {
-    name: 'Alertas',
-    href: '/alerts',
-    icon: Bell,
-    badge: 5,
-  },
-  {
-    name: 'Relatórios',
-    href: '/reports',
-    icon: FileText,
-  },
-]
-
-const configNavigation = [
-  {
-    name: 'Configurações',
-    href: '/settings',
-    icon: Settings,
-  },
-]
-
 export function Sidebar() {
+  const t = useTranslations('navigation')
   const pathname = usePathname()
+
+  const navigation = [
+    {
+      name: t('main.dashboard'),
+      href: '/dashboard',
+      icon: LayoutDashboard,
+    },
+    {
+      name: t('main.employees'),
+      href: '/employees',
+      icon: Users,
+    },
+    {
+      name: t('main.subscriptions'),
+      href: '/subscriptions',
+      icon: Package,
+    },
+    {
+      name: t('main.alerts'),
+      href: '/alerts',
+      icon: Bell,
+      badge: 5,
+    },
+    {
+      name: t('main.reports'),
+      href: '/reports',
+      icon: FileText,
+    },
+  ]
+
+  const configNavigation = [
+    {
+      name: t('config.settings'),
+      href: '/settings',
+      icon: Settings,
+    },
+  ]
 
   return (
     <aside className="w-[260px] bg-[#022c22] border-r border-[rgba(16,185,129,0.15)] flex flex-col fixed top-0 left-0 bottom-0 z-[100] transition-all duration-[250ms]">
@@ -101,7 +103,7 @@ export function Sidebar() {
         {/* Configuration Section */}
         <div className="mt-2">
           <div className="text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-[#6ee7b7] px-3 py-2 mt-2">
-            Configuração
+            {t('config.title')}
           </div>
           {configNavigation.map((item) => {
             const isActive = pathname === item.href
@@ -149,14 +151,14 @@ export function Sidebar() {
             className="flex-1 flex items-center justify-center gap-1.5 px-2.5 py-2.5 rounded-[6px] bg-[rgba(5,150,105,0.08)] text-[#6ee7b7] text-[0.8125rem] hover:bg-[#033a2d] hover:text-[#f0fdf4] transition-all duration-[150ms]"
           >
             <span>?</span>
-            <span>Ajuda</span>
+            <span>{t('footer.help')}</span>
           </a>
           <a
             href="#"
             className="flex-1 flex items-center justify-center gap-1.5 px-2.5 py-2.5 rounded-[6px] bg-[rgba(5,150,105,0.08)] text-[#6ee7b7] text-[0.8125rem] hover:bg-[#033a2d] hover:text-[#f0fdf4] transition-all duration-[150ms]"
           >
             <span>→</span>
-            <span>Docs</span>
+            <span>{t('footer.docs')}</span>
           </a>
         </div>
       </div>

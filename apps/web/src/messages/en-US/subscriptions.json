@@ -1,0 +1,98 @@
+{
+  "title": "Subscriptions",
+  "subtitle": "Manage your SaaS subscriptions",
+  "manageSubscriptions": "Manage Your Subscriptions",
+  "getStarted": "Start adding your SaaS subscriptions to track spending and usage.",
+  "categories": "Categories",
+  "autoTracking": "Automatic Usage Tracking",
+  "autoTrackingDesc": "Connect Okta to automatically track who's using each tool and when.",
+
+  "list": {
+    "search": "Search subscriptions...",
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "cancelled": "Cancelled",
+      "category": "Category"
+    },
+    "columns": {
+      "name": "Name",
+      "category": "Category",
+      "cost": "Monthly Cost",
+      "seats": "Seats",
+      "usage": "Usage",
+      "renewal": "Renewal"
+    },
+    "empty": "No subscriptions found"
+  },
+
+  "detail": {
+    "title": "Subscription Details",
+    "overview": "Overview",
+    "users": "Users",
+    "billing": "Billing",
+    "history": "History"
+  },
+
+  "form": {
+    "create": "Add Subscription",
+    "edit": "Edit Subscription",
+    "name": "SaaS Name",
+    "vendor": "Vendor",
+    "category": "Category",
+    "website": "Website",
+    "cost": "Monthly Cost",
+    "billingCycle": "Billing Cycle",
+    "seats": {
+      "title": "Seats",
+      "purchased": "Purchased Seats",
+      "used": "Used Seats"
+    },
+    "renewal": {
+      "title": "Renewal",
+      "date": "Renewal Date",
+      "type": "Renewal Type",
+      "auto": "Automatic",
+      "manual": "Manual"
+    },
+    "contract": "Contract",
+    "uploadContract": "Upload contract (PDF)"
+  },
+
+  "categories": {
+    "productivity": "Productivity",
+    "communication": "Communication",
+    "development": "Development",
+    "design": "Design",
+    "marketing": "Marketing",
+    "sales": "Sales",
+    "hr": "HR",
+    "finance": "Finance",
+    "security": "Security",
+    "analytics": "Analytics",
+    "other": "Other"
+  },
+
+  "billingCycles": {
+    "monthly": "Monthly",
+    "quarterly": "Quarterly",
+    "semiannual": "Semi-annual",
+    "annual": "Annual"
+  },
+
+  "usage": {
+    "title": "Usage",
+    "rate": "{rate}% utilization",
+    "lastUsed": "Last used: {date}",
+    "neverUsed": "Never used",
+    "users": "{count, plural, one {# user} other {# users}}",
+    "activeUsers": "{count} active users"
+  },
+
+  "insights": {
+    "unusedSeats": "{count, plural, one {# unused seat} other {# unused seats}}",
+    "potentialSaving": "Potential savings: {amount}",
+    "lowUsage": "Low usage detected",
+    "duplicateTool": "Similar tool: {name}"
+  }
+}

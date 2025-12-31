@@ -1,0 +1,52 @@
+{
+  "title": "Dashboard",
+  "welcome": "Bem-vindo, {name}!",
+  "overview": "Visão geral",
+  "underConstruction": "Dashboard em Construção",
+  "comingSoon": "Em breve! Estamos construindo algo incrível.",
+
+  "stats": {
+    "totalSpend": "Gasto Total",
+    "monthlySpend": "Gasto Mensal",
+    "activeSubscriptions": "Assinaturas Ativas",
+    "totalEmployees": "Total de Funcionários",
+    "potentialSavings": "Economia Potencial",
+    "unusedLicenses": "Licenças não Utilizadas"
+  },
+
+  "charts": {
+    "spendByCategory": "Gasto por Categoria",
+    "spendTrend": "Evolução de Gastos",
+    "topApps": "Apps Mais Utilizados",
+    "usageRate": "Taxa de Utilização"
+  },
+
+  "alerts": {
+    "title": "Alertas Recentes",
+    "viewAll": "Ver todos",
+    "noAlerts": "Nenhum alerta pendente",
+    "types": {
+      "offboarding": "Offboarding pendente",
+      "renewal": "Renovação próxima",
+      "unusedLicense": "Licença não utilizada",
+      "lowUsage": "Baixa utilização",
+      "duplicate": "Ferramenta duplicada"
+    }
+  },
+
+  "renewals": {
+    "title": "Próximas Renovações",
+    "viewAll": "Ver todas",
+    "noRenewals": "Nenhuma renovação próxima",
+    "daysUntil": "{days, plural, one {# dia} other {# dias}}",
+    "dueIn": "Vence em {days}"
+  },
+
+  "quickActions": {
+    "title": "Ações Rápidas",
+    "addSubscription": "Adicionar Assinatura",
+    "addEmployee": "Adicionar Funcionário",
+    "runSync": "Sincronizar Integrações",
+    "exportReport": "Exportar Relatório"
+  }
+}

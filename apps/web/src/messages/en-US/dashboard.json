@@ -1,0 +1,52 @@
+{
+  "title": "Dashboard",
+  "welcome": "Welcome, {name}!",
+  "overview": "Overview",
+  "underConstruction": "Dashboard Under Construction",
+  "comingSoon": "Coming soon! We're building something amazing.",
+
+  "stats": {
+    "totalSpend": "Total Spend",
+    "monthlySpend": "Monthly Spend",
+    "activeSubscriptions": "Active Subscriptions",
+    "totalEmployees": "Total Employees",
+    "potentialSavings": "Potential Savings",
+    "unusedLicenses": "Unused Licenses"
+  },
+
+  "charts": {
+    "spendByCategory": "Spend by Category",
+    "spendTrend": "Spending Trend",
+    "topApps": "Most Used Apps",
+    "usageRate": "Usage Rate"
+  },
+
+  "alerts": {
+    "title": "Recent Alerts",
+    "viewAll": "View all",
+    "noAlerts": "No pending alerts",
+    "types": {
+      "offboarding": "Pending offboarding",
+      "renewal": "Upcoming renewal",
+      "unusedLicense": "Unused license",
+      "lowUsage": "Low usage",
+      "duplicate": "Duplicate tool"
+    }
+  },
+
+  "renewals": {
+    "title": "Upcoming Renewals",
+    "viewAll": "View all",
+    "noRenewals": "No upcoming renewals",
+    "daysUntil": "{days, plural, one {# day} other {# days}}",
+    "dueIn": "Due in {days}"
+  },
+
+  "quickActions": {
+    "title": "Quick Actions",
+    "addSubscription": "Add Subscription",
+    "addEmployee": "Add Employee",
+    "runSync": "Sync Integrations",
+    "exportReport": "Export Report"
+  }
+}

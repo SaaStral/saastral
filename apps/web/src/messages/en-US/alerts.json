@@ -1,0 +1,55 @@
+{
+  "title": "Alerts",
+  "subtitle": "Monitor important events and notifications",
+  "alertCenter": "Alert Center",
+  "getStarted": "Alerts will appear here once you've configured your integrations.",
+
+  "types": {
+    "offboarding": "Offboarding Pending",
+    "renewal": "Upcoming Renewal",
+    "unusedLicense": "Unused Licenses",
+    "lowAdoption": "Low Adoption"
+  },
+
+  "typeDescriptions": {
+    "offboarding": "Employee left but still has active licenses",
+    "renewal": "Subscription renewing soon - time to review",
+    "unusedLicense": "License not used in 30+ days",
+    "lowAdoption": "Less than 50% of seats being used"
+  },
+
+  "severity": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "critical": "Critical"
+  },
+
+  "status": {
+    "pending": "Pending",
+    "acknowledged": "Acknowledged",
+    "resolved": "Resolved",
+    "dismissed": "Dismissed"
+  },
+
+  "actions": {
+    "acknowledge": "Acknowledge",
+    "resolve": "Resolve",
+    "dismiss": "Dismiss",
+    "viewDetails": "View Details"
+  },
+
+  "filters": {
+    "all": "All Alerts",
+    "pending": "Pending",
+    "acknowledged": "Acknowledged",
+    "resolved": "Resolved",
+    "bySeverity": "By Severity",
+    "byType": "By Type"
+  },
+
+  "list": {
+    "empty": "No alerts found",
+    "search": "Search alerts..."
+  }
+}

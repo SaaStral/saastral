@@ -1,0 +1,23 @@
+{
+  "title": "SaaStral",
+  "subtitle": "Open Source SaaS Management Platform",
+  "description": "Control your spending, detect unused licenses, and optimize your software stack",
+  "actions": {
+    "dashboard": "Access Dashboard",
+    "github": "View on GitHub"
+  },
+  "features": {
+    "costControl": {
+      "title": "Cost Control",
+      "description": "Monitor all your SaaS subscriptions in one place"
+    },
+    "smartAlerts": {
+      "title": "Smart Alerts",
+      "description": "Get notified about renewals and unused licenses"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "description": "Identify savings opportunities with accurate data"
+    }
+  }
+}

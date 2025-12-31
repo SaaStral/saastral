@@ -1,6 +1,7 @@
 'use client'
 
 import { Search, Bell, HelpCircle } from 'lucide-react'
+import { LocaleSwitcher } from '@/components/ui/locale-switcher'
 
 export function Header() {
   return (
@@ -22,6 +23,9 @@ export function Header() {
             ⌘K
           </span>
         </button>
+
+        {/* Locale Switcher */}
+        <LocaleSwitcher />
 
         {/* Help Button */}
         <button className="w-10 h-10 flex items-center justify-center rounded-[10px] bg-transparent border border-transparent text-[#a7f3d0] cursor-pointer transition-all duration-[150ms] hover:bg-[#033a2d] hover:border-[rgba(16,185,129,0.15)]">

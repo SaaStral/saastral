@@ -1,0 +1,50 @@
+{
+  "generic": {
+    "title": "Algo deu errado",
+    "description": "Ocorreu um erro inesperado. Por favor, tente novamente.",
+    "tryAgain": "Tentar novamente"
+  },
+
+  "notFound": {
+    "title": "Página não encontrada",
+    "description": "A página que você está procurando não existe.",
+    "goHome": "Voltar ao início"
+  },
+
+  "unauthorized": {
+    "title": "Acesso negado",
+    "description": "Você não tem permissão para acessar este recurso.",
+    "goBack": "Voltar"
+  },
+
+  "forbidden": {
+    "title": "Acesso proibido",
+    "description": "Você não tem permissão para realizar esta ação."
+  },
+
+  "network": {
+    "title": "Erro de conexão",
+    "description": "Não foi possível conectar ao servidor. Verifique sua conexão.",
+    "offline": "Você está offline"
+  },
+
+  "validation": {
+    "title": "Erro de validação",
+    "description": "Por favor, verifique os campos e tente novamente."
+  },
+
+  "server": {
+    "title": "Erro no servidor",
+    "description": "Ocorreu um erro no servidor. Nossa equipe foi notificada."
+  },
+
+  "timeout": {
+    "title": "Tempo esgotado",
+    "description": "A requisição demorou muito. Por favor, tente novamente."
+  },
+
+  "rateLimit": {
+    "title": "Muitas requisições",
+    "description": "Você atingiu o limite de requisições. Aguarde um momento."
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "generic": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again.",
+    "tryAgain": "Try again"
+  },
+
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist.",
+    "goHome": "Go home"
+  },
+
+  "unauthorized": {
+    "title": "Access denied",
+    "description": "You don't have permission to access this resource.",
+    "goBack": "Go back"
+  },
+
+  "forbidden": {
+    "title": "Forbidden",
+    "description": "You don't have permission to perform this action."
+  },
+
+  "network": {
+    "title": "Connection error",
+    "description": "Could not connect to the server. Check your connection.",
+    "offline": "You are offline"
+  },
+
+  "validation": {
+    "title": "Validation error",
+    "description": "Please check the fields and try again."
+  },
+
+  "server": {
+    "title": "Server error",
+    "description": "A server error occurred. Our team has been notified."
+  },
+
+  "timeout": {
+    "title": "Request timeout",
+    "description": "The request took too long. Please try again."
+  },
+
+  "rateLimit": {
+    "title": "Too many requests",
+    "description": "You've hit the rate limit. Please wait a moment."
+  }
+}

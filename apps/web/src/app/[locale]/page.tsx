@@ -1,6 +1,15 @@
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { setRequestLocale } from 'next-intl/server'
+import { Link } from '@/i18n/navigation'
 
-export default function Home() {
+interface HomePageProps {
+  params: { locale: string }
+}
+
+export default function HomePage({ params: { locale } }: HomePageProps) {
+  setRequestLocale(locale)
+  const t = useTranslations('home')
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <div className="text-center">
@@ -20,10 +29,10 @@ export default function Home() {
           Saa<span className="text-[#10b981]">Stral</span>
         </h1>
         <p className="text-xl text-[#a7f3d0] mb-8 max-w-2xl mx-auto">
-          Plataforma Open Source para Gestão de SaaS
+          {t('subtitle')}
         </p>
         <p className="text-[#6ee7b7] mb-12 max-w-xl mx-auto">
-          Controle seus gastos, detecte licenças não utilizadas e otimize seu software stack
+          {t('description')}
         </p>
 
         <div className="flex gap-4 justify-center">
@@ -31,7 +40,7 @@ export default function Home() {
             href="/dashboard"
             className="px-6 py-3 bg-gradient-to-br from-[#059669] to-[#0d9488] text-[#f0fdf4] rounded-[10px] font-medium transition-all duration-[150ms] hover:shadow-[0_0_20px_rgba(5,150,105,0.3)] hover:-translate-y-0.5"
           >
-            Acessar Dashboard
+            {t('actions.dashboard')}
           </Link>
           <a
             href="https://github.com/saastral/saastral"
@@ -39,7 +48,7 @@ export default function Home() {
             rel="noopener noreferrer"
             className="px-6 py-3 bg-transparent border border-[rgba(16,185,129,0.3)] text-[#a7f3d0] rounded-[10px] font-medium transition-all duration-[150ms] hover:bg-[rgba(5,150,105,0.08)] hover:border-[rgba(16,185,129,0.5)]"
           >
-            Ver no GitHub
+            {t('actions.github')}
           </a>
         </div>
 
@@ -47,23 +56,23 @@ export default function Home() {
         <div className="mt-16 grid grid-cols-3 gap-6 max-w-3xl mx-auto">
           <div className="p-6 bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-[16px] text-left">
             <div className="text-2xl mb-2">💰</div>
-            <h3 className="text-[#f0fdf4] font-semibold mb-2">Controle de Gastos</h3>
+            <h3 className="text-[#f0fdf4] font-semibold mb-2">{t('features.costControl.title')}</h3>
             <p className="text-sm text-[#6ee7b7]">
-              Monitore todas suas assinaturas SaaS em um só lugar
+              {t('features.costControl.description')}
             </p>
           </div>
           <div className="p-6 bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-[16px] text-left">
             <div className="text-2xl mb-2">🔔</div>
-            <h3 className="text-[#f0fdf4] font-semibold mb-2">Alertas Inteligentes</h3>
+            <h3 className="text-[#f0fdf4] font-semibold mb-2">{t('features.smartAlerts.title')}</h3>
             <p className="text-sm text-[#6ee7b7]">
-              Seja notificado sobre renovações e licenças não utilizadas
+              {t('features.smartAlerts.description')}
             </p>
           </div>
           <div className="p-6 bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-[16px] text-left">
             <div className="text-2xl mb-2">📊</div>
-            <h3 className="text-[#f0fdf4] font-semibold mb-2">Analytics</h3>
+            <h3 className="text-[#f0fdf4] font-semibold mb-2">{t('features.analytics.title')}</h3>
             <p className="text-sm text-[#6ee7b7]">
-              Identifique oportunidades de economia com dados precisos
+              {t('features.analytics.description')}
             </p>
           </div>
         </div>

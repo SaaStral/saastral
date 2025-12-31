@@ -1,0 +1,107 @@
+{
+  "title": "Configurações",
+  "subtitle": "Gerencie sua conta e preferências",
+
+  "navigation": {
+    "general": "Geral",
+    "organization": "Organização",
+    "integrations": "Integrações",
+    "notifications": "Notificações",
+    "billing": "Faturamento",
+    "team": "Equipe",
+    "security": "Segurança",
+    "appearance": "Aparência"
+  },
+
+  "general": {
+    "title": "Configurações Gerais",
+    "language": {
+      "title": "Idioma",
+      "description": "Escolha o idioma da interface"
+    },
+    "timezone": {
+      "title": "Fuso Horário",
+      "description": "Defina seu fuso horário"
+    },
+    "currency": {
+      "title": "Moeda",
+      "description": "Moeda padrão para exibição de valores"
+    },
+    "dateFormat": {
+      "title": "Formato de Data",
+      "description": "Como as datas são exibidas"
+    }
+  },
+
+  "organization": {
+    "title": "Organização",
+    "name": "Nome da Empresa",
+    "domain": "Domínio",
+    "logo": "Logo",
+    "uploadLogo": "Enviar logo",
+    "address": "Endereço",
+    "taxId": "CNPJ"
+  },
+
+  "integrations": {
+    "title": "Integrações",
+    "description": "Conecte suas ferramentas para sincronizar dados automaticamente",
+    "configured": "{count} configuradas",
+    "notConfigured": "Não configuradas"
+  },
+
+  "notifications": {
+    "title": "Notificações",
+    "email": {
+      "title": "Notificações por Email",
+      "alerts": "Alertas de offboarding e renovação",
+      "reports": "Relatórios semanais",
+      "updates": "Atualizações do produto"
+    },
+    "slack": {
+      "title": "Notificações no Slack",
+      "description": "Receba alertas em um canal do Slack"
+    }
+  },
+
+  "appearance": {
+    "title": "Aparência",
+    "theme": {
+      "title": "Tema",
+      "light": "Claro",
+      "dark": "Escuro",
+      "system": "Sistema"
+    },
+    "density": {
+      "title": "Densidade",
+      "comfortable": "Confortável",
+      "compact": "Compacto"
+    }
+  },
+
+  "team": {
+    "title": "Equipe",
+    "invite": "Convidar Membro",
+    "members": "Membros",
+    "roles": {
+      "owner": "Proprietário",
+      "admin": "Administrador",
+      "member": "Membro",
+      "viewer": "Visualizador"
+    },
+    "invitePending": "Convite pendente"
+  },
+
+  "preferences": {
+    "language": "Idioma",
+    "timezone": "Fuso Horário",
+    "currency": "Moeda",
+    "dateFormat": "Formato de Data"
+  },
+
+  "dangerZone": {
+    "title": "Zona de Perigo",
+    "deleteOrganization": "Excluir Organização",
+    "deleteWarning": "Esta ação é irreversível. Todos os dados serão perdidos."
+  }
+}

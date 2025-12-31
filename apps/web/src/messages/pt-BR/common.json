@@ -1,0 +1,68 @@
+{
+  "app": {
+    "name": "SaaStral",
+    "tagline": "Gestão inteligente de SaaS"
+  },
+  "actions": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "create": "Criar",
+    "update": "Atualizar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "import": "Importar",
+    "refresh": "Atualizar",
+    "back": "Voltar",
+    "next": "Próximo",
+    "previous": "Anterior",
+    "confirm": "Confirmar",
+    "close": "Fechar",
+    "view": "Visualizar",
+    "download": "Baixar",
+    "upload": "Enviar"
+  },
+  "status": {
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "pending": "Pendente",
+    "error": "Erro",
+    "success": "Sucesso",
+    "loading": "Carregando...",
+    "saving": "Salvando...",
+    "deleting": "Excluindo..."
+  },
+  "time": {
+    "today": "Hoje",
+    "yesterday": "Ontem",
+    "tomorrow": "Amanhã",
+    "thisWeek": "Esta semana",
+    "thisMonth": "Este mês",
+    "lastMonth": "Mês passado",
+    "daysAgo": "{count, plural, one {# dia atrás} other {# dias atrás}}",
+    "hoursAgo": "{count, plural, one {# hora atrás} other {# horas atrás}}",
+    "minutesAgo": "{count, plural, one {# minuto atrás} other {# minutos atrás}}"
+  },
+  "pagination": {
+    "showing": "Mostrando {from} a {to} de {total}",
+    "itemsPerPage": "Itens por página",
+    "page": "Página {current} de {total}"
+  },
+  "empty": {
+    "noResults": "Nenhum resultado encontrado",
+    "noData": "Nenhum dado disponível"
+  },
+  "confirm": {
+    "delete": "Tem certeza que deseja excluir?",
+    "unsavedChanges": "Você tem alterações não salvas. Deseja sair mesmo assim?"
+  },
+  "validation": {
+    "required": "Este campo é obrigatório",
+    "email": "Digite um email válido",
+    "url": "Digite uma URL válida",
+    "minLength": "Mínimo de {min} caracteres",
+    "maxLength": "Máximo de {max} caracteres"
+  }
+}

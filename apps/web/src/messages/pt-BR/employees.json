@@ -1,0 +1,67 @@
+{
+  "title": "Funcionários",
+  "subtitle": "Gerencie os funcionários da sua organização",
+  "manageTeam": "Gerencie sua Equipe",
+  "getStarted": "Comece adicionando funcionários ou conectando seu Google Workspace para sincronizar automaticamente sua equipe.",
+
+  "list": {
+    "search": "Buscar funcionários...",
+    "filters": {
+      "all": "Todos",
+      "active": "Ativos",
+      "offboarded": "Desligados",
+      "department": "Departamento"
+    },
+    "columns": {
+      "name": "Nome",
+      "email": "Email",
+      "department": "Departamento",
+      "status": "Status",
+      "subscriptions": "Assinaturas",
+      "lastActivity": "Última Atividade"
+    },
+    "empty": "Nenhum funcionário encontrado"
+  },
+
+  "detail": {
+    "title": "Detalhes do Funcionário",
+    "info": "Informações",
+    "subscriptions": "Assinaturas Vinculadas",
+    "activity": "Histórico de Atividade",
+    "noSubscriptions": "Nenhuma assinatura vinculada"
+  },
+
+  "form": {
+    "create": "Adicionar Funcionário",
+    "edit": "Editar Funcionário",
+    "name": "Nome completo",
+    "email": "Email",
+    "department": "Departamento",
+    "jobTitle": "Cargo",
+    "startDate": "Data de Início",
+    "manager": "Gestor"
+  },
+
+  "offboarding": {
+    "title": "Offboarding",
+    "button": "Iniciar Offboarding",
+    "confirm": "Confirmar offboarding de {name}?",
+    "warning": "Esta ação irá marcar o funcionário como desligado e criar alertas para revogar acessos.",
+    "date": "Data de Desligamento",
+    "reason": "Motivo",
+    "success": "Offboarding iniciado com sucesso"
+  },
+
+  "sync": {
+    "button": "Sincronizar do Google Workspace",
+    "inProgress": "Sincronizando...",
+    "success": "{count, plural, one {# funcionário sincronizado} other {# funcionários sincronizados}}",
+    "error": "Erro ao sincronizar funcionários"
+  },
+
+  "status": {
+    "active": "Ativo",
+    "offboarded": "Desligado",
+    "onLeave": "Afastado"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "title": "Reports",
+  "subtitle": "Analytics and insights about your SaaS spending",
+  "reportsAnalytics": "Reports & Analytics",
+  "getStarted": "Reports will be available once you start adding subscriptions and tracking usage.",
+
+  "categories": {
+    "spendByCategory": "Spending by Category",
+    "spendByCategoryDesc": "See where your money goes",
+    "monthlyTrends": "Monthly Trends",
+    "monthlyTrendsDesc": "Track spending over time",
+    "potentialSavings": "Potential Savings",
+    "potentialSavingsDesc": "Identify optimization opportunities",
+    "byDepartment": "By Department",
+    "byDepartmentDesc": "Cost allocation per team",
+    "futureRenewals": "Future Renewals",
+    "futureRenewalsDesc": "Plan for upcoming payments",
+    "utilizationRate": "Utilization Rate",
+    "utilizationRateDesc": "How well you're using licenses"
+  },
+
+  "export": {
+    "button": "Export Report",
+    "pdf": "Export as PDF",
+    "csv": "Export as CSV",
+    "excel": "Export as Excel"
+  },
+
+  "filters": {
+    "timeRange": "Time Range",
+    "department": "Department",
+    "category": "Category",
+    "custom": "Custom Range"
+  },
+
+  "timeRanges": {
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month",
+    "last3Months": "Last 3 Months",
+    "last6Months": "Last 6 Months",
+    "thisYear": "This Year",
+    "lastYear": "Last Year"
+  }
+}

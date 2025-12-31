@@ -1,0 +1,68 @@
+{
+  "app": {
+    "name": "SaaStral",
+    "tagline": "Smart SaaS Management"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "confirm": "Confirm",
+    "close": "Close",
+    "view": "View",
+    "download": "Download",
+    "upload": "Upload"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "deleting": "Deleting..."
+  },
+  "time": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow",
+    "thisWeek": "This week",
+    "thisMonth": "This month",
+    "lastMonth": "Last month",
+    "daysAgo": "{count, plural, one {# day ago} other {# days ago}}",
+    "hoursAgo": "{count, plural, one {# hour ago} other {# hours ago}}",
+    "minutesAgo": "{count, plural, one {# minute ago} other {# minutes ago}}"
+  },
+  "pagination": {
+    "showing": "Showing {from} to {to} of {total}",
+    "itemsPerPage": "Items per page",
+    "page": "Page {current} of {total}"
+  },
+  "empty": {
+    "noResults": "No results found",
+    "noData": "No data available"
+  },
+  "confirm": {
+    "delete": "Are you sure you want to delete?",
+    "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email",
+    "url": "Please enter a valid URL",
+    "minLength": "Minimum {min} characters",
+    "maxLength": "Maximum {max} characters"
+  }
+}

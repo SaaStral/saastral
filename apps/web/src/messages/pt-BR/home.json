@@ -1,0 +1,23 @@
+{
+  "title": "SaaStral",
+  "subtitle": "Plataforma Open Source para Gestão de SaaS",
+  "description": "Controle seus gastos, detecte licenças não utilizadas e otimize seu software stack",
+  "actions": {
+    "dashboard": "Acessar Dashboard",
+    "github": "Ver no GitHub"
+  },
+  "features": {
+    "costControl": {
+      "title": "Controle de Gastos",
+      "description": "Monitore todas suas assinaturas SaaS em um só lugar"
+    },
+    "smartAlerts": {
+      "title": "Alertas Inteligentes",
+      "description": "Seja notificado sobre renovações e licenças não utilizadas"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "description": "Identifique oportunidades de economia com dados precisos"
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "title": "Relatórios",
+  "subtitle": "Analytics e insights sobre seus gastos com SaaS",
+  "reportsAnalytics": "Relatórios e Analytics",
+  "getStarted": "Relatórios estarão disponíveis assim que você começar a adicionar assinaturas e rastrear o uso.",
+
+  "categories": {
+    "spendByCategory": "Gasto por Categoria",
+    "spendByCategoryDesc": "Veja para onde seu dinheiro vai",
+    "monthlyTrends": "Tendências Mensais",
+    "monthlyTrendsDesc": "Acompanhe os gastos ao longo do tempo",
+    "potentialSavings": "Economia Potencial",
+    "potentialSavingsDesc": "Identifique oportunidades de otimização",
+    "byDepartment": "Por Departamento",
+    "byDepartmentDesc": "Alocação de custos por equipe",
+    "futureRenewals": "Renovações Futuras",
+    "futureRenewalsDesc": "Planeje pagamentos futuros",
+    "utilizationRate": "Taxa de Utilização",
+    "utilizationRateDesc": "Quão bem você está usando as licenças"
+  },
+
+  "export": {
+    "button": "Exportar Relatório",
+    "pdf": "Exportar como PDF",
+    "csv": "Exportar como CSV",
+    "excel": "Exportar como Excel"
+  },
+
+  "filters": {
+    "timeRange": "Período",
+    "department": "Departamento",
+    "category": "Categoria",
+    "custom": "Período Personalizado"
+  },
+
+  "timeRanges": {
+    "thisMonth": "Este Mês",
+    "lastMonth": "Mês Passado",
+    "last3Months": "Últimos 3 Meses",
+    "last6Months": "Últimos 6 Meses",
+    "thisYear": "Este Ano",
+    "lastYear": "Ano Passado"
+  }
+}

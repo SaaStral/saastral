@@ -1,0 +1,98 @@
+{
+  "title": "Assinaturas",
+  "subtitle": "Gerencie suas assinaturas de SaaS",
+  "manageSubscriptions": "Gerencie suas Assinaturas",
+  "getStarted": "Comece adicionando suas assinaturas de SaaS para rastrear gastos e utilização.",
+  "categories": "Categorias",
+  "autoTracking": "Rastreamento Automático de Uso",
+  "autoTrackingDesc": "Conecte o Okta para rastrear automaticamente quem está usando cada ferramenta e quando.",
+
+  "list": {
+    "search": "Buscar assinaturas...",
+    "filters": {
+      "all": "Todas",
+      "active": "Ativas",
+      "cancelled": "Canceladas",
+      "category": "Categoria"
+    },
+    "columns": {
+      "name": "Nome",
+      "category": "Categoria",
+      "cost": "Custo Mensal",
+      "seats": "Seats",
+      "usage": "Utilização",
+      "renewal": "Renovação"
+    },
+    "empty": "Nenhuma assinatura encontrada"
+  },
+
+  "detail": {
+    "title": "Detalhes da Assinatura",
+    "overview": "Visão Geral",
+    "users": "Usuários",
+    "billing": "Faturamento",
+    "history": "Histórico"
+  },
+
+  "form": {
+    "create": "Adicionar Assinatura",
+    "edit": "Editar Assinatura",
+    "name": "Nome do SaaS",
+    "vendor": "Fornecedor",
+    "category": "Categoria",
+    "website": "Website",
+    "cost": "Custo Mensal",
+    "billingCycle": "Ciclo de Faturamento",
+    "seats": {
+      "title": "Seats",
+      "purchased": "Seats Contratados",
+      "used": "Seats Utilizados"
+    },
+    "renewal": {
+      "title": "Renovação",
+      "date": "Data de Renovação",
+      "type": "Tipo de Renovação",
+      "auto": "Automática",
+      "manual": "Manual"
+    },
+    "contract": "Contrato",
+    "uploadContract": "Enviar contrato (PDF)"
+  },
+
+  "categories": {
+    "productivity": "Produtividade",
+    "communication": "Comunicação",
+    "development": "Desenvolvimento",
+    "design": "Design",
+    "marketing": "Marketing",
+    "sales": "Vendas",
+    "hr": "RH",
+    "finance": "Finanças",
+    "security": "Segurança",
+    "analytics": "Analytics",
+    "other": "Outros"
+  },
+
+  "billingCycles": {
+    "monthly": "Mensal",
+    "quarterly": "Trimestral",
+    "semiannual": "Semestral",
+    "annual": "Anual"
+  },
+
+  "usage": {
+    "title": "Utilização",
+    "rate": "{rate}% de utilização",
+    "lastUsed": "Último uso: {date}",
+    "neverUsed": "Nunca utilizado",
+    "users": "{count, plural, one {# usuário} other {# usuários}}",
+    "activeUsers": "{count} usuários ativos"
+  },
+
+  "insights": {
+    "unusedSeats": "{count, plural, one {# seat não utilizado} other {# seats não utilizados}}",
+    "potentialSaving": "Economia potencial: {amount}",
+    "lowUsage": "Baixa utilização detectada",
+    "duplicateTool": "Ferramenta similar: {name}"
+  }
+}

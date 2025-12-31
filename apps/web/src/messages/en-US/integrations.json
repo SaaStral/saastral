@@ -1,0 +1,79 @@
+{
+  "title": "Integrations",
+  "subtitle": "Connect your tools to sync data automatically",
+
+  "providers": {
+    "google": {
+      "name": "Google Workspace",
+      "description": "Sync employees and departments from Google Workspace"
+    },
+    "okta": {
+      "name": "Okta",
+      "description": "Monitor app usage via Okta SSO"
+    },
+    "microsoft": {
+      "name": "Microsoft 365",
+      "description": "Sync employees from Azure Active Directory"
+    },
+    "keycloak": {
+      "name": "Keycloak",
+      "description": "Keycloak SSO integration"
+    }
+  },
+
+  "status": {
+    "active": "Connected",
+    "pending": "Pending",
+    "error": "Error",
+    "disabled": "Disabled"
+  },
+
+  "actions": {
+    "connect": "Connect",
+    "configure": "Configure",
+    "disconnect": "Disconnect",
+    "test": "Test Connection",
+    "sync": "Sync Now"
+  },
+
+  "form": {
+    "title": "Configure {provider}",
+    "credentials": "Credentials",
+    "credentialsHint": "Credentials are stored securely and encrypted",
+    "save": "Save Configuration",
+    "update": "Update Credentials"
+  },
+
+  "test": {
+    "testing": "Testing connection...",
+    "success": "Connection successful!",
+    "failed": "Connection failed"
+  },
+
+  "sync": {
+    "lastSync": "Last sync: {date}",
+    "nextSync": "Next sync: {date}",
+    "inProgress": "Syncing...",
+    "success": "Sync completed",
+    "interval": "Sync interval",
+    "intervals": {
+      "15min": "Every 15 minutes",
+      "30min": "Every 30 minutes",
+      "1hour": "Every hour",
+      "6hours": "Every 6 hours",
+      "daily": "Once a day"
+    }
+  },
+
+  "errors": {
+    "invalidCredentials": "Invalid credentials",
+    "connectionFailed": "Connection failed: {error}",
+    "tokenExpired": "Token expired. Please reconnect.",
+    "permissionDenied": "Permission denied. Check app permissions."
+  },
+
+  "enterprise": {
+    "badge": "Enterprise",
+    "upgradeRequired": "Available on Enterprise plan"
+  }
+}

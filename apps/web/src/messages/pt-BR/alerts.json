@@ -1,0 +1,55 @@
+{
+  "title": "Alertas",
+  "subtitle": "Monitore eventos importantes e notificações",
+  "alertCenter": "Central de Alertas",
+  "getStarted": "Alertas aparecerão aqui assim que você configurar suas integrações.",
+
+  "types": {
+    "offboarding": "Offboarding Pendente",
+    "renewal": "Renovação Próxima",
+    "unusedLicense": "Licenças não Utilizadas",
+    "lowAdoption": "Baixa Adoção"
+  },
+
+  "typeDescriptions": {
+    "offboarding": "Funcionário saiu mas ainda tem licenças ativas",
+    "renewal": "Assinatura renovando em breve - hora de revisar",
+    "unusedLicense": "Licença não utilizada em 30+ dias",
+    "lowAdoption": "Menos de 50% dos seats sendo usados"
+  },
+
+  "severity": {
+    "low": "Baixa",
+    "medium": "Média",
+    "high": "Alta",
+    "critical": "Crítica"
+  },
+
+  "status": {
+    "pending": "Pendente",
+    "acknowledged": "Reconhecido",
+    "resolved": "Resolvido",
+    "dismissed": "Dispensado"
+  },
+
+  "actions": {
+    "acknowledge": "Reconhecer",
+    "resolve": "Resolver",
+    "dismiss": "Dispensar",
+    "viewDetails": "Ver Detalhes"
+  },
+
+  "filters": {
+    "all": "Todos os Alertas",
+    "pending": "Pendentes",
+    "acknowledged": "Reconhecidos",
+    "resolved": "Resolvidos",
+    "bySeverity": "Por Severidade",
+    "byType": "Por Tipo"
+  },
+
+  "list": {
+    "empty": "Nenhum alerta encontrado",
+    "search": "Buscar alertas..."
+  }
+}
