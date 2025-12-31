@@ -8,22 +8,42 @@
   "stats": {
     "totalSpend": "Total Spend",
     "monthlySpend": "Monthly Spend",
+    "totalMonthlySpending": "Total Monthly Spending",
     "activeSubscriptions": "Active Subscriptions",
+    "trackedSubscriptions": "Tracked Subscriptions",
     "totalEmployees": "Total Employees",
+    "activeEmployees": "Active Employees",
     "potentialSavings": "Potential Savings",
-    "unusedLicenses": "Unused Licenses"
+    "unusedLicenses": "Unused Licenses",
+    "opportunities": "opportunities",
+    "pendingOffboarding": "pending offboarding",
+    "viaSSO": "via SSO"
   },
 
   "charts": {
     "spendByCategory": "Spend by Category",
+    "spendingOverTime": "Spending Over Time",
     "spendTrend": "Spending Trend",
     "topApps": "Most Used Apps",
-    "usageRate": "Usage Rate"
+    "usageRate": "Usage Rate",
+    "timeRanges": {
+      "7d": "7d",
+      "30d": "30d",
+      "90d": "90d",
+      "12m": "12m"
+    },
+    "categories": {
+      "productivity": "Productivity",
+      "design": "Design",
+      "development": "Development",
+      "salesMarketing": "Sales & Marketing",
+      "infrastructure": "Infrastructure"
+    }
   },
 
   "alerts": {
     "title": "Recent Alerts",
-    "viewAll": "View all",
+    "viewAll": "View all alerts ({count})",
     "noAlerts": "No pending alerts",
     "types": {
       "offboarding": "Pending offboarding",
@@ -32,6 +52,37 @@
       "lowUsage": "Low usage",
       "duplicate": "Duplicate tool"
     }
+  },
+
+  "subscriptions": {
+    "title": "Active Subscriptions",
+    "searchPlaceholder": "Search subscriptions...",
+    "columns": {
+      "app": "App",
+      "category": "Category",
+      "monthlyCost": "Monthly Cost",
+      "seats": "Seats",
+      "adoption": "Adoption",
+      "renewal": "Renewal",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "categories": {
+      "productivity": "Productivity",
+      "design": "Design",
+      "development": "Development",
+      "sales": "Sales",
+      "infrastructure": "Infrastructure",
+      "video": "Video"
+    },
+    "status": {
+      "active": "Active",
+      "warning": "Warning",
+      "critical": "Critical"
+    },
+    "seatsUsed": "{used} / {total} used",
+    "renewalIn": "in {days} days",
+    "showing": "Showing {start}-{end} of {total} subscriptions"
   },
 
   "renewals": {

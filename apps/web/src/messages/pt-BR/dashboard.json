@@ -8,22 +8,42 @@
   "stats": {
     "totalSpend": "Gasto Total",
     "monthlySpend": "Gasto Mensal",
+    "totalMonthlySpending": "Gasto Mensal Total",
     "activeSubscriptions": "Assinaturas Ativas",
+    "trackedSubscriptions": "Assinaturas Rastreadas",
     "totalEmployees": "Total de Funcionários",
+    "activeEmployees": "Funcionários Ativos",
     "potentialSavings": "Economia Potencial",
-    "unusedLicenses": "Licenças não Utilizadas"
+    "unusedLicenses": "Licenças não Utilizadas",
+    "opportunities": "oportunidades",
+    "pendingOffboarding": "offboarding pendente",
+    "viaSSO": "via SSO"
   },
 
   "charts": {
     "spendByCategory": "Gasto por Categoria",
+    "spendingOverTime": "Gastos ao Longo do Tempo",
     "spendTrend": "Evolução de Gastos",
     "topApps": "Apps Mais Utilizados",
-    "usageRate": "Taxa de Utilização"
+    "usageRate": "Taxa de Utilização",
+    "timeRanges": {
+      "7d": "7d",
+      "30d": "30d",
+      "90d": "90d",
+      "12m": "12m"
+    },
+    "categories": {
+      "productivity": "Produtividade",
+      "design": "Design",
+      "development": "Desenvolvimento",
+      "salesMarketing": "Vendas & Marketing",
+      "infrastructure": "Infraestrutura"
+    }
   },
 
   "alerts": {
     "title": "Alertas Recentes",
-    "viewAll": "Ver todos",
+    "viewAll": "Ver todos os alertas ({count})",
     "noAlerts": "Nenhum alerta pendente",
     "types": {
       "offboarding": "Offboarding pendente",
@@ -32,6 +52,37 @@
       "lowUsage": "Baixa utilização",
       "duplicate": "Ferramenta duplicada"
     }
+  },
+
+  "subscriptions": {
+    "title": "Assinaturas Ativas",
+    "searchPlaceholder": "Buscar assinaturas...",
+    "columns": {
+      "app": "App",
+      "category": "Categoria",
+      "monthlyCost": "Custo Mensal",
+      "seats": "Licenças",
+      "adoption": "Adoção",
+      "renewal": "Renovação",
+      "status": "Status",
+      "actions": "Ações"
+    },
+    "categories": {
+      "productivity": "Produtividade",
+      "design": "Design",
+      "development": "Desenvolvimento",
+      "sales": "Vendas",
+      "infrastructure": "Infraestrutura",
+      "video": "Vídeo"
+    },
+    "status": {
+      "active": "Ativo",
+      "warning": "Alerta",
+      "critical": "Crítico"
+    },
+    "seatsUsed": "{used} / {total} em uso",
+    "renewalIn": "em {days} dias",
+    "showing": "Mostrando {start}-{end} de {total} assinaturas"
   },
 
   "renewals": {

@@ -1,4 +1,4 @@
-import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 import { setRequestLocale } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 
@@ -10,7 +10,7 @@ export default async function HomePage({ params }: HomePageProps) {
   // Await params (Next.js 15+ requirement)
   const { locale } = await params
   setRequestLocale(locale)
-  const t = useTranslations('home')
+  const t = await getTranslations('home')
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
