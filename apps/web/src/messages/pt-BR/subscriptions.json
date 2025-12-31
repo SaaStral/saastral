@@ -3,7 +3,7 @@
   "subtitle": "Gerencie suas assinaturas de SaaS",
   "manageSubscriptions": "Gerencie suas Assinaturas",
   "getStarted": "Comece adicionando suas assinaturas de SaaS para rastrear gastos e utilização.",
-  "categories": "Categorias",
+  "categoriesLabel": "Categorias",
   "autoTracking": "Rastreamento Automático de Uso",
   "autoTrackingDesc": "Conecte o Okta para rastrear automaticamente quem está usando cada ferramenta e quando.",
 

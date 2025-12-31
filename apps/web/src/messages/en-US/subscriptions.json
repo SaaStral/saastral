@@ -3,7 +3,7 @@
   "subtitle": "Manage your SaaS subscriptions",
   "manageSubscriptions": "Manage Your Subscriptions",
   "getStarted": "Start adding your SaaS subscriptions to track spending and usage.",
-  "categories": "Categories",
+  "categoriesLabel": "Categories",
   "autoTracking": "Automatic Usage Tracking",
   "autoTrackingDesc": "Connect Okta to automatically track who's using each tool and when.",
 

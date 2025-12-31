@@ -20,11 +20,14 @@ export function LocaleSwitcher() {
     }
 
     startTransition(() => {
-      // Remove current locale from pathname if it exists
-      const pathnameWithoutLocale = pathname.replace(`/${locale}`, '') || '/'
+      // Extract pathname without locale
+      // pathname is like /en-US/dashboard or /pt-BR/dashboard
+      const segments = pathname.split('/')
+      // Remove empty string and locale from segments
+      const pathWithoutLocale = segments.slice(2).join('/') || ''
 
       // Build new path with new locale
-      const newPath = `/${newLocale}${pathnameWithoutLocale}`
+      const newPath = `/${newLocale}${pathWithoutLocale ? `/${pathWithoutLocale}` : ''}`
 
       router.replace(newPath)
       setIsOpen(false)

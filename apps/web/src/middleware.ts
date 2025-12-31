@@ -4,18 +4,7 @@ import { locales, defaultLocale } from './i18n/config'
 export default createMiddleware({
   locales,
   defaultLocale,
-
-  // Locale detection strategy
-  localeDetection: true,
-
-  // Locale prefix configuration
-  localePrefix: 'as-needed', // 'always' | 'as-needed' | 'never'
-
-  // Cookie disabled - using locale prefix in URL
-  // localeCookie: {
-  //   name: 'NEXT_LOCALE',
-  //   maxAge: 60 * 60 * 24 * 365, // 1 year
-  // },
+  localePrefix: 'always',
 })
 
 export const config = {

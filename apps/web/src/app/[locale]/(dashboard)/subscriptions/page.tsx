@@ -20,7 +20,7 @@ export default function SubscriptionsPage() {
       >
         <div className="mt-8 grid grid-cols-2 gap-4 max-w-lg">
           <div className="p-4 bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-lg text-left">
-            <div className="text-sm text-[#6ee7b7] mb-2">{t('categories')}</div>
+            <div className="text-sm text-[#6ee7b7] mb-2">{t('categoriesLabel')}</div>
             <div className="text-xs text-[#4ade80]">
               {t('categories.communication')} • {t('categories.productivity')} • {t('categories.design')} • {t('categories.development')} • {t('categories.marketing')}
             </div>
