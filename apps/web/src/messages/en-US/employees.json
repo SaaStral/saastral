@@ -62,6 +62,57 @@
   "status": {
     "active": "Active",
     "offboarded": "Offboarded",
+    "offboarding": "Offboarding",
     "onLeave": "On Leave"
+  },
+
+  "kpis": {
+    "totalEmployees": "Total Employees",
+    "thisMonth": "this month",
+    "pendingOffboarding": "Pending Offboarding",
+    "withActiveLicenses": "with active licenses",
+    "avgCostPerEmployee": "Average Cost per Employee",
+    "perEmployeeMonth": "per employee/month",
+    "licenseUtilization": "License Utilization",
+    "assignedInUse": "of assigned licenses in use"
+  },
+
+  "offboardingAlerts": {
+    "title": "Pending Offboarding",
+    "viewHistory": "View history",
+    "terminationDate": "Termination",
+    "activeLicenses": "in active licenses",
+    "perMonth": "/month",
+    "viewLicenses": "View licenses",
+    "revokeAccess": "Revoke access"
+  },
+
+  "departments": {
+    "title": "By Department",
+    "people": "people",
+    "engineering": "Engineering",
+    "product": "Product",
+    "marketing": "Marketing",
+    "sales": "Sales",
+    "design": "Design",
+    "admin": "Admin"
+  },
+
+  "table": {
+    "title": "All Employees",
+    "export": "Export",
+    "employee": "Employee",
+    "department": "Department",
+    "status": "Status",
+    "licenses": "Licenses",
+    "license": "license",
+    "licensesPlural": "licenses",
+    "costPerMonth": "Cost/month",
+    "lastActivity": "Last Activity",
+    "actions": "Actions",
+    "showing": "Showing",
+    "of": "of",
+    "employeesCount": "employees",
+    "daysWarning": "30+ days"
   }
 }

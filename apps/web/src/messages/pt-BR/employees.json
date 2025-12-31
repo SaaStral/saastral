@@ -62,6 +62,57 @@
   "status": {
     "active": "Ativo",
     "offboarded": "Desligado",
+    "offboarding": "Offboarding",
     "onLeave": "Afastado"
+  },
+
+  "kpis": {
+    "totalEmployees": "Total de Funcionários",
+    "thisMonth": "este mês",
+    "pendingOffboarding": "Offboarding Pendente",
+    "withActiveLicenses": "com licenças ativas",
+    "avgCostPerEmployee": "Custo Médio por Funcionário",
+    "perEmployeeMonth": "por funcionário/mês",
+    "licenseUtilization": "Utilização de Licenças",
+    "assignedInUse": "de licenças atribuídas em uso"
+  },
+
+  "offboardingAlerts": {
+    "title": "Offboarding Pendente",
+    "viewHistory": "Ver histórico",
+    "terminationDate": "Desligamento",
+    "activeLicenses": "em licenças ativas",
+    "perMonth": "/mês",
+    "viewLicenses": "Ver licenças",
+    "revokeAccess": "Revogar acessos"
+  },
+
+  "departments": {
+    "title": "Por Departamento",
+    "people": "pessoas",
+    "engineering": "Engineering",
+    "product": "Product",
+    "marketing": "Marketing",
+    "sales": "Sales",
+    "design": "Design",
+    "admin": "Admin"
+  },
+
+  "table": {
+    "title": "Todos os Funcionários",
+    "export": "Exportar",
+    "employee": "Funcionário",
+    "department": "Departamento",
+    "status": "Status",
+    "licenses": "Licenças",
+    "license": "licença",
+    "licensesPlural": "licenças",
+    "costPerMonth": "Custo/mês",
+    "lastActivity": "Última Atividade",
+    "actions": "Ações",
+    "showing": "Mostrando",
+    "of": "de",
+    "employeesCount": "funcionários",
+    "daysWarning": "30+ dias"
   }
 }
