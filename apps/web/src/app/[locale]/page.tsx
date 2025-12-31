@@ -3,10 +3,12 @@ import { setRequestLocale } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 
 interface HomePageProps {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
-export default function HomePage({ params: { locale } }: HomePageProps) {
+export default async function HomePage({ params }: HomePageProps) {
+  // Await params (Next.js 15+ requirement)
+  const { locale } = await params
   setRequestLocale(locale)
   const t = useTranslations('home')
 
