@@ -6,13 +6,16 @@ interface KPICardProps {
   trend?: {
     value: number
     isPositive: boolean
+    label?: string
   }
   subtitle?: string
   highlight?: boolean
+  warning?: boolean
   icon?: LucideIcon
+  children?: React.ReactNode
 }
 
-export function KPICard({ title, value, trend, subtitle, highlight, icon: Icon }: KPICardProps) {
+export function KPICard({ title, value, trend, subtitle, highlight, warning, icon: Icon, children }: KPICardProps) {
   return (
     <div
       className={`
@@ -28,9 +31,11 @@ export function KPICard({ title, value, trend, subtitle, highlight, icon: Icon }
       <div
         className={`
           absolute top-0 left-0 right-0 h-[3px] opacity-0 transition-opacity duration-200
-          ${highlight
-            ? 'bg-gradient-to-r from-[#d97706] to-[#fbbf24] opacity-100'
-            : 'bg-gradient-to-r from-[#059669] to-[#0d9488]'
+          ${warning
+            ? 'bg-gradient-to-r from-[#f59e0b] to-[#fbbf24] opacity-100'
+            : highlight
+              ? 'bg-gradient-to-r from-[#d97706] to-[#fbbf24] opacity-100'
+              : 'bg-gradient-to-r from-[#059669] to-[#0d9488]'
           }
           group-hover:opacity-100
         `}
@@ -49,7 +54,7 @@ export function KPICard({ title, value, trend, subtitle, highlight, icon: Icon }
       </div>
 
       <div className="flex items-center gap-3">
-        {trend && (
+        {trend && trend.value !== 0 && (
           <div
             className={`
               flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold
@@ -60,13 +65,14 @@ export function KPICard({ title, value, trend, subtitle, highlight, icon: Icon }
             `}
           >
             {trend.isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-            <span>{Math.abs(trend.value)}%</span>
+            <span>{trend.label || `${Math.abs(trend.value)}%`}</span>
           </div>
         )}
         {subtitle && (
           <div className="text-sm text-[#6ee7b7]">{subtitle}</div>
         )}
       </div>
+      {children && <div className="mt-2">{children}</div>}
     </div>
   )
 }

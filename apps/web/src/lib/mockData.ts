@@ -408,6 +408,93 @@ export const mockDepartmentBreakdown: DepartmentBreakdown[] = [
   },
 ]
 
+// Subscription page data types and mocks
+
+export interface SubscriptionKPIData {
+  totalMonthlyCost: number // in cents
+  costTrend: number
+  potentialSavings: number // in cents
+  savingsOpportunities: number
+  upcomingRenewals: number
+  upcomingRenewalsCost: number // in cents
+  averageAdoptionRate: number
+}
+
+export interface CategorySpending {
+  category: string
+  amount: number // in cents
+  color: string
+}
+
+export interface RenewalItem {
+  id: string
+  name: string
+  monthlyCostCents: number
+  renewalDate: string
+  daysUntilRenewal: number
+  icon: string
+  color: string
+}
+
+export const mockSubscriptionKPIs: SubscriptionKPIData = {
+  totalMonthlyCost: 4523000, // R$ 45,230
+  costTrend: 12,
+  potentialSavings: 485000, // R$ 4,850
+  savingsOpportunities: 23,
+  upcomingRenewals: 5,
+  upcomingRenewalsCost: 842000, // R$ 8,420
+  averageAdoptionRate: 73,
+}
+
+export const mockCategorySpending: CategorySpending[] = [
+  { category: 'productivity', amount: 1234000, color: '#10b981' },
+  { category: 'infrastructure', amount: 1089000, color: '#ec4899' },
+  { category: 'sales', amount: 810000, color: '#f97316' },
+  { category: 'development', amount: 640000, color: '#3b82f6' },
+  { category: 'design', amount: 420000, color: '#8b5cf6' },
+  { category: 'communication', amount: 210000, color: '#06b6d4' },
+  { category: 'other', amount: 120000, color: '#6b7280' },
+]
+
+export const mockRenewals: RenewalItem[] = [
+  {
+    id: '1',
+    name: 'Slack',
+    monthlyCostCents: 234000,
+    renewalDate: '04/01/2025',
+    daysUntilRenewal: 4,
+    icon: 'S',
+    color: '#611f69',
+  },
+  {
+    id: '2',
+    name: 'Zoom',
+    monthlyCostCents: 89000,
+    renewalDate: '07/01/2025',
+    daysUntilRenewal: 7,
+    icon: 'Z',
+    color: '#2d8cff',
+  },
+  {
+    id: '3',
+    name: 'Figma',
+    monthlyCostCents: 189000,
+    renewalDate: '15/01/2025',
+    daysUntilRenewal: 15,
+    icon: 'F',
+    color: '#f24e1e',
+  },
+  {
+    id: '4',
+    name: 'Notion',
+    monthlyCostCents: 98000,
+    renewalDate: '28/01/2025',
+    daysUntilRenewal: 28,
+    icon: 'N',
+    color: '#000',
+  },
+]
+
 export const mockEmployees: Employee[] = [
   {
     id: '1',
