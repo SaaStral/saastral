@@ -1,14 +1,25 @@
 {
   "title": "Alertas",
-  "subtitle": "Monitore eventos importantes e notificações",
+  "subtitle": "Ações recomendadas para otimizar seus gastos",
   "alertCenter": "Central de Alertas",
   "getStarted": "Alertas aparecerão aqui assim que você configurar suas integrações.",
+
+  "stats": {
+    "critical": "Críticos",
+    "high": "Importantes",
+    "medium": "Médios",
+    "low": "Baixos",
+    "potentialSavings": "economia potencial"
+  },
 
   "types": {
     "offboarding": "Offboarding Pendente",
     "renewal": "Renovação Próxima",
-    "unusedLicense": "Licenças não Utilizadas",
-    "lowAdoption": "Baixa Adoção"
+    "unusedLicense": "Licenças Não Utilizadas",
+    "unused": "Licenças Não Utilizadas",
+    "lowAdoption": "Baixa Adoção",
+    "adoption": "Baixa Adoção",
+    "duplicate": "Possível Duplicidade"
   },
 
   "typeDescriptions": {
@@ -25,27 +36,73 @@
     "critical": "Crítica"
   },
 
+  "priority": {
+    "low": "Baixo",
+    "medium": "Médio",
+    "high": "Importante",
+    "critical": "Crítico"
+  },
+
   "status": {
     "pending": "Pendente",
     "acknowledged": "Reconhecido",
     "resolved": "Resolvido",
-    "dismissed": "Dispensado"
+    "dismissed": "Ignorado"
   },
 
   "actions": {
     "acknowledge": "Reconhecer",
     "resolve": "Resolver",
-    "dismiss": "Dispensar",
-    "viewDetails": "Ver Detalhes"
+    "dismiss": "Ignorar",
+    "viewDetails": "Ver Detalhes",
+    "revokeAll": "Revogar todas",
+    "reviewOneByOne": "Revisar uma a uma",
+    "startNegotiation": "Iniciar renegociação",
+    "scheduleReminder": "Agendar lembrete",
+    "viewAllUsers": "Ver todos os usuários",
+    "notifyUsers": "Notificar usuários",
+    "compareDetails": "Comparar detalhes",
+    "planMigration": "Planejar migração"
   },
 
   "filters": {
-    "all": "Todos os Alertas",
+    "all": "Todos",
     "pending": "Pendentes",
     "acknowledged": "Reconhecidos",
     "resolved": "Resolvidos",
+    "dismissed": "Ignorados",
     "bySeverity": "Por Severidade",
     "byType": "Por Tipo"
+  },
+
+  "quickFilters": {
+    "label": "Filtros rápidos:",
+    "offboarding": "🔴 Offboarding",
+    "renewals": "📅 Renovações",
+    "unused": "💤 Não utilizados",
+    "lowAdoption": "📉 Baixa adoção",
+    "duplicates": "🔄 Duplicatas"
+  },
+
+  "labels": {
+    "monthlyCost": "Custo mensal",
+    "currentValue": "Valor atual",
+    "perMonth": "/mês",
+    "perYear": "/ano",
+    "seats": "Seats",
+    "adoption": "Adoção",
+    "suggestion": "Sugestão",
+    "potentialSavings": "Economia potencial",
+    "consolidating": "consolidando no",
+    "resolved": "Resolvido",
+    "savings": "Economia",
+    "others": "outros",
+    "vs": "vs"
+  },
+
+  "buttons": {
+    "refresh": "Atualizar",
+    "settings": "Configurações"
   },
 
   "list": {

@@ -7,10 +7,14 @@ interface AlertsPanelProps {
   alerts: Alert[]
 }
 
-const severityConfig = {
-  high: {
+const priorityConfig = {
+  critical: {
     bgColor: 'bg-[rgba(239,68,68,0.15)]',
     iconColor: 'text-[#ef4444]',
+  },
+  high: {
+    bgColor: 'bg-[rgba(249,115,22,0.15)]',
+    iconColor: 'text-[#f97316]',
   },
   medium: {
     bgColor: 'bg-[rgba(245,158,11,0.15)]',
@@ -43,7 +47,7 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
       {/* Alert Items */}
       <div className="flex-1 overflow-y-auto">
         {alerts.map((alert, index) => {
-          const config = severityConfig[alert.severity]
+          const config = priorityConfig[alert.priority]
           const Icon = alertIcons[alert.type]
 
           return (
@@ -68,10 +72,10 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-[#f0fdf4] mb-1">
-                  {alert.title}
+                  {alert.message}
                 </div>
                 <div className="text-[0.8125rem] text-[#6ee7b7]">
-                  {alert.subtitle}
+                  {alert.detail || alert.timeAgo}
                 </div>
               </div>
 
@@ -85,7 +89,7 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
                   transition-all duration-150 flex-shrink-0
                 "
               >
-                {alert.actionLabel}
+                Ver
               </button>
             </div>
           )

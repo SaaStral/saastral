@@ -1,14 +1,25 @@
 {
   "title": "Alerts",
-  "subtitle": "Monitor important events and notifications",
+  "subtitle": "Recommended actions to optimize your spending",
   "alertCenter": "Alert Center",
   "getStarted": "Alerts will appear here once you've configured your integrations.",
+
+  "stats": {
+    "critical": "Critical",
+    "high": "Important",
+    "medium": "Medium",
+    "low": "Low",
+    "potentialSavings": "potential savings"
+  },
 
   "types": {
     "offboarding": "Offboarding Pending",
     "renewal": "Upcoming Renewal",
     "unusedLicense": "Unused Licenses",
-    "lowAdoption": "Low Adoption"
+    "unused": "Unused Licenses",
+    "lowAdoption": "Low Adoption",
+    "adoption": "Low Adoption",
+    "duplicate": "Possible Duplicate"
   },
 
   "typeDescriptions": {
@@ -25,6 +36,13 @@
     "critical": "Critical"
   },
 
+  "priority": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "Important",
+    "critical": "Critical"
+  },
+
   "status": {
     "pending": "Pending",
     "acknowledged": "Acknowledged",
@@ -36,16 +54,55 @@
     "acknowledge": "Acknowledge",
     "resolve": "Resolve",
     "dismiss": "Dismiss",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "revokeAll": "Revoke all",
+    "reviewOneByOne": "Review one by one",
+    "startNegotiation": "Start renegotiation",
+    "scheduleReminder": "Schedule reminder",
+    "viewAllUsers": "View all users",
+    "notifyUsers": "Notify users",
+    "compareDetails": "Compare details",
+    "planMigration": "Plan migration"
   },
 
   "filters": {
-    "all": "All Alerts",
+    "all": "All",
     "pending": "Pending",
     "acknowledged": "Acknowledged",
     "resolved": "Resolved",
+    "dismissed": "Dismissed",
     "bySeverity": "By Severity",
     "byType": "By Type"
+  },
+
+  "quickFilters": {
+    "label": "Quick filters:",
+    "offboarding": "🔴 Offboarding",
+    "renewals": "📅 Renewals",
+    "unused": "💤 Unused",
+    "lowAdoption": "📉 Low adoption",
+    "duplicates": "🔄 Duplicates"
+  },
+
+  "labels": {
+    "monthlyCost": "Monthly cost",
+    "currentValue": "Current value",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "seats": "Seats",
+    "adoption": "Adoption",
+    "suggestion": "Suggestion",
+    "potentialSavings": "Potential savings",
+    "consolidating": "consolidating",
+    "resolved": "Resolved",
+    "savings": "Savings",
+    "others": "others",
+    "vs": "vs"
+  },
+
+  "buttons": {
+    "refresh": "Refresh",
+    "settings": "Settings"
   },
 
   "list": {

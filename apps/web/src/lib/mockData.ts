@@ -23,11 +23,46 @@ export interface ChartDataPoint {
 export interface Alert {
   id: string
   type: 'offboarding' | 'renewal' | 'unused' | 'adoption' | 'duplicate'
-  severity: 'high' | 'medium' | 'low'
+  priority: 'critical' | 'high' | 'medium' | 'low'
+  status: 'pending' | 'resolved' | 'dismissed'
   title: string
-  subtitle: string
-  actionLabel: string
-  timestamp: string
+  message: string
+  detail: string
+  timeAgo: string
+  data?: {
+    // For offboarding alerts
+    employeeName?: string
+    offboardingDate?: string
+    licenses?: Array<{ name: string; icon: string; color: string }>
+    monthlyCost?: number
+
+    // For renewal alerts
+    subscriptionName?: string
+    renewalDate?: string
+    daysUntilRenewal?: number
+    annualCost?: number
+    seats?: { total: number; used: number }
+    adoptionRate?: number
+    suggestion?: string
+
+    // For unused license alerts
+    unusedCount?: number
+    unusedUsers?: Array<{ name: string; daysInactive: number }>
+    potentialSavings?: number
+
+    // For duplicate tool alerts
+    tools?: Array<{
+      name: string
+      cost: string
+      users: number
+      adoption: number
+    }>
+
+    // For resolved alerts
+    resolvedDate?: string
+    resolvedAction?: string
+    savedAmount?: number
+  }
 }
 
 export interface Subscription {
@@ -72,51 +107,117 @@ export const mockChartData: ChartDataPoint[] = [
   { date: '30/12', productivity: 15600, design: 10200, development: 17800, salesMarketing: 8600, infrastructure: 3000 },
 ]
 
+export interface AlertKPIData {
+  criticalCount: number
+  highCount: number
+  mediumCount: number
+  lowCount: number
+  totalPotentialSavings: number // in cents
+}
+
+export const mockAlertKPIs: AlertKPIData = {
+  criticalCount: 3,
+  highCount: 5,
+  mediumCount: 12,
+  lowCount: 3,
+  totalPotentialSavings: 485000, // R$ 4,850
+}
+
 export const mockAlerts: Alert[] = [
   {
     id: '1',
     type: 'offboarding',
-    severity: 'high',
-    title: 'João Silva left the company',
-    subtitle: 'Still has 5 active licenses (Slack, Figma, GitHub, Notion, Zoom)',
-    actionLabel: 'Review licenses',
-    timestamp: '2 hours ago',
+    priority: 'critical',
+    status: 'pending',
+    title: 'Offboarding Pendente',
+    message: 'João Silva tem 5 licenças ativas',
+    detail: 'Saiu da empresa em 26/12/2024',
+    timeAgo: 'Há 3 dias',
+    data: {
+      employeeName: 'João Silva',
+      offboardingDate: '26/12/2024',
+      licenses: [
+        { name: 'Slack', icon: 'S', color: '#611f69' },
+        { name: 'Figma', icon: 'F', color: '#f24e1e' },
+        { name: 'GitHub', icon: 'G', color: '#24292e' },
+        { name: 'Notion', icon: 'N', color: '#000' },
+        { name: 'Zoom', icon: 'Z', color: '#2d8cff' },
+      ],
+      monthlyCost: 28700,
+    },
   },
   {
     id: '2',
     type: 'renewal',
-    severity: 'medium',
-    title: 'Slack renews in 7 days',
-    subtitle: 'Monthly cost: R$ 1,280 · 32 seats · Time to review usage',
-    actionLabel: 'Review renewal',
-    timestamp: '5 hours ago',
+    priority: 'high',
+    status: 'pending',
+    title: 'Renovação Próxima',
+    message: 'Slack renova em 7 dias (15/01/2025)',
+    detail: 'Ciclo anual • Última renovação: Jan 2024',
+    timeAgo: 'Há 1 dia',
+    data: {
+      subscriptionName: 'Slack',
+      renewalDate: '15/01/2025',
+      daysUntilRenewal: 7,
+      monthlyCost: 234000,
+      annualCost: 2808000,
+      seats: { total: 50, used: 42 },
+      adoptionRate: 84,
+      suggestion: 'Considere reduzir para 45 seats (-R$ 468/ano)',
+    },
   },
   {
     id: '3',
     type: 'unused',
-    severity: 'medium',
-    title: '8 unused Figma licenses',
-    subtitle: 'No login in the last 30 days · Potential saving: R$ 640/month',
-    actionLabel: 'Review usage',
-    timestamp: '1 day ago',
+    priority: 'medium',
+    status: 'pending',
+    title: 'Licenças Não Utilizadas',
+    message: '8 licenças do Figma sem uso há mais de 30 dias',
+    detail: '',
+    timeAgo: 'Há 5 dias',
+    data: {
+      subscriptionName: 'Figma',
+      unusedCount: 8,
+      potentialSavings: 75600,
+      unusedUsers: [
+        { name: 'Bruno Ferreira', daysInactive: 45 },
+        { name: 'Juliana Alves', daysInactive: 38 },
+        { name: 'Carlos Lima', daysInactive: 35 },
+      ],
+    },
   },
   {
     id: '4',
-    type: 'adoption',
-    severity: 'low',
-    title: 'Low Miro adoption',
-    subtitle: 'Only 12 of 25 seats used (48%) · Consider reducing seats',
-    actionLabel: 'View details',
-    timestamp: '2 days ago',
+    type: 'duplicate',
+    priority: 'low',
+    status: 'pending',
+    title: 'Possível Duplicidade',
+    message: 'Você tem 2 ferramentas na categoria "Videoconferência"',
+    detail: '',
+    timeAgo: 'Há 2 semanas',
+    data: {
+      tools: [
+        { name: 'Zoom', cost: 'R$ 890/mês', users: 25, adoption: 67 },
+        { name: 'Google Meet', cost: 'Incluso no GWS', users: 127, adoption: 89 },
+      ],
+      potentialSavings: 89000,
+    },
   },
   {
     id: '5',
-    type: 'duplicate',
-    severity: 'low',
-    title: 'Duplicate video tools detected',
-    subtitle: 'You have Zoom and Google Meet · Consider consolidating',
-    actionLabel: 'Compare tools',
-    timestamp: '3 days ago',
+    type: 'offboarding',
+    priority: 'critical',
+    status: 'resolved',
+    title: 'Offboarding',
+    message: 'Ana Oliveira — 4 licenças revogadas',
+    detail: '',
+    timeAgo: '26/12/2024',
+    data: {
+      employeeName: 'Ana Oliveira',
+      resolvedDate: '26/12/2024',
+      resolvedAction: '4 licenças revogadas',
+      savedAmount: 28700,
+    },
   },
 ]
 

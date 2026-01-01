@@ -80,12 +80,6 @@ function SubscriptionRow({
     critical: t('statusLabels.lowUse'),
   }
 
-  const getAdoptionColor = (rate: number) => {
-    if (rate >= 80) return '#22c55e'
-    if (rate >= 50) return '#f59e0b'
-    return '#ef4444'
-  }
-
   const getAdoptionDotColor = (rate: number) => {
     if (rate >= 80) return 'bg-[#22c55e]'
     if (rate >= 50) return 'bg-[#f59e0b]'
