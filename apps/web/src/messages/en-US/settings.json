@@ -1,107 +1,71 @@
 {
   "title": "Settings",
-  "subtitle": "Manage your account and preferences",
+  "subtitle": "Manage your organization, integrations and preferences",
 
-  "navigation": {
+  "nav": {
     "general": "General",
     "organization": "Organization",
     "integrations": "Integrations",
+    "users": "Users & Access",
     "notifications": "Notifications",
-    "billing": "Billing",
-    "team": "Team",
-    "security": "Security",
-    "appearance": "Appearance"
-  },
-
-  "general": {
-    "title": "General Settings",
-    "language": {
-      "title": "Language",
-      "description": "Choose your interface language"
-    },
-    "timezone": {
-      "title": "Timezone",
-      "description": "Set your timezone"
-    },
-    "currency": {
-      "title": "Currency",
-      "description": "Default currency for displaying values"
-    },
-    "dateFormat": {
-      "title": "Date Format",
-      "description": "How dates are displayed"
-    }
+    "customization": "Customization",
+    "categories": "Categories",
+    "departments": "Departments",
+    "alertRules": "Alert Rules",
+    "advanced": "Advanced",
+    "api": "API & Webhooks",
+    "data": "Data & Privacy",
+    "plan": "Plan & Billing",
+    "audit": "Audit"
   },
 
   "organization": {
     "title": "Organization",
+    "description": "Configure your company information",
     "name": "Company Name",
+    "namePlaceholder": "ACME Corp",
     "domain": "Domain",
+    "domainPlaceholder": "acme.com",
     "logo": "Logo",
     "uploadLogo": "Upload logo",
     "address": "Address",
-    "taxId": "Tax ID"
+    "addressPlaceholder": "Street, City, State, ZIP",
+    "taxId": "Tax ID",
+    "taxIdPlaceholder": "00.000.000/0000-00",
+    "save": "Save changes"
   },
 
   "integrations": {
     "title": "Integrations",
     "description": "Connect your tools to sync data automatically",
     "configured": "{count} configured",
-    "notConfigured": "Not configured"
-  },
-
-  "notifications": {
-    "title": "Notifications",
-    "email": {
-      "title": "Email Notifications",
-      "alerts": "Offboarding and renewal alerts",
-      "reports": "Weekly reports",
-      "updates": "Product updates"
+    "notConfigured": "Not configured",
+    "googleWorkspace": {
+      "name": "Google Workspace",
+      "description": "Sync employee directory and detect offboarding",
+      "configure": "Configure",
+      "disconnect": "Disconnect",
+      "status": "Connected",
+      "lastSync": "Last sync: {date}"
+    },
+    "okta": {
+      "name": "Okta",
+      "description": "Track login events and usage for all apps",
+      "configure": "Configure",
+      "disconnect": "Disconnect",
+      "status": "Connected",
+      "lastSync": "Last sync: {date}"
+    },
+    "microsoft365": {
+      "name": "Microsoft 365",
+      "description": "Sync employee directory (Azure AD)",
+      "configure": "Configure",
+      "premium": "Enterprise"
     },
     "slack": {
-      "title": "Slack Notifications",
-      "description": "Receive alerts in a Slack channel"
+      "name": "Slack",
+      "description": "Send alerts to Slack channels",
+      "configure": "Configure"
     }
-  },
-
-  "appearance": {
-    "title": "Appearance",
-    "theme": {
-      "title": "Theme",
-      "light": "Light",
-      "dark": "Dark",
-      "system": "System"
-    },
-    "density": {
-      "title": "Density",
-      "comfortable": "Comfortable",
-      "compact": "Compact"
-    }
-  },
-
-  "team": {
-    "title": "Team",
-    "invite": "Invite Member",
-    "members": "Members",
-    "roles": {
-      "owner": "Owner",
-      "admin": "Administrator",
-      "member": "Member",
-      "viewer": "Viewer"
-    },
-    "invitePending": "Invite pending"
-  },
-
-  "preferences": {
-    "language": "Language",
-    "timezone": "Timezone",
-    "currency": "Currency",
-    "dateFormat": "Date Format"
-  },
-
-  "dangerZone": {
-    "title": "Danger Zone",
-    "deleteOrganization": "Delete Organization",
-    "deleteWarning": "This action is irreversible. All data will be lost."
   }
 }
