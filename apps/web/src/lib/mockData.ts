@@ -792,3 +792,220 @@ export const mockEmployees: Employee[] = [
     avatar: { initials: 'JS', color: '#3b82f6' },
   },
 ]
+
+// ============================================
+// Reports Data
+// ============================================
+
+export interface ReportKPIData {
+  totalSpend: number // in cents
+  spendTrend: number // percentage
+  savedThisMonth: number // in cents
+  averageAdoption: number // percentage
+  adoptionTrend: number // percentage
+  activeTools: number
+}
+
+export interface TopSpender {
+  id: string
+  name: string
+  icon: { text: string; color: string }
+  amount: number // in cents
+}
+
+export interface CategorySpend {
+  category: 'productivity' | 'infrastructure' | 'sales' | 'development' | 'design' | 'communication'
+  amount: number // in cents
+  percentage: number
+}
+
+export interface DepartmentSpend {
+  department: string
+  amount: number // in cents
+  percentage: number
+  color: string
+}
+
+export interface PeriodAction {
+  type: 'resolved' | 'saved' | 'pending' | 'renewals'
+  label: string
+  value: string | number
+}
+
+export interface Highlight {
+  icon: string
+  label: string
+  text: string
+}
+
+export interface MonthlySpending {
+  month: string
+  amount: number // in cents
+}
+
+export interface AdoptionData {
+  name: string
+  rate: number // percentage
+  status: 'high' | 'medium' | 'low'
+}
+
+export interface TopUser {
+  id: string
+  name: string
+  appsCount: number
+}
+
+export interface UnderusedLicense {
+  name: string
+  icon: { text: string; color: string }
+  idleCount: number
+  severity: 'critical' | 'warning'
+}
+
+export interface SavingByType {
+  type: string
+  amount: number // in cents
+  percentage: number
+  color: string
+}
+
+export interface SavingAction {
+  date: string
+  action: string
+  amount: number // in cents (monthly)
+}
+
+export interface YearComparison {
+  year: string
+  total: number // in cents
+  monthlyAvg: number // in cents
+  savings: number // in cents
+  toolsCount: number
+  employeesCount: number
+  costPerEmployee: number // in cents
+}
+
+export const mockReportKPIData: ReportKPIData = {
+  totalSpend: 4523000, // R$ 45,230
+  spendTrend: 12,
+  savedThisMonth: 485000, // R$ 4,850
+  averageAdoption: 73,
+  adoptionTrend: 5,
+  activeTools: 34,
+}
+
+export const mockTopSpenders: TopSpender[] = [
+  { id: '1', name: 'AWS', icon: { text: 'A', color: '#ff9900' }, amount: 845000 },
+  { id: '2', name: 'HubSpot', icon: { text: 'H', color: '#ff7a59' }, amount: 450000 },
+  { id: '3', name: 'Google Workspace', icon: { text: 'G', color: '#4285f4' }, amount: 381000 },
+  { id: '4', name: 'GitHub', icon: { text: 'G', color: '#24292f' }, amount: 320000 },
+  { id: '5', name: 'Slack', icon: { text: 'S', color: '#611f69' }, amount: 234000 },
+]
+
+export const mockCategorySpends: CategorySpend[] = [
+  { category: 'productivity', amount: 1234000, percentage: 27 },
+  { category: 'infrastructure', amount: 1089000, percentage: 24 },
+  { category: 'sales', amount: 810000, percentage: 18 },
+  { category: 'development', amount: 640000, percentage: 14 },
+  { category: 'design', amount: 420000, percentage: 9 },
+  { category: 'communication', amount: 330000, percentage: 8 },
+]
+
+export const mockDepartmentSpends: DepartmentSpend[] = [
+  { department: 'engineering', amount: 1842000, percentage: 41, color: '#3b82f6' },
+  { department: 'product', amount: 980000, percentage: 22, color: '#8b5cf6' },
+  { department: 'marketing', amount: 520000, percentage: 12, color: '#ec4899' },
+  { department: 'sales', amount: 480000, percentage: 11, color: '#f97316' },
+  { department: 'other', amount: 701000, percentage: 14, color: '#6b7280' },
+]
+
+export const mockPeriodActions: PeriodAction[] = [
+  { type: 'resolved', label: 'alertsResolved', value: 12 },
+  { type: 'saved', label: 'saved', value: 485000 }, // in cents
+  { type: 'pending', label: 'pendingAlerts', value: 3 },
+  { type: 'renewals', label: 'upcomingRenewals', value: 5 },
+]
+
+export const mockHighlights: Highlight[] = [
+  { icon: '📈', label: 'biggestIncrease', text: 'Infrastructure (+18%)' },
+  { icon: '📉', label: 'biggestReduction', text: 'Design (-12% after consolidation)' },
+  { icon: '🏆', label: 'bestAdoption', text: 'GitHub (93%)' },
+  { icon: '⚠️', label: 'worstAdoption', text: 'Notion (32%)' },
+]
+
+export const mockMonthlySpending: MonthlySpending[] = [
+  { month: 'Jul', amount: 3950000 },
+  { month: 'Aug', amount: 4120000 },
+  { month: 'Sep', amount: 4080000 },
+  { month: 'Oct', amount: 4230000 },
+  { month: 'Nov', amount: 4340000 },
+  { month: 'Dec', amount: 4523000 },
+]
+
+export const mockAdoptionData: AdoptionData[] = [
+  { name: 'Google WS', rate: 95, status: 'high' },
+  { name: 'GitHub', rate: 93, status: 'high' },
+  { name: 'Slack', rate: 84, status: 'high' },
+  { name: 'HubSpot', rate: 80, status: 'high' },
+  { name: 'Zoom', rate: 67, status: 'medium' },
+  { name: 'Figma', rate: 53, status: 'medium' },
+  { name: 'Notion', rate: 32, status: 'low' },
+]
+
+export const mockTopUsers: TopUser[] = [
+  { id: '1', name: 'Ricardo M.', appsCount: 12 },
+  { id: '2', name: 'Maria S.', appsCount: 10 },
+  { id: '3', name: 'Pedro C.', appsCount: 9 },
+  { id: '4', name: 'Ana O.', appsCount: 8 },
+  { id: '5', name: 'Carlos L.', appsCount: 7 },
+]
+
+export const mockUnderusedLicenses: UnderusedLicense[] = [
+  { name: 'Notion', icon: { text: 'N', color: '#000' }, idleCount: 26, severity: 'critical' },
+  { name: 'Figma', icon: { text: 'F', color: '#f24e1e' }, idleCount: 9, severity: 'warning' },
+  { name: 'Zoom', icon: { text: 'Z', color: '#2d8cff' }, idleCount: 5, severity: 'warning' },
+]
+
+export const mockSavingsByType: SavingByType[] = [
+  { type: 'offboarding', amount: 1842000, percentage: 43, color: '#10b981' },
+  { type: 'seatReduction', amount: 1234000, percentage: 29, color: '#0d9488' },
+  { type: 'negotiation', amount: 820000, percentage: 19, color: '#3b82f6' },
+  { type: 'consolidation', amount: 372000, percentage: 9, color: '#d97706' },
+]
+
+export const mockSavingActions: SavingAction[] = [
+  { date: '26/12', action: 'Offboarding João Silva', amount: 28700 },
+  { date: '20/12', action: 'Reduced Figma 20→15 seats', amount: 63000 },
+  { date: '15/12', action: 'Renegotiated Slack -10%', amount: 23400 },
+  { date: '01/12', action: 'Cancelled Zoom (migrated to Meet)', amount: 89000 },
+]
+
+export const mockYearComparison: YearComparison[] = [
+  {
+    year: '2024',
+    total: 49876000, // R$ 498,760
+    monthlyAvg: 4156300, // R$ 41,563
+    savings: 4268000, // R$ 42,680
+    toolsCount: 34,
+    employeesCount: 127,
+    costPerEmployee: 32700, // R$ 327
+  },
+  {
+    year: '2023',
+    total: 41234000, // R$ 412,340
+    monthlyAvg: 3436200, // R$ 34,362
+    savings: 2842000, // R$ 28,420
+    toolsCount: 28,
+    employeesCount: 98,
+    costPerEmployee: 35100, // R$ 351
+  },
+]
+
+export const mockTotalSavings2024 = 4268000 // R$ 42,680
+export const mockSavingsGoal = 5000000 // R$ 50,000
+export const mockSavingsProgress = 85 // percentage
+export const mockPendingOpportunities = {
+  count: 23,
+  monthlyAmount: 485000, // R$ 4,850/month
+  yearlyAmount: 5820000, // R$ 58,200/year
+}

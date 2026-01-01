@@ -1,44 +1,189 @@
 {
   "title": "Relatórios",
-  "subtitle": "Analytics e insights sobre seus gastos com SaaS",
-  "reportsAnalytics": "Relatórios e Analytics",
-  "getStarted": "Relatórios estarão disponíveis assim que você começar a adicionar assinaturas e rastrear o uso.",
+  "subtitle": "Análises e exportações de dados",
 
-  "categories": {
-    "spendByCategory": "Gasto por Categoria",
-    "spendByCategoryDesc": "Veja para onde seu dinheiro vai",
-    "monthlyTrends": "Tendências Mensais",
-    "monthlyTrendsDesc": "Acompanhe os gastos ao longo do tempo",
-    "potentialSavings": "Economia Potencial",
-    "potentialSavingsDesc": "Identifique oportunidades de otimização",
-    "byDepartment": "Por Departamento",
-    "byDepartmentDesc": "Alocação de custos por equipe",
-    "futureRenewals": "Renovações Futuras",
-    "futureRenewalsDesc": "Planeje pagamentos futuros",
-    "utilizationRate": "Taxa de Utilização",
-    "utilizationRateDesc": "Quão bem você está usando as licenças"
+  "tabs": {
+    "overview": "Visão Geral",
+    "spending": "Gastos",
+    "usage": "Uso & Adoção",
+    "savings": "Economia",
+    "history": "Histórico"
   },
 
-  "export": {
-    "button": "Exportar Relatório",
-    "pdf": "Exportar como PDF",
-    "csv": "Exportar como CSV",
-    "excel": "Exportar como Excel"
+  "period": {
+    "label": "Período:",
+    "thisMonth": "Este mês",
+    "last6Months": "Últimos 6 meses",
+    "last12Months": "Últimos 12 meses",
+    "thisYear": "Este ano",
+    "dateRange": "{startDate} — {endDate}"
   },
 
-  "filters": {
-    "timeRange": "Período",
-    "department": "Departamento",
-    "category": "Categoria",
-    "custom": "Período Personalizado"
+  "buttons": {
+    "exportPDF": "Exportar PDF",
+    "exportCSV": "Exportar CSV",
+    "schedule": "Agendar relatório (Enterprise)",
+    "viewPendingAlerts": "Ver alertas pendentes"
   },
 
-  "timeRanges": {
-    "thisMonth": "Este Mês",
-    "lastMonth": "Mês Passado",
-    "last3Months": "Últimos 3 Meses",
-    "last6Months": "Últimos 6 Meses",
-    "thisYear": "Este Ano",
-    "lastYear": "Ano Passado"
+  "overview": {
+    "title": "Resumo Executivo",
+    "periodLabel": "— {period}",
+
+    "kpis": {
+      "totalSpend": "Gasto Total",
+      "savedThisMonth": "Economizado este mês",
+      "averageAdoption": "Adoção Média",
+      "activeTools": "Ferramentas Ativas",
+      "thisMonth": "este mês"
+    },
+
+    "trends": {
+      "savings": "economia"
+    },
+
+    "monthlySpendingChart": "Gastos por Mês (últimos 6m)",
+    "topSpendersTitle": "Top 5 Maiores Gastos",
+    "categorySpendingTitle": "Gastos por Categoria",
+    "periodActionsTitle": "Ações do Período",
+
+    "actions": {
+      "alertsResolved": "Alertas resolvidos",
+      "saved": "Economizados",
+      "pendingAlerts": "Alertas pendentes",
+      "upcomingRenewals": "Renovações próximas"
+    },
+
+    "highlightsTitle": "Destaques do Mês",
+    "highlights": {
+      "biggestIncrease": "Maior aumento:",
+      "biggestReduction": "Maior redução:",
+      "bestAdoption": "Melhor adoção:",
+      "worstAdoption": "Pior adoção:"
+    }
+  },
+
+  "spending": {
+    "title": "Análise de Gastos",
+    "periodLabel": "— {period}",
+
+    "evolutionTitle": "Evolução de Gastos",
+    "byCategoryTitle": "Por Categoria",
+    "byDepartmentTitle": "Por Departamento",
+    "detailedTableTitle": "Tabela Detalhada",
+
+    "departments": {
+      "engineering": "Engenharia",
+      "product": "Produto",
+      "marketing": "Marketing",
+      "sales": "Vendas",
+      "other": "Outros"
+    },
+
+    "table": {
+      "tool": "Ferramenta",
+      "category": "Categoria",
+      "cost": "Custo",
+      "percentTotal": "% Total",
+      "variation": "Variação"
+    }
+  },
+
+  "usage": {
+    "title": "Uso & Adoção",
+    "periodLabel": "— {period}",
+
+    "kpis": {
+      "averageAdoption": "Adoção Média",
+      "activeUsers": "Usuários Ativos",
+      "unusedLicenses": "Licenças Não Usadas"
+    },
+
+    "adoptionByToolTitle": "Adoção por Ferramenta",
+    "adoptionThreshold": "Linha tracejada = threshold de 50%",
+    "mostActiveUsersTitle": "Usuários Mais Ativos",
+    "underusedLicensesTitle": "Licenças Subutilizadas",
+    "potentialSavings": "potencial",
+    "apps": "apps",
+    "idle": "ociosas"
+  },
+
+  "savings": {
+    "title": "Economia & Otimização",
+    "periodLabel": "— {period}",
+
+    "hero": {
+      "label": "economizados em {year}",
+      "goalProgress": "Meta anual: {goal} ({progress}% atingido)"
+    },
+
+    "monthlyChartTitle": "Economia por Mês",
+    "byTypeTitle": "Economia por Tipo de Ação",
+
+    "types": {
+      "offboarding": "Offboarding (licenças revogadas)",
+      "seatReduction": "Redução de seats",
+      "negotiation": "Renegociação de contratos",
+      "consolidation": "Consolidação de ferramentas"
+    },
+
+    "actionsTableTitle": "Ações de Economia Realizadas",
+    "actionsTable": {
+      "date": "Data",
+      "action": "Ação",
+      "savings": "Economia"
+    },
+
+    "pending": {
+      "title": "{count} oportunidades pendentes",
+      "subtitle": "Economia potencial ainda não realizada"
+    }
+  },
+
+  "history": {
+    "title": "Histórico",
+    "periodLabel": "— Últimos 12 meses",
+
+    "evolutionTitle": "Evolução do Gasto Total",
+    "yearComparisonTitle": "Comparativo Ano a Ano",
+
+    "yearStats": {
+      "total": "Total",
+      "monthlyAvg": "Média mensal",
+      "savings": "Economia",
+      "tools": "Ferramentas",
+      "employees": "Funcionários",
+      "costPerEmployee": "Custo/funcionário"
+    }
+  },
+
+  "exportModal": {
+    "title": "Exportar Relatório PDF",
+    "reportTitle": "Título do relatório",
+    "reportTitlePlaceholder": "Relatório SaaS — {period}",
+    "sectionsLabel": "Seções a incluir",
+
+    "sections": {
+      "executiveSummary": "Resumo executivo",
+      "spendingByCategory": "Gastos por categoria",
+      "spendingByDepartment": "Gastos por departamento",
+      "top10Tools": "Top 10 ferramentas",
+      "completeSubscriptionList": "Lista completa de assinaturas",
+      "adoptionAnalysis": "Análise de adoção",
+      "savingsAchieved": "Economia realizada"
+    },
+
+    "formatLabel": "Formato",
+    "formats": {
+      "summary": "Resumido (2-3 páginas)",
+      "complete": "Completo (5-8 páginas)",
+      "detailed": "Detalhado (10+ páginas)"
+    },
+
+    "previewLabel": "Pré-visualização",
+    "previewPages": "{min}-{max} páginas",
+
+    "cancel": "Cancelar",
+    "generate": "Gerar PDF"
   }
 }

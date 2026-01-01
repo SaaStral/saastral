@@ -1,44 +1,189 @@
 {
   "title": "Reports",
-  "subtitle": "Analytics and insights about your SaaS spending",
-  "reportsAnalytics": "Reports & Analytics",
-  "getStarted": "Reports will be available once you start adding subscriptions and tracking usage.",
+  "subtitle": "Analytics and data exports",
 
-  "categories": {
-    "spendByCategory": "Spending by Category",
-    "spendByCategoryDesc": "See where your money goes",
-    "monthlyTrends": "Monthly Trends",
-    "monthlyTrendsDesc": "Track spending over time",
-    "potentialSavings": "Potential Savings",
-    "potentialSavingsDesc": "Identify optimization opportunities",
-    "byDepartment": "By Department",
-    "byDepartmentDesc": "Cost allocation per team",
-    "futureRenewals": "Future Renewals",
-    "futureRenewalsDesc": "Plan for upcoming payments",
-    "utilizationRate": "Utilization Rate",
-    "utilizationRateDesc": "How well you're using licenses"
+  "tabs": {
+    "overview": "Overview",
+    "spending": "Spending",
+    "usage": "Usage & Adoption",
+    "savings": "Savings",
+    "history": "History"
   },
 
-  "export": {
-    "button": "Export Report",
-    "pdf": "Export as PDF",
-    "csv": "Export as CSV",
-    "excel": "Export as Excel"
+  "period": {
+    "label": "Period:",
+    "thisMonth": "This month",
+    "last6Months": "Last 6 months",
+    "last12Months": "Last 12 months",
+    "thisYear": "This year",
+    "dateRange": "{startDate} — {endDate}"
   },
 
-  "filters": {
-    "timeRange": "Time Range",
-    "department": "Department",
-    "category": "Category",
-    "custom": "Custom Range"
+  "buttons": {
+    "exportPDF": "Export PDF",
+    "exportCSV": "Export CSV",
+    "schedule": "Schedule report (Enterprise)",
+    "viewPendingAlerts": "View pending alerts"
   },
 
-  "timeRanges": {
-    "thisMonth": "This Month",
-    "lastMonth": "Last Month",
-    "last3Months": "Last 3 Months",
-    "last6Months": "Last 6 Months",
-    "thisYear": "This Year",
-    "lastYear": "Last Year"
+  "overview": {
+    "title": "Executive Summary",
+    "periodLabel": "— {period}",
+
+    "kpis": {
+      "totalSpend": "Total Spend",
+      "savedThisMonth": "Saved this month",
+      "averageAdoption": "Average Adoption",
+      "activeTools": "Active Tools",
+      "thisMonth": "this month"
+    },
+
+    "trends": {
+      "savings": "savings"
+    },
+
+    "monthlySpendingChart": "Spending by Month (last 6m)",
+    "topSpendersTitle": "Top 5 Biggest Expenses",
+    "categorySpendingTitle": "Spending by Category",
+    "periodActionsTitle": "Period Actions",
+
+    "actions": {
+      "alertsResolved": "Resolved alerts",
+      "saved": "Saved",
+      "pendingAlerts": "Pending alerts",
+      "upcomingRenewals": "Upcoming renewals"
+    },
+
+    "highlightsTitle": "Month Highlights",
+    "highlights": {
+      "biggestIncrease": "Biggest increase:",
+      "biggestReduction": "Biggest reduction:",
+      "bestAdoption": "Best adoption:",
+      "worstAdoption": "Worst adoption:"
+    }
+  },
+
+  "spending": {
+    "title": "Spending Analysis",
+    "periodLabel": "— {period}",
+
+    "evolutionTitle": "Spending Evolution",
+    "byCategoryTitle": "By Category",
+    "byDepartmentTitle": "By Department",
+    "detailedTableTitle": "Detailed Table",
+
+    "departments": {
+      "engineering": "Engineering",
+      "product": "Product",
+      "marketing": "Marketing",
+      "sales": "Sales",
+      "other": "Others"
+    },
+
+    "table": {
+      "tool": "Tool",
+      "category": "Category",
+      "cost": "Cost",
+      "percentTotal": "% Total",
+      "variation": "Variation"
+    }
+  },
+
+  "usage": {
+    "title": "Usage & Adoption",
+    "periodLabel": "— {period}",
+
+    "kpis": {
+      "averageAdoption": "Average Adoption",
+      "activeUsers": "Active Users",
+      "unusedLicenses": "Unused Licenses"
+    },
+
+    "adoptionByToolTitle": "Adoption by Tool",
+    "adoptionThreshold": "Dashed line = 50% threshold",
+    "mostActiveUsersTitle": "Most Active Users",
+    "underusedLicensesTitle": "Underused Licenses",
+    "potentialSavings": "potential",
+    "apps": "apps",
+    "idle": "idle"
+  },
+
+  "savings": {
+    "title": "Savings & Optimization",
+    "periodLabel": "— {period}",
+
+    "hero": {
+      "label": "saved in {year}",
+      "goalProgress": "Annual goal: {goal} ({progress}% achieved)"
+    },
+
+    "monthlyChartTitle": "Savings by Month",
+    "byTypeTitle": "Savings by Action Type",
+
+    "types": {
+      "offboarding": "Offboarding (revoked licenses)",
+      "seatReduction": "Seat reduction",
+      "negotiation": "Contract renegotiation",
+      "consolidation": "Tool consolidation"
+    },
+
+    "actionsTableTitle": "Savings Actions Taken",
+    "actionsTable": {
+      "date": "Date",
+      "action": "Action",
+      "savings": "Savings"
+    },
+
+    "pending": {
+      "title": "{count} pending opportunities",
+      "subtitle": "Unrealized potential savings"
+    }
+  },
+
+  "history": {
+    "title": "History",
+    "periodLabel": "— Last 12 months",
+
+    "evolutionTitle": "Total Spend Evolution",
+    "yearComparisonTitle": "Year-over-Year Comparison",
+
+    "yearStats": {
+      "total": "Total",
+      "monthlyAvg": "Monthly avg",
+      "savings": "Savings",
+      "tools": "Tools",
+      "employees": "Employees",
+      "costPerEmployee": "Cost/employee"
+    }
+  },
+
+  "exportModal": {
+    "title": "Export PDF Report",
+    "reportTitle": "Report title",
+    "reportTitlePlaceholder": "SaaS Report — {period}",
+    "sectionsLabel": "Sections to include",
+
+    "sections": {
+      "executiveSummary": "Executive summary",
+      "spendingByCategory": "Spending by category",
+      "spendingByDepartment": "Spending by department",
+      "top10Tools": "Top 10 tools",
+      "completeSubscriptionList": "Complete subscription list",
+      "adoptionAnalysis": "Adoption analysis",
+      "savingsAchieved": "Savings achieved"
+    },
+
+    "formatLabel": "Format",
+    "formats": {
+      "summary": "Summary (2-3 pages)",
+      "complete": "Complete (5-8 pages)",
+      "detailed": "Detailed (10+ pages)"
+    },
+
+    "previewLabel": "Preview",
+    "previewPages": "{min}-{max} pages",
+
+    "cancel": "Cancel",
+    "generate": "Generate PDF"
   }
 }
