@@ -13,7 +13,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // ============================================================================
@@ -745,9 +744,9 @@ model AuditLog {
   userName  String? @map("user_name") @db.VarChar(255)
 
   // Action
-  action     String @db.VarChar(100)
-  entityType String @map("entity_type") @db.VarChar(100)
-  entityId   String?
+  action     String  @db.VarChar(100)
+  entityType String  @map("entity_type") @db.VarChar(100)
+  entityId   String? @map("entity_id")
 
   // Changes
   oldValues Json? @map("old_values")

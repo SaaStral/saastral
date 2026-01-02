@@ -24,16 +24,19 @@
   },
   "dependencies": {
     "@saastral/core": "workspace:*",
-    "@prisma/client": "^5.8.0",
+    "@prisma/client": "^7.2.0",
+    "@prisma/adapter-pg": "^7.2.0",
     "@trpc/server": "^11.0.0-next-beta.308",
     "zod": "^3.22.4",
     "pino": "^8.17.2",
     "pino-pretty": "^10.3.1",
-    "graphile-worker": "^0.16.4"
+    "graphile-worker": "^0.16.4",
+    "pg": "^8.13.1"
   },
   "devDependencies": {
     "@types/node": "^20.10.6",
-    "prisma": "^5.8.0",
+    "@types/pg": "^8.11.10",
+    "prisma": "^7.2.0",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3",
     "vitest": "^1.1.1"
