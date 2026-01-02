@@ -20,28 +20,31 @@
     "prisma:generate": "prisma generate --schema=./src/database/prisma/schema.prisma",
     "prisma:migrate": "prisma migrate dev --schema=./src/database/prisma/schema.prisma",
     "prisma:studio": "prisma studio --schema=./src/database/prisma/schema.prisma",
-    "prisma:seed": "tsx src/database/prisma/seed.ts"
+    "prisma:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@saastral/core": "workspace:*",
-    "@prisma/client": "^7.2.0",
     "@prisma/adapter-pg": "^7.2.0",
+    "@prisma/client": "^7.2.0",
+    "@saastral/core": "workspace:*",
     "@trpc/server": "^11.0.0-next-beta.308",
-    "zod": "^3.22.4",
+    "dotenv": "^16.3.1",
+    "graphile-worker": "^0.16.4",
+    "pg": "^8.13.1",
     "pino": "^8.17.2",
     "pino-pretty": "^10.3.1",
-    "graphile-worker": "^0.16.4",
-    "pg": "^8.13.1"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/node": "^20.10.6",
     "@types/pg": "^8.11.10",
+    "bcrypt": "^6.0.0",
     "prisma": "^7.2.0",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3",
     "vitest": "^1.1.1"
   },
   "prisma": {
-    "seed": "tsx src/database/prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts"
   }
 }

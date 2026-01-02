@@ -18,6 +18,7 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
+import { createAuth } from '@saastral/shared'
 
 // Initialize Prisma with adapter
 const pool = new Pool({
@@ -26,6 +27,12 @@ const pool = new Pool({
 
 const adapter = new PrismaPg(pool)
 const prisma = new PrismaClient({ adapter })
+
+// Initialize BetterAuth for user creation
+const auth = createAuth(pool)
+
+// Default password for seeded users
+const DEFAULT_PASSWORD = '12345678'
 
 // Helper function to get random item from array
 function randomItem<T>(arr: T[]): T {
@@ -69,6 +76,9 @@ async function main() {
   await prisma.organizationMember.deleteMany()
   await prisma.costHistory.deleteMany()
   await prisma.auditLog.deleteMany()
+  await prisma.betterAuthSession.deleteMany()
+  await prisma.betterAuthAccount.deleteMany()
+  await prisma.betterAuthVerification.deleteMany()
   await prisma.user.deleteMany()
   await prisma.organization.deleteMany()
   await prisma.saasCatalog.deleteMany()
@@ -170,37 +180,39 @@ async function main() {
   // ============================================================================
   console.log('👤 Seeding users...')
 
-  const users = await Promise.all([
-    prisma.user.create({
-      data: {
-        email: 'john.doe@acme.com',
-        name: 'John Doe',
-        emailVerifiedAt: randomPastDate(60),
-        lastLoginAt: randomPastDate(1),
-        preferences: { language: 'pt-BR', notifications: { email: true, inApp: true } },
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: 'jane.smith@acme.com',
-        name: 'Jane Smith',
-        emailVerifiedAt: randomPastDate(60),
-        lastLoginAt: randomPastDate(2),
-        preferences: { language: 'pt-BR', notifications: { email: true, inApp: true } },
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: 'mike.johnson@techstartup.io',
-        name: 'Mike Johnson',
-        emailVerifiedAt: randomPastDate(25),
-        lastLoginAt: randomPastDate(1),
-        preferences: { language: 'en-US', notifications: { email: true, inApp: false } },
-      },
-    }),
-  ])
+  // Create users with BetterAuth's signUp API to ensure proper password hashing
+  const userEmails = [
+    { email: 'john.doe@acme.com', name: 'John Doe', preferences: { language: 'pt-BR', notifications: { email: true, inApp: true } } },
+    { email: 'jane.smith@acme.com', name: 'Jane Smith', preferences: { language: 'pt-BR', notifications: { email: true, inApp: true } } },
+    { email: 'mike.johnson@techstartup.io', name: 'Mike Johnson', preferences: { language: 'en-US', notifications: { email: true, inApp: false } } },
+  ]
 
-  console.log(`✓ Created ${users.length} users\n`)
+  const users = []
+  for (const userData of userEmails) {
+    // Use BetterAuth API to create user with properly hashed password
+    const result = await auth.api.signUpEmail({
+      body: {
+        email: userData.email,
+        password: DEFAULT_PASSWORD,
+        name: userData.name,
+      },
+    })
+
+    // Update the user with additional fields that BetterAuth doesn't handle
+    const user = await prisma.user.update({
+      where: { id: result.user.id },
+      data: {
+        emailVerifiedAt: randomPastDate(60),
+        emailVerified: true,
+        lastLoginAt: randomPastDate(1),
+        preferences: userData.preferences,
+      },
+    })
+
+    users.push(user)
+  }
+
+  console.log(`✓ Created ${users.length} users with password: "${DEFAULT_PASSWORD}"\n`)
 
   // ============================================================================
   // ORGANIZATION MEMBERS

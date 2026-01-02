@@ -9,6 +9,7 @@ import reports from './reports.json'
 import settings from './settings.json'
 import integrations from './integrations.json'
 import errors from './errors.json'
+import auth from './auth.json'
 
 const messages = {
   common,
@@ -22,6 +23,7 @@ const messages = {
   settings,
   integrations,
   errors,
+  auth,
 } as const
 
 export default messages
