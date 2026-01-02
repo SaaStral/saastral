@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, setRequestLocale } from 'next-intl/server'
 import { locales, Locale } from '@/i18n/config'
+import { TRPCProvider } from '@/lib/trpc/provider'
 import '../globals.css'
 
 const outfit = Outfit({
@@ -60,9 +61,11 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${outfit.variable} ${sora.variable} ${jetbrainsMono.variable}`}>
       <body className={outfit.className}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <TRPCProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            {children}
+          </NextIntlClientProvider>
+        </TRPCProvider>
       </body>
     </html>
   )

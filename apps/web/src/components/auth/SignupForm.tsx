@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { Building2, User, Mail, Lock } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
+import { trpc } from '@/lib/trpc/client'
 
 interface SignupFormProps {
   onSuccess?: () => void
@@ -33,6 +34,9 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
   const [errors, setErrors] = useState<Partial<Record<keyof SignupFormData, string>>>({})
   const [isLoading, setIsLoading] = useState(false)
   const [generalError, setGeneralError] = useState<string | null>(null)
+
+  // tRPC mutation for creating organization
+  const createOrganization = trpc.organization.create.useMutation()
 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof SignupFormData, string>> = {}
@@ -81,23 +85,37 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
           name: formData.fullName,
         },
         {
-          onSuccess: async () => {
-            // TODO: Create organization after signup
-            // For now, just redirect to dashboard
-            if (onSuccess) {
-              onSuccess()
-            } else {
-              router.push('/dashboard')
+          onSuccess: async (ctx) => {
+            // Create organization for the new user
+            try {
+              await createOrganization.mutateAsync({
+                name: formData.organizationName,
+                userId: ctx.data.user.id,
+              })
+
+              // Redirect to dashboard after successful organization creation
+              if (onSuccess) {
+                onSuccess()
+              } else {
+                router.push('/dashboard')
+              }
+            } catch (orgError) {
+              setGeneralError(
+                orgError instanceof Error
+                  ? orgError.message
+                  : 'Failed to create organization'
+              )
+              setIsLoading(false)
             }
           },
           onError: (ctx) => {
             setGeneralError(ctx.error.message)
+            setIsLoading(false)
           },
         }
       )
     } catch (error) {
       setGeneralError(error instanceof Error ? error.message : t('errors.generic'))
-    } finally {
       setIsLoading(false)
     }
   }

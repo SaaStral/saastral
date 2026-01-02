@@ -105,6 +105,9 @@ export function createAuth(pool: Pool) {
 
     advanced: {
       useSecureCookies: process.env.NODE_ENV === 'production',
+      database: {
+        generateId: 'uuid', // Generate UUIDs for all tables
+      },
     },
   })
 }

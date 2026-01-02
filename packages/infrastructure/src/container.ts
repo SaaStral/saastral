@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client'
-import { prisma } from './database/prisma/client'
 import { PinoLogger } from './logger/pino.adapter'
 
 /**
@@ -11,7 +10,7 @@ export class Container {
   private _prisma: PrismaClient
 
   constructor(prismaClient?: PrismaClient) {
-    this._prisma = prismaClient ?? prisma
+    this._prisma = prismaClient ?? new PrismaClient()
   }
 
   get prisma(): PrismaClient {
