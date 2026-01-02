@@ -337,8 +337,8 @@ model Employee {
   // Extra data
   metadata Json @default("{}")
 
-  // Cost tracking
-  monthlySaasCost Decimal? @map("monthly_saas_cost") @db.Decimal(12, 2)
+  // Cost tracking (stored in cents)
+  monthlySaasCost BigInt? @map("monthly_saas_cost")
 
   // Audit
   createdAt DateTime  @default(now()) @map("created_at")
@@ -392,14 +392,14 @@ model Subscription {
   pricingModel PricingModel       @map("pricing_model")
   currency     String             @default("BRL") @db.Char(3)
 
-  // Pricing
-  pricePerUnit     Decimal? @map("price_per_unit") @db.Decimal(12, 2)
-  totalMonthlyCost Decimal  @map("total_monthly_cost") @db.Decimal(12, 2)
-  annualValue      Decimal? @map("annual_value") @db.Decimal(14, 2)
+  // Pricing (monetary values stored in cents)
+  pricePerUnit     BigInt? @map("price_per_unit")
+  totalMonthlyCost BigInt  @map("total_monthly_cost")
+  annualValue      BigInt? @map("annual_value")
 
   // Discounts
   discountPercentage Decimal? @map("discount_percentage") @db.Decimal(5, 2)
-  originalPrice      Decimal? @map("original_price") @db.Decimal(12, 2)
+  originalPrice      BigInt? @map("original_price")
   priceIncreaseCap   Decimal? @map("price_increase_cap") @db.Decimal(5, 2)
 
   // Licenses
@@ -641,9 +641,9 @@ model Alert {
   // Alert data
   data Json @default("{}")
 
-  // Potential savings
-  potentialSavings Decimal? @map("potential_savings") @db.Decimal(12, 2)
-  currency         String?  @default("BRL") @db.Char(3)
+  // Potential savings (stored in cents)
+  potentialSavings BigInt? @map("potential_savings")
+  currency         String? @default("BRL") @db.Char(3)
 
   // Resolution
   resolvedAt      DateTime? @map("resolved_at")
@@ -665,10 +665,6 @@ model Alert {
 
   // Recurrence prevention
   alertKey String? @map("alert_key") @db.VarChar(500)
-
-  // Notifications
-  notificationSentAt  DateTime? @map("notification_sent_at")
-  notificationChannel String?   @map("notification_channel") @db.VarChar(50)
 
   // Audit
   createdAt DateTime @default(now()) @map("created_at")
@@ -859,20 +855,20 @@ model CostHistory {
   // Period
   yearMonth DateTime @map("year_month") @db.Date
 
-  // Totals
-  totalCost          Decimal @map("total_cost") @db.Decimal(14, 2)
-  totalSubscriptions Int     @map("total_subscriptions")
-  totalEmployees     Int     @map("total_employees")
-  totalSeats         Int?    @map("total_seats")
-  usedSeats          Int?    @map("used_seats")
+  // Totals (monetary values stored in cents)
+  totalCost          BigInt @map("total_cost")
+  totalSubscriptions Int    @map("total_subscriptions")
+  totalEmployees     Int    @map("total_employees")
+  totalSeats         Int?   @map("total_seats")
+  usedSeats          Int?   @map("used_seats")
 
   // Breakdown
   costByCategory   Json @default("{}") @map("cost_by_category")
   costByDepartment Json @default("{}") @map("cost_by_department")
 
-  // Savings
-  potentialSavings Decimal? @map("potential_savings") @db.Decimal(14, 2)
-  realizedSavings  Decimal? @map("realized_savings") @db.Decimal(14, 2)
+  // Savings (monetary values stored in cents)
+  potentialSavings BigInt? @map("potential_savings")
+  realizedSavings  BigInt? @map("realized_savings")
 
   // Audit
   calculatedAt DateTime @default(now()) @map("calculated_at")
