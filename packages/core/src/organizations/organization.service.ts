@@ -81,6 +81,21 @@ export class OrganizationService {
   }
 
   // ============================================================================
+  // Queries
+  // ============================================================================
+
+  /**
+   * List all organizations a user has access to
+   */
+  async listUserOrganizations(userId: string) {
+    this.logger.info('[OrganizationService.listUserOrganizations] Listing user organizations', {
+      userId,
+    })
+
+    return await this.organizationMemberRepo.listOrganizationsByUser(userId)
+  }
+
+  // ============================================================================
   // Helpers
   // ============================================================================
 

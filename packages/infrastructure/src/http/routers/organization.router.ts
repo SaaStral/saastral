@@ -18,4 +18,17 @@ export const organizationRouter = router({
       const container = getContainer()
       return await container.organizationService.createOrganization(input)
     }),
+
+  /**
+   * List all organizations the user has access to
+   * Uses authenticated user from context
+   */
+  listUserOrganizations: publicProcedure
+    .query(async ({ ctx }) => {
+      if (!ctx.userId) {
+        throw new Error('Not authenticated')
+      }
+      const container = getContainer()
+      return await container.organizationService.listUserOrganizations(ctx.userId)
+    }),
 })

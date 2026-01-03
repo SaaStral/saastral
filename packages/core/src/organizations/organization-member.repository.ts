@@ -35,6 +35,11 @@ export interface OrganizationMemberRepository {
    * Remove member from organization
    */
   remove(organizationId: string, userId: string): Promise<void>
+
+  /**
+   * List organizations for a user
+   */
+  listOrganizationsByUser(userId: string): Promise<UserOrganizationData[]>
 }
 
 /**
@@ -62,4 +67,14 @@ export interface CreateOrganizationMemberData {
   userId: string
   role: OrganizationRole
   acceptedAt?: Date
+}
+
+/**
+ * User's organization data (for listing organizations a user belongs to)
+ */
+export interface UserOrganizationData {
+  id: string
+  name: string
+  slug: string
+  role: OrganizationRole
 }

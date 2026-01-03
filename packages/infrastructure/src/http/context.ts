@@ -1,9 +1,15 @@
 import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch'
+import { auth } from '../auth/index'
 
-export async function createContext(_opts?: FetchCreateContextFnOptions) {
-  // For now, simple context. Will expand later with auth
+export async function createContext(opts?: FetchCreateContextFnOptions) {
+  // Get session from BetterAuth
+  const session = await auth.api.getSession({
+    headers: opts?.req.headers || new Headers(),
+  })
+
   return {
-    userId: undefined as string | undefined,
+    userId: session?.user?.id || undefined,
+    session,
   }
 }
 

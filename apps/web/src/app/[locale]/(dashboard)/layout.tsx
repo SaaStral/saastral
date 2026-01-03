@@ -1,5 +1,10 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
+import { OrganizationProvider } from '@/contexts/OrganizationContext'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <DashboardLayout>{children}</DashboardLayout>
+  return (
+    <OrganizationProvider>
+      <DashboardLayout>{children}</DashboardLayout>
+    </OrganizationProvider>
+  )
 }

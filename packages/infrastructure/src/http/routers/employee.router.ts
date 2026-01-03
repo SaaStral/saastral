@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { router, publicProcedure } from '../trpc'
 import { getContainer } from '../../container'
+import { TRPCError } from '@trpc/server'
 
 // ============================================================================
 // Input Schemas
@@ -15,6 +16,27 @@ const listEmployeesSchema = z.object({
 })
 
 // ============================================================================
+// Helper Functions
+// ============================================================================
+
+/**
+ * Validates that the authenticated user has access to the specified organization
+ */
+async function validateOrganizationAccess(userId: string, organizationId: string) {
+  const container = getContainer()
+  const userOrgs = await container.organizationService.listUserOrganizations(userId)
+
+  const hasAccess = userOrgs.some(org => org.id === organizationId)
+
+  if (!hasAccess) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'You do not have access to this organization',
+    })
+  }
+}
+
+// ============================================================================
 // Employee Router
 // ============================================================================
 
@@ -25,7 +47,13 @@ export const employeeRouter = router({
    */
   getKPIs: publicProcedure
     .input(z.object({ organizationId: z.string().uuid() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      if (!ctx.userId) {
+        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
+      }
+
+      await validateOrganizationAccess(ctx.userId, input.organizationId)
+
       const container = getContainer()
       const employeeService = container.employeeService
 
@@ -39,7 +67,13 @@ export const employeeRouter = router({
    */
   list: publicProcedure
     .input(listEmployeesSchema)
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      if (!ctx.userId) {
+        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
+      }
+
+      await validateOrganizationAccess(ctx.userId, input.organizationId)
+
       const container = getContainer()
       const employeeService = container.employeeService
 
@@ -57,7 +91,13 @@ export const employeeRouter = router({
    */
   getOffboardingAlerts: publicProcedure
     .input(z.object({ organizationId: z.string().uuid(), limit: z.number().int().positive().optional() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      if (!ctx.userId) {
+        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
+      }
+
+      await validateOrganizationAccess(ctx.userId, input.organizationId)
+
       const container = getContainer()
       const employeeService = container.employeeService
 
@@ -72,7 +112,13 @@ export const employeeRouter = router({
    */
   getDepartmentBreakdown: publicProcedure
     .input(z.object({ organizationId: z.string().uuid() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      if (!ctx.userId) {
+        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
+      }
+
+      await validateOrganizationAccess(ctx.userId, input.organizationId)
+
       const container = getContainer()
       const employeeService = container.employeeService
 

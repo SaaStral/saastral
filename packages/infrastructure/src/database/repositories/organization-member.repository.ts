@@ -4,6 +4,7 @@ import {
   OrganizationMemberData,
   CreateOrganizationMemberData,
   OrganizationRole,
+  UserOrganizationData,
 } from '@saastral/core'
 
 /**
@@ -84,6 +85,28 @@ export class PrismaOrganizationMemberRepository
         },
       },
     })
+  }
+
+  async listOrganizationsByUser(userId: string): Promise<UserOrganizationData[]> {
+    const memberships = await this.prisma.organizationMember.findMany({
+      where: { userId },
+      include: {
+        organization: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+      },
+    })
+
+    return memberships.map((m) => ({
+      id: m.organization.id,
+      name: m.organization.name,
+      slug: m.organization.slug,
+      role: m.role as OrganizationRole,
+    }))
   }
 
   /**
