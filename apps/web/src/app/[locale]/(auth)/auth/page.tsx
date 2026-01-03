@@ -1,17 +1,25 @@
 'use client'
 
-import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { SignupForm } from '@/components/auth/SignupForm'
 import { LoginForm } from '@/components/auth/LoginForm'
-import { AuthModeToggle } from '@/components/auth/AuthModeToggle'
+import { trpc } from '@/lib/trpc/client'
 
 export default function AuthPage() {
   const t = useTranslations('auth')
   const tCommon = useTranslations('common.app')
 
-  // TODO: Replace with actual check from backend
-  const [hasExistingUsers, setHasExistingUsers] = useState(false)
+  // Check if there are existing users in the database
+  const { data, isLoading } = trpc.user.hasUsers.useQuery()
+  const hasExistingUsers = data?.hasUsers ?? false
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#011815]">
+        <div className="text-[#6ee7b7]">Loading...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#011815]">
@@ -48,14 +56,6 @@ export default function AuthPage() {
 
           {/* Forms */}
           {hasExistingUsers ? <LoginForm /> : <SignupForm />}
-
-          {/* Dev Mode Toggle */}
-          {process.env.NODE_ENV === 'development' && (
-            <AuthModeToggle
-              hasExistingUsers={hasExistingUsers}
-              onToggle={() => setHasExistingUsers(!hasExistingUsers)}
-            />
-          )}
         </div>
 
         {/* Footer */}
