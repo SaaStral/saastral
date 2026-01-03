@@ -58,6 +58,82 @@ function toCents(brl: number): bigint {
   return BigInt(Math.round(brl * 100))
 }
 
+// Random number between min and max (inclusive)
+function randomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+// Generate realistic Brazilian names
+const firstNames = [
+  'João', 'Maria', 'Pedro', 'Ana', 'Carlos', 'Paula', 'Lucas', 'Juliana',
+  'Fernando', 'Camila', 'Roberto', 'Fernanda', 'Ricardo', 'Mariana', 'Bruno',
+  'Beatriz', 'Rafael', 'Carolina', 'Felipe', 'Larissa', 'André', 'Gabriela',
+  'Thiago', 'Amanda', 'Rodrigo', 'Patrícia', 'Marcelo', 'Aline', 'Eduardo',
+  'Renata', 'Diego', 'Vanessa', 'Gustavo', 'Cristina', 'Henrique', 'Silvia',
+  'Vitor', 'Daniela', 'Leandro', 'Tatiana', 'Márcio', 'Bianca', 'Alexandre',
+  'Priscila', 'Fábio', 'Carla', 'Luiz', 'Adriana', 'Mateus', 'Lívia'
+]
+
+const lastNames = [
+  'Silva', 'Santos', 'Oliveira', 'Souza', 'Rodrigues', 'Ferreira', 'Alves',
+  'Pereira', 'Lima', 'Gomes', 'Costa', 'Ribeiro', 'Martins', 'Carvalho',
+  'Rocha', 'Almeida', 'Nascimento', 'Araújo', 'Vieira', 'Monteiro', 'Mendes',
+  'Barros', 'Freitas', 'Barbosa', 'Pinto', 'Moreira', 'Cavalcanti', 'Dias',
+  'Castro', 'Campos', 'Cardoso', 'Correia', 'Teixeira', 'Farias', 'Machado'
+]
+
+const jobTitles = {
+  engineering: [
+    'Software Engineer', 'Senior Software Engineer', 'Staff Engineer', 'Principal Engineer',
+    'Frontend Developer', 'Backend Developer', 'Full-Stack Developer', 'DevOps Engineer',
+    'Engineering Manager', 'Tech Lead', 'VP of Engineering', 'CTO', 'QA Engineer'
+  ],
+  design: [
+    'Product Designer', 'Senior Designer', 'UX Designer', 'UI Designer', 'UX Researcher',
+    'Design Lead', 'Head of Design', 'Graphic Designer', 'Brand Designer'
+  ],
+  sales: [
+    'Sales Representative', 'Account Executive', 'Sales Manager', 'Sales Director',
+    'Business Development Rep', 'VP of Sales', 'Chief Revenue Officer'
+  ],
+  marketing: [
+    'Marketing Analyst', 'Marketing Manager', 'Content Writer', 'SEO Specialist',
+    'Social Media Manager', 'Growth Manager', 'CMO', 'Marketing Coordinator'
+  ],
+  hr: [
+    'HR Manager', 'HR Coordinator', 'Recruiter', 'People Operations Manager',
+    'Talent Acquisition Specialist', 'CHRO', 'HR Business Partner'
+  ],
+  finance: [
+    'Financial Analyst', 'Accountant', 'Finance Manager', 'Controller', 'CFO',
+    'Accounts Payable', 'Accounts Receivable', 'Treasury Analyst'
+  ],
+  operations: [
+    'Operations Manager', 'Operations Coordinator', 'COO', 'Office Manager',
+    'Administrative Assistant', 'Project Manager', 'Program Manager'
+  ],
+  support: [
+    'Customer Support Rep', 'Customer Success Manager', 'Support Manager',
+    'Technical Support Engineer', 'Head of Support'
+  ]
+}
+
+function generateRandomName(): { firstName: string; lastName: string; fullName: string } {
+  const firstName = randomItem(firstNames)
+  const lastName = randomItem(lastNames)
+  return {
+    firstName,
+    lastName,
+    fullName: `${firstName} ${lastName}`
+  }
+}
+
+function generateEmail(name: { firstName: string; lastName: string }, domain: string): string {
+  const first = name.firstName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  const last = name.lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  return `${first}.${last}@${domain}`
+}
+
 async function main() {
   console.log('🌱 Starting database seed...\n')
 
@@ -135,60 +211,125 @@ async function main() {
   // ============================================================================
   console.log('🏢 Seeding organizations...')
 
-  const acmeOrg = await prisma.organization.create({
-    data: {
+  const organizationsData = [
+    {
       name: 'Acme Corporation',
       slug: 'acme',
       domain: 'acme.com',
-      plan: 'business',
+      plan: 'business' as const,
       planStartedAt: randomPastDate(90),
-      settings: {
-        timezone: 'America/Sao_Paulo',
-        currency: 'BRL',
-        alertDefaults: {
-          unusedLicenseDays: 30,
-          lowUtilizationThreshold: 50,
-          renewalReminderDays: [30, 15, 7],
-        },
-      },
+      employeeCount: 50,
     },
-  })
-
-  const techStartup = await prisma.organization.create({
-    data: {
-      name: 'TechStartup Inc',
-      slug: 'techstartup',
-      domain: 'techstartup.io',
-      plan: 'team',
+    {
+      name: 'TechBrasil Ltda',
+      slug: 'techbrasil',
+      domain: 'techbrasil.com.br',
+      plan: 'business' as const,
+      planStartedAt: randomPastDate(120),
+      employeeCount: 35,
+    },
+    {
+      name: 'StartupHub Inovação',
+      slug: 'startuphub',
+      domain: 'startuphub.io',
+      plan: 'team' as const,
       planStartedAt: randomPastDate(30),
-      settings: {
-        timezone: 'America/Sao_Paulo',
-        currency: 'BRL',
-        alertDefaults: {
-          unusedLicenseDays: 45,
-          lowUtilizationThreshold: 40,
-          renewalReminderDays: [30, 15, 7],
+      employeeCount: 25,
+    },
+    {
+      name: 'FinTech Solutions',
+      slug: 'fintechsolutions',
+      domain: 'fintechsolutions.com.br',
+      plan: 'business' as const,
+      planStartedAt: randomPastDate(180),
+      employeeCount: 45,
+    },
+    {
+      name: 'CloudSys Sistemas',
+      slug: 'cloudsys',
+      domain: 'cloudsys.com.br',
+      plan: 'enterprise' as const,
+      planStartedAt: randomPastDate(365),
+      employeeCount: 80,
+    },
+    {
+      name: 'Digital Ventures',
+      slug: 'digitalventures',
+      domain: 'digitalventures.io',
+      plan: 'team' as const,
+      planStartedAt: randomPastDate(60),
+      employeeCount: 20,
+    },
+    {
+      name: 'MegaCorp Tecnologia',
+      slug: 'megacorp',
+      domain: 'megacorp.com.br',
+      plan: 'enterprise' as const,
+      planStartedAt: randomPastDate(730),
+      employeeCount: 120,
+    },
+  ]
+
+  const organizations: Array<{ id: string; name: string; domain: string | null; employeeCount: number }> = []
+  for (const orgData of organizationsData) {
+    const org = await prisma.organization.create({
+      data: {
+        name: orgData.name,
+        slug: orgData.slug,
+        domain: orgData.domain,
+        plan: orgData.plan,
+        planStartedAt: orgData.planStartedAt,
+        settings: {
+          timezone: 'America/Sao_Paulo',
+          currency: 'BRL',
+          alertDefaults: {
+            unusedLicenseDays: 30,
+            lowUtilizationThreshold: 50,
+            renewalReminderDays: [30, 15, 7],
+          },
         },
       },
-    },
-  })
+    })
+    organizations.push({ id: org.id, name: org.name, domain: org.domain, employeeCount: orgData.employeeCount })
+  }
 
-  console.log(`✓ Created 2 organizations\n`)
+  // Keep reference to first org for backward compatibility (used in seeding below)
+  const acmeOrg = organizations[0]
+
+  console.log(`✓ Created ${organizations.length} organizations\n`)
 
   // ============================================================================
   // USERS
   // ============================================================================
   console.log('👤 Seeding users...')
 
-  // Create users with BetterAuth's signUp API to ensure proper password hashing
-  const userEmails = [
-    { email: 'john.doe@acme.com', name: 'John Doe', preferences: { language: 'pt-BR', notifications: { email: true, inApp: true } } },
-    { email: 'jane.smith@acme.com', name: 'Jane Smith', preferences: { language: 'pt-BR', notifications: { email: true, inApp: true } } },
-    { email: 'mike.johnson@techstartup.io', name: 'Mike Johnson', preferences: { language: 'en-US', notifications: { email: true, inApp: false } } },
-  ]
+  // Create 1-2 users per organization
+  const usersData: Array<{ email: string; name: string; orgIndex: number; role: 'owner' | 'admin' }> = []
+
+  organizations.forEach((org, index) => {
+    const domain = org.domain || 'example.com'
+    const name1 = generateRandomName()
+    usersData.push({
+      email: generateEmail(name1, domain),
+      name: name1.fullName,
+      orgIndex: index,
+      role: 'owner'
+    })
+
+    // Larger orgs get a second admin user
+    if (org.employeeCount > 30) {
+      const name2 = generateRandomName()
+      usersData.push({
+        email: generateEmail(name2, domain),
+        name: name2.fullName,
+        orgIndex: index,
+        role: 'admin'
+      })
+    }
+  })
 
   const users = []
-  for (const userData of userEmails) {
+  for (const userData of usersData) {
     // Use BetterAuth API to create user with properly hashed password
     const result = await auth.api.signUpEmail({
       body: {
@@ -205,11 +346,14 @@ async function main() {
         emailVerifiedAt: randomPastDate(60),
         emailVerified: true,
         lastLoginAt: randomPastDate(1),
-        preferences: userData.preferences,
+        preferences: {
+          language: 'pt-BR',
+          notifications: { email: true, inApp: true }
+        },
       },
     })
 
-    users.push(user)
+    users.push({ ...user, orgIndex: userData.orgIndex, role: userData.role })
   }
 
   console.log(`✓ Created ${users.length} users with password: "${DEFAULT_PASSWORD}"\n`)
@@ -219,33 +363,25 @@ async function main() {
   // ============================================================================
   console.log('👥 Seeding organization members...')
 
-  await Promise.all([
-    prisma.organizationMember.create({
-      data: {
-        organizationId: acmeOrg.id,
-        userId: users[0].id,
-        role: 'owner',
-        acceptedAt: randomPastDate(60),
-      },
-    }),
-    prisma.organizationMember.create({
-      data: {
-        organizationId: acmeOrg.id,
-        userId: users[1].id,
-        role: 'admin',
-        invitedBy: users[0].id,
-        acceptedAt: randomPastDate(55),
-      },
-    }),
-    prisma.organizationMember.create({
-      data: {
-        organizationId: techStartup.id,
-        userId: users[2].id,
-        role: 'owner',
-        acceptedAt: randomPastDate(30),
-      },
-    }),
-  ])
+  const memberPromises = []
+  for (const user of users) {
+    const org = organizations[user.orgIndex]
+    const ownerUser = users.find(u => u.orgIndex === user.orgIndex && u.role === 'owner')
+
+    memberPromises.push(
+      prisma.organizationMember.create({
+        data: {
+          organizationId: org.id,
+          userId: user.id,
+          role: user.role,
+          invitedBy: user.role === 'admin' ? ownerUser?.id : undefined,
+          acceptedAt: randomPastDate(60),
+        },
+      })
+    )
+  }
+
+  await Promise.all(memberPromises)
 
   console.log('✓ Created organization memberships\n')
 
@@ -254,213 +390,211 @@ async function main() {
   // ============================================================================
   console.log('🏛️ Seeding departments...')
 
-  // Acme departments
-  const acmeEngineering = await prisma.department.create({
-    data: {
-      organizationId: acmeOrg.id,
-      name: 'Engineering',
-      description: 'Product development and infrastructure',
-    },
-  })
+  const departmentsByOrg: Record<string, any[]> = {}
 
-  const acmeFrontend = await prisma.department.create({
-    data: {
-      organizationId: acmeOrg.id,
-      name: 'Frontend',
-      description: 'Frontend development team',
-      parentId: acmeEngineering.id,
-    },
-  })
+  for (const org of organizations) {
+    const orgDepts = []
 
-  const acmeBackend = await prisma.department.create({
-    data: {
-      organizationId: acmeOrg.id,
-      name: 'Backend',
-      description: 'Backend development team',
-      parentId: acmeEngineering.id,
-    },
-  })
+    // All organizations get core departments
+    const engineering = await prisma.department.create({
+      data: {
+        organizationId: org.id,
+        name: 'Engineering',
+        description: 'Product development and infrastructure',
+      },
+    })
+    orgDepts.push({ dept: engineering, category: 'engineering' })
 
-  const acmeDesign = await prisma.department.create({
-    data: {
-      organizationId: acmeOrg.id,
-      name: 'Design',
-      description: 'Product design and UX',
-    },
-  })
+    // Larger orgs get sub-departments
+    if (org.employeeCount > 40) {
+      const frontend = await prisma.department.create({
+        data: {
+          organizationId: org.id,
+          name: 'Frontend',
+          description: 'Frontend development team',
+          parentId: engineering.id,
+        },
+      })
+      orgDepts.push({ dept: frontend, category: 'engineering' })
 
-  const acmeSales = await prisma.department.create({
-    data: {
-      organizationId: acmeOrg.id,
-      name: 'Sales',
-      description: 'Sales and business development',
-    },
-  })
+      const backend = await prisma.department.create({
+        data: {
+          organizationId: org.id,
+          name: 'Backend',
+          description: 'Backend development team',
+          parentId: engineering.id,
+        },
+      })
+      orgDepts.push({ dept: backend, category: 'engineering' })
+    }
 
-  // TechStartup departments
-  const techEngineering = await prisma.department.create({
-    data: {
-      organizationId: techStartup.id,
-      name: 'Engineering',
-      description: 'Full-stack development',
-    },
-  })
+    const design = await prisma.department.create({
+      data: {
+        organizationId: org.id,
+        name: 'Design',
+        description: 'Product design and UX',
+      },
+    })
+    orgDepts.push({ dept: design, category: 'design' })
 
-  console.log('✓ Created departments with hierarchy\n')
+    const sales = await prisma.department.create({
+      data: {
+        organizationId: org.id,
+        name: 'Sales',
+        description: 'Sales and business development',
+      },
+    })
+    orgDepts.push({ dept: sales, category: 'sales' })
+
+    // Medium and large orgs get more departments
+    if (org.employeeCount > 30) {
+      const marketing = await prisma.department.create({
+        data: {
+          organizationId: org.id,
+          name: 'Marketing',
+          description: 'Marketing and growth',
+        },
+      })
+      orgDepts.push({ dept: marketing, category: 'marketing' })
+
+      const hr = await prisma.department.create({
+        data: {
+          organizationId: org.id,
+          name: 'People & HR',
+          description: 'Human resources and talent',
+        },
+      })
+      orgDepts.push({ dept: hr, category: 'hr' })
+    }
+
+    // Large orgs get full suite
+    if (org.employeeCount > 60) {
+      const finance = await prisma.department.create({
+        data: {
+          organizationId: org.id,
+          name: 'Finance',
+          description: 'Finance and accounting',
+        },
+      })
+      orgDepts.push({ dept: finance, category: 'finance' })
+
+      const operations = await prisma.department.create({
+        data: {
+          organizationId: org.id,
+          name: 'Operations',
+          description: 'Operations and administration',
+        },
+      })
+      orgDepts.push({ dept: operations, category: 'operations' })
+
+      const support = await prisma.department.create({
+        data: {
+          organizationId: org.id,
+          name: 'Customer Support',
+          description: 'Customer success and support',
+        },
+      })
+      orgDepts.push({ dept: support, category: 'support' })
+    }
+
+    departmentsByOrg[org.id] = orgDepts
+  }
+
+  // Keep backward compatibility references (for existing seed code below)
+  const acmeEngineering = departmentsByOrg[acmeOrg.id].find(d => d.dept.name === 'Engineering')?.dept
+  const acmeDesign = departmentsByOrg[acmeOrg.id].find(d => d.dept.name === 'Design')?.dept
+  const acmeSales = departmentsByOrg[acmeOrg.id].find(d => d.dept.name === 'Sales')?.dept
+
+  const totalDepts = Object.values(departmentsByOrg).reduce((sum, depts) => sum + depts.length, 0)
+  console.log(`✓ Created ${totalDepts} departments across all organizations\n`)
 
   // ============================================================================
   // EMPLOYEES
   // ============================================================================
   console.log('👨‍💼 Seeding employees...')
 
-  // Acme employees (active)
-  const acmeEmployees = await Promise.all([
-    prisma.employee.create({
-      data: {
-        organizationId: acmeOrg.id,
-        name: 'Alice Johnson',
-        email: 'alice.johnson@acme.com',
-        title: 'VP of Engineering',
-        status: 'active',
-        departmentId: acmeEngineering.id,
-        hiredAt: randomPastDate(730),
-        externalId: 'google-123456',
-        externalProvider: 'google',
-        monthlySaasCost: toCents(450),
-        createdBy: users[0].id,
-      },
-    }),
-    prisma.employee.create({
-      data: {
-        organizationId: acmeOrg.id,
-        name: 'Bob Martinez',
-        email: 'bob.martinez@acme.com',
-        title: 'Senior Frontend Engineer',
-        status: 'active',
-        departmentId: acmeFrontend.id,
-        hiredAt: randomPastDate(365),
-        externalId: 'google-123457',
-        externalProvider: 'google',
-        monthlySaasCost: toCents(320),
-        createdBy: users[0].id,
-      },
-    }),
-    prisma.employee.create({
-      data: {
-        organizationId: acmeOrg.id,
-        name: 'Carol White',
-        email: 'carol.white@acme.com',
-        title: 'Backend Engineer',
-        status: 'active',
-        departmentId: acmeBackend.id,
-        hiredAt: randomPastDate(180),
-        externalId: 'google-123458',
-        externalProvider: 'google',
-        monthlySaasCost: toCents(280),
-        createdBy: users[0].id,
-      },
-    }),
-    prisma.employee.create({
-      data: {
-        organizationId: acmeOrg.id,
-        name: 'David Chen',
-        email: 'david.chen@acme.com',
-        title: 'Product Designer',
-        status: 'active',
-        departmentId: acmeDesign.id,
-        hiredAt: randomPastDate(270),
-        externalId: 'google-123459',
-        externalProvider: 'google',
-        monthlySaasCost: toCents(190),
-        createdBy: users[0].id,
-      },
-    }),
-    prisma.employee.create({
-      data: {
-        organizationId: acmeOrg.id,
-        name: 'Emily Davis',
-        email: 'emily.davis@acme.com',
-        title: 'Sales Manager',
-        status: 'active',
-        departmentId: acmeSales.id,
-        hiredAt: randomPastDate(450),
-        externalId: 'google-123460',
-        externalProvider: 'google',
-        monthlySaasCost: toCents(220),
-        createdBy: users[0].id,
-      },
-    }),
-  ])
+  const allEmployees: any[] = []
+  const allOffboarded: any[] = []
+  let externalIdCounter = 100000
 
-  // Acme employees (offboarded - for testing orphaned licenses)
-  const acmeOffboarded = await Promise.all([
-    prisma.employee.create({
-      data: {
-        organizationId: acmeOrg.id,
-        name: 'Frank Wilson',
-        email: 'frank.wilson@acme.com',
-        title: 'Former Engineer',
-        status: 'offboarded',
-        departmentId: acmeBackend.id,
-        hiredAt: randomPastDate(500),
-        offboardedAt: randomPastDate(7),
-        externalId: 'google-123461',
-        externalProvider: 'google',
-        createdBy: users[0].id,
-      },
-    }),
-    prisma.employee.create({
-      data: {
-        organizationId: acmeOrg.id,
-        name: 'Grace Lee',
-        email: 'grace.lee@acme.com',
-        title: 'Former Designer',
-        status: 'offboarded',
-        departmentId: acmeDesign.id,
-        hiredAt: randomPastDate(600),
-        offboardedAt: randomPastDate(15),
-        externalId: 'google-123462',
-        externalProvider: 'google',
-        createdBy: users[0].id,
-      },
-    }),
-  ])
+  for (const org of organizations) {
+    const domain = org.domain || 'example.com'
+    const orgDepts = departmentsByOrg[org.id]
+    const ownerUser = users.find(u => u.orgIndex === organizations.indexOf(org) && u.role === 'owner')
 
-  // TechStartup employees
-  const techEmployees = await Promise.all([
-    prisma.employee.create({
-      data: {
-        organizationId: techStartup.id,
-        name: 'Henry Kim',
-        email: 'henry.kim@techstartup.io',
-        title: 'CTO',
-        status: 'active',
-        departmentId: techEngineering.id,
-        hiredAt: randomPastDate(200),
-        externalId: 'google-234567',
-        externalProvider: 'google',
-        monthlySaasCost: toCents(380),
-        createdBy: users[2].id,
-      },
-    }),
-    prisma.employee.create({
-      data: {
-        organizationId: techStartup.id,
-        name: 'Iris Patel',
-        email: 'iris.patel@techstartup.io',
-        title: 'Full-Stack Engineer',
-        status: 'active',
-        departmentId: techEngineering.id,
-        hiredAt: randomPastDate(90),
-        externalId: 'google-234568',
-        externalProvider: 'google',
-        monthlySaasCost: toCents(250),
-        createdBy: users[2].id,
-      },
-    }),
-  ])
+    // Calculate how many employees per department
+    const activeCount = Math.floor(org.employeeCount * 0.95) // 95% active
+    const offboardedCount = org.employeeCount - activeCount // 5% offboarded
 
-  console.log(`✓ Created ${acmeEmployees.length + acmeOffboarded.length + techEmployees.length} employees (${acmeOffboarded.length} offboarded)\n`)
+    const employeesPerDept = Math.ceil(activeCount / orgDepts.length)
+
+    // Create active employees distributed across departments
+    for (const { dept, category } of orgDepts) {
+      const deptTitles = jobTitles[category as keyof typeof jobTitles] || jobTitles.operations
+      const employeesInDept = randomInt(
+        Math.max(1, employeesPerDept - 3),
+        employeesPerDept + 3
+      )
+
+      for (let i = 0; i < employeesInDept; i++) {
+        const name = generateRandomName()
+        const email = generateEmail(name, domain)
+        const title = randomItem(deptTitles)
+        const hiredDaysAgo = randomInt(30, 1095) // Hired between 1 month and 3 years ago
+
+        const employee = await prisma.employee.create({
+          data: {
+            organizationId: org.id,
+            name: name.fullName,
+            email,
+            title,
+            status: 'active',
+            departmentId: dept.id,
+            hiredAt: randomPastDate(hiredDaysAgo),
+            externalId: `google-${externalIdCounter++}`,
+            externalProvider: 'google',
+            monthlySaasCost: toCents(randomInt(150, 500)),
+            createdBy: ownerUser?.id,
+          },
+        })
+
+        allEmployees.push({ ...employee, orgId: org.id })
+      }
+    }
+
+    // Create offboarded employees (5% of total)
+    for (let i = 0; i < offboardedCount; i++) {
+      const name = generateRandomName()
+      const email = generateEmail(name, domain)
+      const dept = randomItem(orgDepts)
+      const deptTitles = jobTitles[dept.category as keyof typeof jobTitles] || jobTitles.operations
+      const title = randomItem(deptTitles)
+
+      const employee = await prisma.employee.create({
+        data: {
+          organizationId: org.id,
+          name: name.fullName,
+          email,
+          title: `Former ${title}`,
+          status: 'offboarded',
+          departmentId: dept.dept.id,
+          hiredAt: randomPastDate(randomInt(180, 1095)),
+          offboardedAt: randomPastDate(randomInt(1, 30)),
+          externalId: `google-${externalIdCounter++}`,
+          externalProvider: 'google',
+          createdBy: ownerUser?.id,
+        },
+      })
+
+      allOffboarded.push({ ...employee, orgId: org.id })
+    }
+  }
+
+  // Keep backward compatibility references for Acme (used in subscription/alert seeding below)
+  const acmeEmployees = allEmployees.filter(e => e.orgId === acmeOrg.id).slice(0, 5)
+  const acmeOffboarded = allOffboarded.filter(e => e.orgId === acmeOrg.id).slice(0, 2)
+
+  console.log(`✓ Created ${allEmployees.length} active employees and ${allOffboarded.length} offboarded employees across all organizations\n`)
 
   // ============================================================================
   // INTEGRATIONS
@@ -1091,17 +1225,24 @@ async function main() {
 
   console.log('✅ Database seeding completed successfully!\n')
   console.log('Summary:')
-  console.log(`  - 2 organizations`)
+  console.log(`  - ${organizations.length} organizations`)
   console.log(`  - ${users.length} platform users`)
-  console.log(`  - 6 departments (with hierarchy)`)
-  console.log(`  - ${acmeEmployees.length + acmeOffboarded.length + techEmployees.length} employees (${acmeOffboarded.length} offboarded)`)
-  console.log(`  - ${createdAcmeSubscriptions.length} subscriptions`)
+  console.log(`  - ${totalDepts} departments (with hierarchy)`)
+  console.log(`  - ${allEmployees.length} active employees`)
+  console.log(`  - ${allOffboarded.length} offboarded employees`)
+  console.log(`  - ${createdAcmeSubscriptions.length} subscriptions (for primary org)`)
   console.log(`  - ${assignments.length} license assignments`)
   console.log(`  - ${loginEvents.length} login events`)
   console.log(`  - ${alerts.length} alerts (various types and statuses)`)
   console.log(`  - ${costHistoryEntries.length} cost history entries`)
   console.log(`  - ${syncLogs.length} sync logs`)
   console.log(`  - ${catalogTools.length} SaaS catalog entries`)
+  console.log('\nOrganization breakdown:')
+  organizations.forEach(org => {
+    const empCount = allEmployees.filter(e => e.orgId === org.id).length
+    const offCount = allOffboarded.filter(e => e.orgId === org.id).length
+    console.log(`  - ${org.name}: ${empCount} active, ${offCount} offboarded`)
+  })
 }
 
 main()
