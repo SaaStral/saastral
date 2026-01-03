@@ -128,9 +128,14 @@ function generateRandomName(): { firstName: string; lastName: string; fullName: 
   }
 }
 
-function generateEmail(name: { firstName: string; lastName: string }, domain: string): string {
+function generateEmail(name: { firstName: string; lastName: string }, domain: string, uniqueId?: number): string {
   const first = name.firstName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   const last = name.lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+  if (uniqueId !== undefined) {
+    return `${first}.${last}.${uniqueId}@${domain}`
+  }
+
   return `${first}.${last}@${domain}`
 }
 
@@ -516,6 +521,7 @@ async function main() {
   const allEmployees: any[] = []
   const allOffboarded: any[] = []
   let externalIdCounter = 100000
+  let emailCounter = 1
 
   for (const org of organizations) {
     const domain = org.domain || 'example.com'
@@ -538,7 +544,7 @@ async function main() {
 
       for (let i = 0; i < employeesInDept; i++) {
         const name = generateRandomName()
-        const email = generateEmail(name, domain)
+        const email = generateEmail(name, domain, emailCounter++)
         const title = randomItem(deptTitles)
         const hiredDaysAgo = randomInt(30, 1095) // Hired between 1 month and 3 years ago
 
@@ -565,7 +571,7 @@ async function main() {
     // Create offboarded employees (5% of total)
     for (let i = 0; i < offboardedCount; i++) {
       const name = generateRandomName()
-      const email = generateEmail(name, domain)
+      const email = generateEmail(name, domain, emailCounter++)
       const dept = randomItem(orgDepts)
       const deptTitles = jobTitles[dept.category as keyof typeof jobTitles] || jobTitles.operations
       const title = randomItem(deptTitles)
