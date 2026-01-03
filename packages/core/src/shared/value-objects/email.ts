@@ -25,7 +25,11 @@ export class Email {
   }
 
   getDomain(): string {
-    return this.value.split('@')[1]
+    const domain = this.value.split('@')[1]
+    if (!domain) {
+      throw new Error('Invalid email: missing domain')
+    }
+    return domain
   }
 
   equals(other: Email): boolean {

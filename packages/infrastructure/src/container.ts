@@ -1,5 +1,11 @@
 import { PrismaClient } from '@prisma/client'
 import { PinoLogger } from './logger/pino.adapter'
+import { PrismaEmployeeRepository } from './database/repositories/employee.repository'
+import { PrismaUserRepository } from './database/repositories/user.repository'
+import { PrismaOrganizationRepository } from './database/repositories/organization.repository'
+import { PrismaOrganizationMemberRepository } from './database/repositories/organization-member.repository'
+import { EmployeeService, UserService, OrganizationService } from '@saastral/core'
+import { prisma } from './database/client'
 
 /**
  * Dependency Injection Container
@@ -10,7 +16,7 @@ export class Container {
   private _prisma: PrismaClient
 
   constructor(prismaClient?: PrismaClient) {
-    this._prisma = prismaClient ?? new PrismaClient()
+    this._prisma = prismaClient ?? prisma
   }
 
   get prisma(): PrismaClient {
@@ -21,10 +27,35 @@ export class Container {
     return this.singleton('logger', () => new PinoLogger())
   }
 
-  // Repositories will be added as they are implemented
-  // get employeeRepo(): PrismaEmployeeRepository { ... }
-  // get subscriptionRepo(): PrismaSubscriptionRepository { ... }
-  // etc.
+  // Repositories
+  get employeeRepo(): PrismaEmployeeRepository {
+    return this.singleton('employeeRepo', () => new PrismaEmployeeRepository(this.prisma))
+  }
+
+  get userRepo(): PrismaUserRepository {
+    return this.singleton('userRepo', () => new PrismaUserRepository(this.prisma))
+  }
+
+  get organizationRepo(): PrismaOrganizationRepository {
+    return this.singleton('organizationRepo', () => new PrismaOrganizationRepository(this.prisma))
+  }
+
+  get organizationMemberRepo(): PrismaOrganizationMemberRepository {
+    return this.singleton('organizationMemberRepo', () => new PrismaOrganizationMemberRepository(this.prisma))
+  }
+
+  // Services
+  get employeeService(): EmployeeService {
+    return this.singleton('employeeService', () => new EmployeeService(this.employeeRepo, this.logger))
+  }
+
+  get userService(): UserService {
+    return this.singleton('userService', () => new UserService(this.userRepo, this.logger))
+  }
+
+  get organizationService(): OrganizationService {
+    return this.singleton('organizationService', () => new OrganizationService(this.organizationRepo, this.organizationMemberRepo, this.logger))
+  }
 
   private singleton<T>(key: string, factory: () => T): T {
     if (!this.instances.has(key)) {

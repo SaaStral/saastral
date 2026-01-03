@@ -1,7 +1,7 @@
 // Database
+export { prisma } from './database/client'
+export * from './database/repositories/employee.repository'
 // TODO: Uncomment as these are implemented
-// export * from './database/prisma/client'
-// export * from './database/repositories/employee.repository'
 // export * from './database/repositories/subscription.repository'
 // export * from './database/repositories/alert.repository'
 // export * from './database/repositories/integration.repository'

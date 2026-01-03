@@ -1,33 +1,80 @@
+'use client'
+
 import { useState } from 'react'
 import { Search, Download, MoreHorizontal, AlertCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Tooltip } from '@/components/ui'
-import { formatCurrency, type Employee } from '@/lib/mockData'
+import { trpc } from '@/lib/trpc/client'
 
-interface EmployeesTableProps {
-  employees: Employee[]
+type EmployeeStatus = 'active' | 'suspended' | 'offboarded'
+
+interface EmployeeListItem {
+  id: string
+  name: string
+  email: string
+  department: string
+  status: EmployeeStatus
+  licenseCount: number
+  licenses: Array<{
+    name: string
+    icon: string
+    color: string
+  }>
+  monthlyCost: number
+  lastActivityTime: string
+  activitySource: string
+  avatar: {
+    initials: string
+    color: string
+  }
+  hasWarning: boolean
 }
 
-export function EmployeesTable({ employees }: EmployeesTableProps) {
+interface EmployeesTableProps {
+  initialData?: {
+    employees: EmployeeListItem[]
+    pagination: {
+      page: number
+      pageSize: number
+      totalCount: number
+      totalPages: number
+      hasMore: boolean
+    }
+  }
+  organizationId: string
+}
+
+export function EmployeesTable({ initialData, organizationId }: EmployeesTableProps) {
   const t = useTranslations('employees')
   const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<
-    'all' | 'active' | 'offboarding'
-  >('all')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'offboarding' | 'offboarded'>('all')
+  const [page, setPage] = useState(1)
 
-  // Filter employees based on search and status
-  const filteredEmployees = employees.filter((employee) => {
-    const matchesSearch =
-      employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      employee.email.toLowerCase().includes(searchQuery.toLowerCase())
+  // Use tRPC query with initial data from server
+  const { data, isLoading, isFetching } = trpc.employee.list.useQuery(
+    {
+      organizationId,
+      search: searchQuery || undefined,
+      status: statusFilter,
+      page,
+      pageSize: 20,
+    },
+    {
+      initialData,
+      // Keep previous data while fetching new data
+      placeholderData: (previousData) => previousData,
+    }
+  )
 
-    const matchesStatus =
-      statusFilter === 'all' ||
-      (statusFilter === 'active' && employee.status === 'active') ||
-      (statusFilter === 'offboarding' && employee.status === 'offboarding')
+  const employees = data?.employees ?? []
+  const pagination = data?.pagination
 
-    return matchesSearch && matchesStatus
-  })
+  const formatCurrency = (cents: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(cents / 100)
+  }
 
   return (
     <div className="bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-2xl overflow-hidden">
@@ -44,15 +91,24 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
               type="text"
               placeholder={t('list.search')}
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setPage(1) // Reset to page 1 on search
+              }}
               className="flex-1 bg-transparent border-none outline-none text-sm text-[#f0fdf4] placeholder:text-[#6ee7b7]"
             />
+            {isFetching && (
+              <div className="w-4 h-4 border-2 border-[#6ee7b7] border-t-transparent rounded-full animate-spin" />
+            )}
           </div>
 
           {/* Status Filter */}
           <div className="flex bg-[#022c22] rounded-lg p-0.5">
             <button
-              onClick={() => setStatusFilter('all')}
+              onClick={() => {
+                setStatusFilter('all')
+                setPage(1)
+              }}
               className={`px-3 py-1.5 text-sm font-medium rounded transition-all ${
                 statusFilter === 'all'
                   ? 'bg-[#059669] text-[#f0fdf4]'
@@ -62,7 +118,10 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
               {t('list.filters.all')}
             </button>
             <button
-              onClick={() => setStatusFilter('active')}
+              onClick={() => {
+                setStatusFilter('active')
+                setPage(1)
+              }}
               className={`px-3 py-1.5 text-sm font-medium rounded transition-all ${
                 statusFilter === 'active'
                   ? 'bg-[#059669] text-[#f0fdf4]'
@@ -72,7 +131,10 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
               {t('list.filters.active')}
             </button>
             <button
-              onClick={() => setStatusFilter('offboarding')}
+              onClick={() => {
+                setStatusFilter('offboarding')
+                setPage(1)
+              }}
               className={`px-3 py-1.5 text-sm font-medium rounded transition-all ${
                 statusFilter === 'offboarding'
                   ? 'bg-[#059669] text-[#f0fdf4]'
@@ -120,15 +182,32 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
             </tr>
           </thead>
           <tbody>
-            {filteredEmployees.map((employee, index) => (
-              <tr
-                key={employee.id}
-                className={`hover:bg-[rgba(5,150,105,0.08)] transition-colors ${
-                  index !== filteredEmployees.length - 1
-                    ? 'border-b border-[rgba(16,185,129,0.15)]'
-                    : ''
-                }`}
-              >
+            {isLoading ? (
+              // Loading skeleton
+              Array.from({ length: 10 }).map((_, i) => (
+                <tr key={i} className="border-b border-[rgba(16,185,129,0.15)]">
+                  <td className="px-5 py-4" colSpan={7}>
+                    <div className="h-12 bg-[#064e3b] rounded animate-pulse" />
+                  </td>
+                </tr>
+              ))
+            ) : employees.length === 0 ? (
+              // Empty state
+              <tr>
+                <td colSpan={7} className="px-5 py-12 text-center">
+                  <p className="text-[#6ee7b7]">{t('table.noResults')}</p>
+                </td>
+              </tr>
+            ) : (
+              employees.map((employee, index) => (
+                <tr
+                  key={employee.id}
+                  className={`hover:bg-[rgba(5,150,105,0.08)] transition-colors ${
+                    index !== employees.length - 1
+                      ? 'border-b border-[rgba(16,185,129,0.15)]'
+                      : ''
+                  }`}
+                >
                 {/* Employee */}
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-3">
@@ -172,7 +251,7 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                     className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
                       employee.status === 'active'
                         ? 'bg-[rgba(34,197,94,0.15)] text-[#22c55e]'
-                        : employee.status === 'offboarding'
+                        : employee.status === 'suspended'
                           ? 'bg-[rgba(245,158,11,0.15)] text-[#f59e0b]'
                           : 'bg-[rgba(107,114,128,0.15)] text-[#9ca3af]'
                     }`}
@@ -181,14 +260,14 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                       className={`w-1.5 h-1.5 rounded-full ${
                         employee.status === 'active'
                           ? 'bg-[#22c55e]'
-                          : employee.status === 'offboarding'
+                          : employee.status === 'suspended'
                             ? 'bg-[#f59e0b]'
                             : 'bg-[#9ca3af]'
                       }`}
                     />
                     {employee.status === 'active'
                       ? t('status.active')
-                      : employee.status === 'offboarding'
+                      : employee.status === 'suspended'
                         ? t('status.offboarding')
                         : t('status.offboarded')}
                   </span>
@@ -259,39 +338,63 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                   </div>
                 </td>
               </tr>
-            ))}
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
       {/* Table Footer */}
-      <div className="flex items-center justify-between px-6 py-4 border-t border-[rgba(16,185,129,0.15)]">
-        <div className="text-sm text-[#6ee7b7]">
-          {t('table.showing')} {filteredEmployees.length} {t('table.of')}{' '}
-          {employees.length} {t('table.employeesCount')}
+      {pagination && (
+        <div className="flex items-center justify-between px-6 py-4 border-t border-[rgba(16,185,129,0.15)]">
+          <div className="text-sm text-[#6ee7b7]">
+            {t('table.showing')} {employees.length} {t('table.of')}{' '}
+            {pagination.totalCount} {t('table.employeesCount')}
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1}
+              className="w-8 h-8 flex items-center justify-center border border-[rgba(16,185,129,0.15)] rounded-lg text-[#a7f3d0] hover:bg-[#055540] hover:border-[rgba(16,185,129,0.3)] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              ←
+            </button>
+
+            {/* Page numbers */}
+            {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+              const pageNum = i + 1
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setPage(pageNum)}
+                  className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium transition-all ${
+                    page === pageNum
+                      ? 'bg-[#059669] border border-[#059669] text-[#f0fdf4]'
+                      : 'border border-[rgba(16,185,129,0.15)] text-[#a7f3d0] hover:bg-[#055540] hover:border-[rgba(16,185,129,0.3)]'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              )
+            })}
+
+            <button
+              onClick={() => setPage(page + 1)}
+              disabled={!pagination.hasMore}
+              className="w-8 h-8 flex items-center justify-center border border-[rgba(16,185,129,0.15)] rounded-lg text-[#a7f3d0] hover:bg-[#055540] hover:border-[rgba(16,185,129,0.3)] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              →
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="w-8 h-8 flex items-center justify-center border border-[rgba(16,185,129,0.15)] rounded-lg text-[#a7f3d0] hover:bg-[#055540] hover:border-[rgba(16,185,129,0.3)] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
-            ←
-          </button>
-          <button className="w-8 h-8 flex items-center justify-center bg-[#059669] border border-[#059669] rounded-lg text-[#f0fdf4]">
-            1
-          </button>
-          <button className="w-8 h-8 flex items-center justify-center border border-[rgba(16,185,129,0.15)] rounded-lg text-[#a7f3d0] hover:bg-[#055540] hover:border-[rgba(16,185,129,0.3)] transition-all">
-            2
-          </button>
-          <button className="w-8 h-8 flex items-center justify-center border border-[rgba(16,185,129,0.15)] rounded-lg text-[#a7f3d0] hover:bg-[#055540] hover:border-[rgba(16,185,129,0.3)] transition-all">
-            →
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   )
 }
 
 // Helper functions
-function getDepartmentStyle(department: Employee['department']) {
-  const styles = {
+function getDepartmentStyle(department: string) {
+  const styles: Record<string, string> = {
     engineering: 'bg-[rgba(59,130,246,0.15)] text-[#60a5fa]',
     product: 'bg-[rgba(139,92,246,0.15)] text-[#c084fc]',
     marketing: 'bg-[rgba(236,72,153,0.15)] text-[#f472b6]',
@@ -299,11 +402,11 @@ function getDepartmentStyle(department: Employee['department']) {
     design: 'bg-[rgba(20,184,166,0.15)] text-[#2dd4bf]',
     admin: 'bg-[rgba(107,114,128,0.15)] text-[#9ca3af]',
   }
-  return styles[department]
+  return styles[department] || styles.admin
 }
 
-function getDepartmentLabel(department: Employee['department']) {
-  const labels = {
+function getDepartmentLabel(department: string) {
+  const labels: Record<string, string> = {
     engineering: 'Engineering',
     product: 'Product',
     marketing: 'Marketing',
@@ -311,5 +414,5 @@ function getDepartmentLabel(department: Employee['department']) {
     design: 'Design',
     admin: 'Admin',
   }
-  return labels[department]
+  return labels[department] || 'Admin'
 }

@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { usePathname as useNextPathname, useRouter as useNextRouter } from 'next/navigation'
-import { Search, Bell, HelpCircle, Globe, Check, LogOut, User } from 'lucide-react'
+import { Search, Bell, HelpCircle, Globe, Check, LogOut } from 'lucide-react'
 import { locales, localeNames, localeFlags, type Locale } from '@/i18n/config'
 import { authClient } from '@/lib/auth-client'
 

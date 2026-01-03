@@ -113,6 +113,7 @@
     "showing": "Mostrando",
     "of": "de",
     "employeesCount": "funcionários",
-    "daysWarning": "30+ dias"
+    "daysWarning": "30+ dias",
+    "noResults": "Nenhum funcionário encontrado"
   }
 }
