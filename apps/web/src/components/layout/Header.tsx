@@ -1,21 +1,24 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { usePathname as useNextPathname, useRouter as useNextRouter } from 'next/navigation'
-import { Search, Bell, HelpCircle, Globe, Check } from 'lucide-react'
+import { Search, Bell, HelpCircle, Globe, Check, LogOut, User } from 'lucide-react'
 import { locales, localeNames, localeFlags, type Locale } from '@/i18n/config'
+import { authClient } from '@/lib/auth-client'
 
 export function Header() {
   const locale = useLocale() as Locale
   const router = useNextRouter()
   const pathname = useNextPathname()
   const [isPending, startTransition] = useTransition()
-  const [isOpen, setIsOpen] = useState(false)
+  const [isLocaleOpen, setIsLocaleOpen] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const t = useTranslations('common.header')
 
   const handleLocaleChange = (newLocale: Locale) => {
     if (newLocale === locale) {
-      setIsOpen(false)
+      setIsLocaleOpen(false)
       return
     }
 
@@ -30,7 +33,17 @@ export function Header() {
       const newPath = `/${newLocale}${pathWithoutLocale ? `/${pathWithoutLocale}` : ''}`
 
       router.replace(newPath)
-      setIsOpen(false)
+      setIsLocaleOpen(false)
+    })
+  }
+
+  const handleLogout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push(`/${locale}/auth`)
+        },
+      },
     })
   }
 
@@ -57,7 +70,7 @@ export function Header() {
         {/* Locale Switcher */}
         <div className="relative">
           <button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => setIsLocaleOpen(!isLocaleOpen)}
             className="flex items-center gap-2 px-3 py-2 text-sm text-[#a7f3d0] hover:bg-[rgba(5,150,105,0.08)] rounded-lg transition-colors disabled:opacity-50"
             disabled={isPending}
           >
@@ -66,12 +79,12 @@ export function Header() {
             <span className="hidden md:inline">{localeNames[locale]}</span>
           </button>
 
-          {isOpen && (
+          {isLocaleOpen && (
             <>
               {/* Backdrop */}
               <div
                 className="fixed inset-0 z-40"
-                onClick={() => setIsOpen(false)}
+                onClick={() => setIsLocaleOpen(false)}
               />
 
               {/* Dropdown */}
@@ -103,10 +116,36 @@ export function Header() {
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#ef4444] rounded-full border-2 border-[#022c22]" />
         </button>
 
-        {/* User Avatar */}
-        <button className="w-9 h-9 rounded-full bg-gradient-to-br from-[#059669] to-[#0d9488] flex items-center justify-center font-semibold text-sm cursor-pointer transition-transform duration-[150ms] hover:scale-105">
-          CF
-        </button>
+        {/* User Menu */}
+        <div className="relative">
+          <button
+            onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+            className="w-9 h-9 rounded-full bg-gradient-to-br from-[#059669] to-[#0d9488] flex items-center justify-center font-semibold text-sm cursor-pointer transition-transform duration-[150ms] hover:scale-105"
+          >
+            CF
+          </button>
+
+          {isUserMenuOpen && (
+            <>
+              {/* Backdrop */}
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setIsUserMenuOpen(false)}
+              />
+
+              {/* Dropdown */}
+              <div className="absolute right-0 mt-2 w-48 bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-lg shadow-lg z-50">
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 w-full px-4 py-2 text-sm text-[#f0fdf4] hover:bg-[rgba(5,150,105,0.08)] transition-colors rounded-lg"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>{t('logout')}</span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </header>
   )

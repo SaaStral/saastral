@@ -3,6 +3,9 @@
     "name": "SaaStral",
     "tagline": "Smart SaaS Management"
   },
+  "header": {
+    "logout": "Logout"
+  },
   "actions": {
     "save": "Save",
     "cancel": "Cancel",

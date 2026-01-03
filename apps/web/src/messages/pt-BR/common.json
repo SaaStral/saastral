@@ -3,6 +3,9 @@
     "name": "SaaStral",
     "tagline": "Gestão inteligente de SaaS"
   },
+  "header": {
+    "logout": "Sair"
+  },
   "actions": {
     "save": "Salvar",
     "cancel": "Cancelar",
