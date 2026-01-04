@@ -11,17 +11,18 @@ export * from './employees'
 // TODO: Uncomment when subscription module is implemented
 // export * from './subscriptions'
 
+// Departments
+export * from './departments'
+
 // Alerts
-// TODO: Uncomment when alerts module is implemented
-// export * from './alerts'
+export * from './alerts'
 
 // Analytics
 // TODO: Uncomment when analytics module is implemented
 // export * from './analytics'
 
 // Integrations
-// TODO: Uncomment when integrations module is implemented
-// export * from './integrations'
+export * from './integrations'
 
 // Shared
 export * from './shared'

@@ -1,8 +1,21 @@
-// TODO: Implement integration module
-// export * from './integration.entity'
+// Entities
+export * from './integration.entity'
+
+// Value Objects
+export * from './value-objects/service-account-credentials'
+
+// Types
+export * from './integration.types'
+
+// Errors
+export * from './integration.errors'
+
+// Repositories (Ports)
+export * from './integration.repository'
+
+// Provider Interfaces (Ports)
+export * from './directory-provider.interface'
+
+// Services (to be implemented in Phase 3)
 // export * from './integration.service'
-// export * from './integration.repository'
-// export * from './integration.types'
-// export * from './directory-provider'
-// export * from './identity-provider'
-// export * from './login-event.entity'
+// export * from './directory-sync.service'

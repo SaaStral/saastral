@@ -1,6 +1,8 @@
-// TODO: Implement alert module
-// export * from './alert.entity'
+// Entities
+export * from './alert.entity'
+
+// Repositories (Ports)
+export * from './alert.repository'
+
+// Services (to be implemented in Phase 3)
 // export * from './alert.service'
-// export * from './alert.repository'
-// export * from './alert.types'
-// export * from './alert.errors'
