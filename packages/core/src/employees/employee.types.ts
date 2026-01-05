@@ -37,6 +37,34 @@ export interface EmployeeProps {
 // Service Input/Output DTOs
 // ============================================================================
 
+export interface CreateEmployeeInput {
+  readonly organizationId: string
+  readonly name: string
+  readonly email: Email
+  readonly title?: string
+  readonly phone?: string
+  readonly avatarUrl?: string
+  readonly status?: EmployeeStatus
+  readonly departmentId?: string
+  readonly managerId?: string
+  readonly hiredAt?: Date
+  readonly externalId?: string
+  readonly externalProvider?: 'google' | 'microsoft' | 'okta' | 'keycloak'
+  readonly metadata?: Record<string, unknown>
+  readonly createdBy?: string
+}
+
+export interface UpdateEmployeeInput {
+  readonly name?: string
+  readonly email?: Email
+  readonly title?: string
+  readonly phone?: string
+  readonly avatarUrl?: string
+  readonly departmentId?: string
+  readonly managerId?: string
+  readonly metadata?: Record<string, unknown>
+}
+
 export interface ListEmployeesInput {
   readonly organizationId: string
   readonly search?: string

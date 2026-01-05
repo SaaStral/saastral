@@ -1,8 +1,11 @@
 // Entities
 export * from './alert.entity'
 
+// Types
+export * from './alert.types'
+
 // Repositories (Ports)
 export * from './alert.repository'
 
-// Services (to be implemented in Phase 3)
-// export * from './alert.service'
+// Services
+export * from './alert.service'

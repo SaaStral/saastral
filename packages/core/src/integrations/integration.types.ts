@@ -37,6 +37,7 @@ export interface CreateIntegrationInput {
     syncSchedule?: string // Cron expression for sync schedule
     [key: string]: unknown // Allow provider-specific config
   }
+  createdBy?: string
 }
 
 /**
@@ -54,18 +55,24 @@ export interface UpdateIntegrationInput {
 }
 
 /**
+ * Sync statistics
+ */
+export interface SyncStats {
+  created: number
+  updated: number
+  skipped: number
+  errors: number
+}
+
+/**
  * Result of a sync operation
  */
 export interface SyncResult {
   success: boolean
-  recordsProcessed: number
-  recordsCreated: number
-  recordsUpdated: number
-  recordsSkipped: number
-  errors: SyncError[]
   startedAt: Date
   completedAt: Date
-  durationMs: number
+  stats: SyncStats
+  errors: string[] // Array of error messages
 }
 
 /**

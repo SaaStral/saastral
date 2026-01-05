@@ -16,6 +16,6 @@ export * from './integration.repository'
 // Provider Interfaces (Ports)
 export * from './directory-provider.interface'
 
-// Services (to be implemented in Phase 3)
-// export * from './integration.service'
-// export * from './directory-sync.service'
+// Services
+export * from './integration.service'
+export * from './directory-sync.service'

@@ -237,6 +237,37 @@ export class Employee {
     this.props.updatedAt = new Date()
   }
 
+  /**
+   * Update name
+   * Used by directory sync to update employee name from external provider
+   */
+  updateName(name: string): void {
+    this.props.name = name
+    this.props.updatedAt = new Date()
+  }
+
+  /**
+   * Update email
+   * Used by directory sync to update employee email from external provider
+   */
+  updateEmail(email: Email): void {
+    this.props.email = email
+    this.props.updatedAt = new Date()
+  }
+
+  /**
+   * Update external ID
+   * Used by directory sync to link employee to external provider
+   */
+  updateExternalId(
+    externalId: string,
+    provider: 'google' | 'microsoft' | 'okta' | 'keycloak',
+  ): void {
+    this.props.externalId = externalId
+    this.props.externalProvider = provider
+    this.props.updatedAt = new Date()
+  }
+
   // ============================================================================
   // Serialization
   // ============================================================================

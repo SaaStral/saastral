@@ -1,3 +1,4 @@
+import { Employee } from './employee.entity'
 import { EmployeeRepository } from './employee.repository'
 import { LoggerInterface } from '../shared/interfaces/logger'
 import {
@@ -9,6 +10,8 @@ import {
   OffboardingAlert,
   GetDepartmentBreakdownInput,
   DepartmentBreakdown,
+  CreateEmployeeInput,
+  UpdateEmployeeInput,
 } from './employee.types'
 
 /**
@@ -132,11 +135,136 @@ export class EmployeeService {
   // Commands
   // ============================================================================
 
-  // TODO: Add command methods like:
-  // - createEmployee
-  // - updateEmployee
-  // - offboardEmployee
-  // - suspendEmployee
-  // - reactivateEmployee
-  // These will be implemented as needed
+  /**
+   * Create a new employee
+   */
+  async createEmployee(input: CreateEmployeeInput): Promise<Employee> {
+    this.logger.info('[EmployeeService.createEmployee] Creating employee', {
+      organizationId: input.organizationId,
+      email: input.email.toString(),
+    })
+
+    const employee = Employee.create(input)
+    return await this.employeeRepo.save(employee)
+  }
+
+  /**
+   * Update employee information
+   */
+  async updateEmployee(
+    id: string,
+    organizationId: string,
+    input: UpdateEmployeeInput
+  ): Promise<Employee> {
+    this.logger.info('[EmployeeService.updateEmployee] Updating employee', {
+      id,
+      organizationId,
+    })
+
+    const employee = await this.employeeRepo.findById(id, organizationId)
+
+    if (!employee) {
+      throw new Error(`Employee ${id} not found`)
+    }
+
+    // Update profile fields (name, title, phone, avatarUrl)
+    const profileUpdates: {
+      name?: string
+      title?: string
+      phone?: string
+      avatarUrl?: string
+    } = {}
+
+    if (input.name !== undefined) {
+      profileUpdates.name = input.name
+    }
+    if (input.title !== undefined) {
+      profileUpdates.title = input.title
+    }
+    if (input.phone !== undefined) {
+      profileUpdates.phone = input.phone
+    }
+    if (input.avatarUrl !== undefined) {
+      profileUpdates.avatarUrl = input.avatarUrl
+    }
+
+    if (Object.keys(profileUpdates).length > 0) {
+      employee.updateProfile(profileUpdates)
+    }
+
+    // Update department
+    if (input.departmentId !== undefined) {
+      employee.updateDepartment(input.departmentId)
+    }
+
+    // Update manager
+    if (input.managerId !== undefined) {
+      employee.updateManager(input.managerId)
+    }
+
+    // Note: Email updates are not supported in the current entity implementation
+    // They would require additional business logic (verification, uniqueness check, etc.)
+
+    return await this.employeeRepo.save(employee)
+  }
+
+  /**
+   * Offboard an employee
+   */
+  async offboardEmployee(id: string, organizationId: string): Promise<Employee> {
+    this.logger.info('[EmployeeService.offboardEmployee] Offboarding employee', {
+      id,
+      organizationId,
+    })
+
+    const employee = await this.employeeRepo.findById(id, organizationId)
+
+    if (!employee) {
+      throw new Error(`Employee ${id} not found`)
+    }
+
+    employee.offboard()
+
+    return await this.employeeRepo.save(employee)
+  }
+
+  /**
+   * Suspend an employee
+   */
+  async suspendEmployee(id: string, organizationId: string): Promise<Employee> {
+    this.logger.info('[EmployeeService.suspendEmployee] Suspending employee', {
+      id,
+      organizationId,
+    })
+
+    const employee = await this.employeeRepo.findById(id, organizationId)
+
+    if (!employee) {
+      throw new Error(`Employee ${id} not found`)
+    }
+
+    employee.suspend()
+
+    return await this.employeeRepo.save(employee)
+  }
+
+  /**
+   * Reactivate an employee
+   */
+  async reactivateEmployee(id: string, organizationId: string): Promise<Employee> {
+    this.logger.info('[EmployeeService.reactivateEmployee] Reactivating employee', {
+      id,
+      organizationId,
+    })
+
+    const employee = await this.employeeRepo.findById(id, organizationId)
+
+    if (!employee) {
+      throw new Error(`Employee ${id} not found`)
+    }
+
+    employee.reactivate()
+
+    return await this.employeeRepo.save(employee)
+  }
 }
