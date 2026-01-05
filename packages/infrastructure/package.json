@@ -28,6 +28,7 @@
     "@saastral/core": "workspace:*",
     "@trpc/server": "11.8.1",
     "dotenv": "^16.3.1",
+    "googleapis": "^169.0.0",
     "graphile-worker": "^0.16.4",
     "pg": "^8.13.1",
     "pino": "^8.17.2",
