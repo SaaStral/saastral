@@ -40,6 +40,20 @@
     "description": "Connect your tools to sync data automatically",
     "configured": "{count} configured",
     "notConfigured": "Not configured",
+    "oauthModal": {
+      "title": "Configure Google OAuth Credentials",
+      "description": "Enter your Google Cloud OAuth credentials to enable Google Workspace integration.",
+      "clientId": "Client ID",
+      "clientIdPlaceholder": "123456789-abc.apps.googleusercontent.com",
+      "clientSecret": "Client Secret",
+      "clientSecretPlaceholder": "GOCSPX-...",
+      "saveAndConnect": "Save & Connect",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "errorRequired": "Please enter both Client ID and Client Secret",
+      "errorSave": "Failed to save OAuth credentials. Please try again.",
+      "successSave": "Google OAuth credentials saved successfully!"
+    },
     "googleWorkspace": {
       "name": "Google Workspace",
       "description": "Sync employee directory and detect offboarding",

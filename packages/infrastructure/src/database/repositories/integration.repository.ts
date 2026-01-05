@@ -171,7 +171,7 @@ export class PrismaIntegrationRepository implements IntegrationRepository {
 
   /**
    * Convert Prisma record to domain entity
-   * SECURITY: Decrypts credentials
+   * SECURITY: Decrypts credentials and OAuth client credentials
    */
   private async toDomain(record: any): Promise<Integration> {
     // Decrypt credentials
@@ -188,6 +188,17 @@ export class PrismaIntegrationRepository implements IntegrationRepository {
     // Parse config
     const config = record.config as Record<string, unknown>
     const providerConfig = record.providerConfig as Record<string, unknown>
+
+    // Decrypt OAuth client credentials if present
+    if (record.oauthClientId && record.oauthClientSecret) {
+      const decryptedOAuthClientSecret = await this.encryptionService.decrypt(
+        record.oauthClientSecret,
+      )
+
+      // Add OAuth client credentials to config
+      config.oauthClientId = record.oauthClientId
+      config.oauthClientSecret = decryptedOAuthClientSecret
+    }
 
     // Merge provider config into config
     const mergedConfig = {
@@ -217,7 +228,7 @@ export class PrismaIntegrationRepository implements IntegrationRepository {
 
   /**
    * Convert domain entity to Prisma record
-   * SECURITY: Encrypts credentials
+   * SECURITY: Encrypts credentials and OAuth client credentials
    */
   private async toPersistence(integration: Integration): Promise<any> {
     const props = integration.toObject()
@@ -230,6 +241,20 @@ export class PrismaIntegrationRepository implements IntegrationRepository {
     // Extract provider-specific config
     const config = props.config || {}
     const providerConfig: Record<string, unknown> = {}
+
+    // Extract and encrypt OAuth client credentials if present
+    let oauthClientId: string | null = null
+    let oauthClientSecret: string | null = null
+
+    if (config.oauthClientId && config.oauthClientSecret) {
+      oauthClientId = config.oauthClientId as string
+      oauthClientSecret = await this.encryptionService.encrypt(
+        config.oauthClientSecret as string,
+      )
+      // Remove from config to avoid duplication
+      delete config.oauthClientId
+      delete config.oauthClientSecret
+    }
 
     // Extract adminEmail, domain, syncSchedule to providerConfig
     if (config.adminEmail) {
@@ -270,6 +295,8 @@ export class PrismaIntegrationRepository implements IntegrationRepository {
       status: props.status,
       errorMessage: props.lastSyncError || null,
       encryptedCredentials,
+      oauthClientId,
+      oauthClientSecret,
       config,
       providerConfig,
       lastSyncAt: props.lastSyncAt || null,

@@ -540,6 +540,10 @@ model Integration {
   // Credentials (encrypted)
   encryptedCredentials String @map("encrypted_credentials")
 
+  // OAuth Client Credentials (encrypted, for multi-tenant OAuth apps)
+  oauthClientId     String? @map("oauth_client_id")
+  oauthClientSecret String? @map("oauth_client_secret")
+
   // Configuration
   config         Json @default("{\"syncEnabled\":true,\"syncIntervalMinutes\":60}")
   providerConfig Json @default("{}") @map("provider_config")

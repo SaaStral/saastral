@@ -40,6 +40,20 @@
     "description": "Conecte suas ferramentas para sincronizar dados automaticamente",
     "configured": "{count} configuradas",
     "notConfigured": "Não configurado",
+    "oauthModal": {
+      "title": "Configurar Credenciais OAuth do Google",
+      "description": "Insira suas credenciais OAuth do Google Cloud para habilitar a integração com o Google Workspace.",
+      "clientId": "Client ID",
+      "clientIdPlaceholder": "123456789-abc.apps.googleusercontent.com",
+      "clientSecret": "Client Secret",
+      "clientSecretPlaceholder": "GOCSPX-...",
+      "saveAndConnect": "Salvar & Conectar",
+      "saving": "Salvando...",
+      "cancel": "Cancelar",
+      "errorRequired": "Por favor, insira o Client ID e o Client Secret",
+      "errorSave": "Falha ao salvar credenciais OAuth. Por favor, tente novamente.",
+      "successSave": "Credenciais OAuth do Google salvas com sucesso!"
+    },
     "googleWorkspace": {
       "name": "Google Workspace",
       "description": "Sincronize o diretório de funcionários e detecte desligamentos",

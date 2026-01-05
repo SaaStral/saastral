@@ -4,7 +4,17 @@ import { PrismaEmployeeRepository } from './database/repositories/employee.repos
 import { PrismaUserRepository } from './database/repositories/user.repository'
 import { PrismaOrganizationRepository } from './database/repositories/organization.repository'
 import { PrismaOrganizationMemberRepository } from './database/repositories/organization-member.repository'
-import { EmployeeService, UserService, OrganizationService } from '@saastral/core'
+import { PrismaIntegrationRepository } from './database/repositories/integration.repository'
+import { PrismaAlertRepository } from './database/repositories/alert.repository'
+import { PrismaDepartmentRepository } from './database/repositories/department.repository'
+import { EncryptionService } from './utils/encryption.service'
+import {
+  EmployeeService,
+  UserService,
+  OrganizationService,
+  AlertService,
+  DepartmentService,
+} from '@saastral/core'
 import { prisma } from './database/client'
 
 /**
@@ -44,6 +54,23 @@ export class Container {
     return this.singleton('organizationMemberRepo', () => new PrismaOrganizationMemberRepository(this.prisma))
   }
 
+  get integrationRepo(): PrismaIntegrationRepository {
+    return this.singleton('integrationRepo', () => new PrismaIntegrationRepository(this.prisma))
+  }
+
+  get alertRepo(): PrismaAlertRepository {
+    return this.singleton('alertRepo', () => new PrismaAlertRepository(this.prisma))
+  }
+
+  get departmentRepo(): PrismaDepartmentRepository {
+    return this.singleton('departmentRepo', () => new PrismaDepartmentRepository(this.prisma))
+  }
+
+  // Utilities
+  get encryptionService(): EncryptionService {
+    return this.singleton('encryptionService', () => new EncryptionService())
+  }
+
   // Services
   get employeeService(): EmployeeService {
     return this.singleton('employeeService', () => new EmployeeService(this.employeeRepo, this.logger))
@@ -56,6 +83,23 @@ export class Container {
   get organizationService(): OrganizationService {
     return this.singleton('organizationService', () => new OrganizationService(this.organizationRepo, this.organizationMemberRepo, this.logger))
   }
+
+  get alertService(): AlertService {
+    return this.singleton('alertService', () => new AlertService({
+      alertRepository: this.alertRepo,
+      employeeRepository: this.employeeRepo,
+    }))
+  }
+
+  get departmentService(): DepartmentService {
+    return this.singleton('departmentService', () => new DepartmentService({
+      departmentRepository: this.departmentRepo,
+    }))
+  }
+
+  // Note: IntegrationService and DirectorySyncService require DirectoryProvider
+  // which is created at runtime based on the integration type
+  // These should be instantiated in the route handlers or background jobs
 
   private singleton<T>(key: string, factory: () => T): T {
     if (!this.instances.has(key)) {
