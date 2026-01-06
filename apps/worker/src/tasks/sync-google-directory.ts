@@ -1,15 +1,20 @@
 /**
  * Sync Google Directory Worker Task
  *
- * CRITICAL - Employee sync worker that runs periodically.
+ * CRITICAL - Employee sync orchestrator that runs periodically.
  *
  * Responsibilities:
  * - Fetch all active Google Workspace integrations
- * - For each integration, sync employees from Google Workspace
- * - Update employee status (active/suspended/offboarded)
- * - Track sync stats and errors
+ * - For each integration, fetch user list from Google
+ * - Split users into batches and enqueue batch processing jobs
+ * - Provides scalability for organizations with thousands of employees
  *
  * Runs: Hourly (configurable via cron)
+ *
+ * Architecture:
+ * - This task fetches users and enqueues batches (fast, non-blocking)
+ * - sync-employee-batch task processes each batch in parallel
+ * - Batch size: 100 users per batch (configurable)
  */
 
 import type { Task } from 'graphile-worker'
@@ -17,15 +22,18 @@ import { getContainer, GoogleDirectoryProvider } from '@saastral/infrastructure'
 import type { OAuthTokens } from '@saastral/infrastructure'
 import type { DirectoryUser } from '@saastral/core'
 
+const BATCH_SIZE = 100 // Process 100 employees per batch
+
 /**
  * Sync Google Directory Task
  *
- * Fetches all active Google integrations and syncs employees.
+ * Fetches all active Google integrations, retrieves user lists,
+ * and enqueues batch processing jobs.
  */
 export const task: Task = async (_payload, helpers) => {
   const container = getContainer()
 
-  helpers.logger.info('Starting Google Workspace directory sync...')
+  helpers.logger.info('Starting Google Workspace directory sync orchestration...')
 
   try {
     // Find all active Google Workspace integrations
@@ -44,34 +52,48 @@ export const task: Task = async (_payload, helpers) => {
 
     helpers.logger.info(`Found ${integrations.length} Google Workspace integration(s)`)
 
-    // Sync each integration
+    // Process each integration
     for (const integration of integrations) {
       try {
-        await syncIntegration(integration, helpers)
+        await orchestrateIntegrationSync(integration, helpers)
       } catch (error) {
         helpers.logger.error(
-          `Failed to sync integration ${integration.id} for org ${integration.organizationId}`,
+          `Failed to orchestrate sync for integration ${integration.id} for org ${integration.organizationId}`,
           { error },
         )
+
+        // Mark integration as errored
+        await container.prisma.integration.update({
+          where: { id: integration.id },
+          data: {
+            lastSyncAt: new Date(),
+            lastSyncStatus: 'error',
+            lastSyncMessage: error instanceof Error ? error.message : String(error),
+            updatedAt: new Date(),
+          },
+        })
+
         // Continue with next integration instead of failing entire job
       }
     }
 
-    helpers.logger.info('✅ Google Workspace directory sync completed')
+    helpers.logger.info('✅ Google Workspace directory sync orchestration completed')
   } catch (error) {
-    helpers.logger.error('❌ Fatal error in Google Workspace sync', { error })
+    helpers.logger.error('❌ Fatal error in Google Workspace sync orchestration', { error })
     throw error
   }
 }
 
 /**
- * Sync a single integration
+ * Orchestrate sync for a single integration
+ *
+ * Fetches user list from Google and enqueues batch processing jobs
  */
-async function syncIntegration(integration: any, helpers: any) {
+async function orchestrateIntegrationSync(integration: any, helpers: any) {
   const container = getContainer()
   const orgId = integration.organizationId
 
-  helpers.logger.info(`Syncing Google Workspace for organization ${orgId}`)
+  helpers.logger.info(`Orchestrating sync for organization ${orgId}`)
 
   // Parse config
   const config = integration.config as Record<string, any>
@@ -109,16 +131,6 @@ async function syncIntegration(integration: any, helpers: any) {
     },
   })
 
-  // Track sync stats
-  const stats = {
-    created: 0,
-    updated: 0,
-    skipped: 0,
-    errors: 0,
-  }
-
-  const errors: string[] = []
-
   try {
     // Fetch all users from Google (handle pagination)
     let pageToken: string | undefined
@@ -136,37 +148,45 @@ async function syncIntegration(integration: any, helpers: any) {
 
     helpers.logger.info(`Fetched ${allUsers.length} users from Google Workspace`)
 
-    // Sync each user
-    for (const directoryUser of allUsers) {
-      try {
-        await syncEmployee(orgId, directoryUser, stats, helpers)
-      } catch (error) {
-        const errorMsg = `Failed to sync employee ${directoryUser.email}: ${error instanceof Error ? error.message : String(error)}`
-        errors.push(errorMsg)
-        stats.errors++
-        helpers.logger.error(errorMsg, { error })
-        // Continue with next employee
-      }
+    // Split users into batches
+    const batches: DirectoryUser[][] = []
+    for (let i = 0; i < allUsers.length; i += BATCH_SIZE) {
+      batches.push(allUsers.slice(i, i + BATCH_SIZE))
     }
 
-    // Update integration sync status
+    helpers.logger.info(`Split ${allUsers.length} users into ${batches.length} batches of ${BATCH_SIZE}`)
+
+    // Enqueue batch processing jobs
+    for (let i = 0; i < batches.length; i++) {
+      await helpers.addJob('sync-employee-batch', {
+        integrationId: integration.id,
+        organizationId: orgId,
+        users: batches[i],
+        batchNumber: i,
+        totalBatches: batches.length,
+        totalUsers: allUsers.length,
+      })
+    }
+
+    // Update integration status to "in progress"
     await container.prisma.integration.update({
       where: { id: integration.id },
       data: {
         lastSyncAt: new Date(),
-        lastSyncStatus: errors.length > 0 ? 'partial' : 'success',
-        lastSyncMessage:
-          errors.length > 0 ? `Completed with ${errors.length} errors` : 'Sync completed successfully',
-        syncStats: stats as any,
+        lastSyncStatus: 'success',
+        lastSyncMessage: `Enqueued ${batches.length} batches for ${allUsers.length} users`,
+        syncStats: {
+          totalUsers: allUsers.length,
+          totalBatches: batches.length,
+          batchSize: BATCH_SIZE,
+        } as any,
         updatedAt: new Date(),
       },
     })
 
-    helpers.logger.info(`Sync completed for org ${orgId}`, { stats })
-
-    if (errors.length > 0) {
-      helpers.logger.warn(`Sync had ${errors.length} errors`, { errors: errors.slice(0, 10) })
-    }
+    helpers.logger.info(
+      `✅ Enqueued ${batches.length} batch jobs for integration ${integration.id}`,
+    )
   } catch (error) {
     // Update integration with error status
     await container.prisma.integration.update({
@@ -175,122 +195,11 @@ async function syncIntegration(integration: any, helpers: any) {
         lastSyncAt: new Date(),
         lastSyncStatus: 'error',
         lastSyncMessage: error instanceof Error ? error.message : String(error),
-        syncStats: stats as any,
         updatedAt: new Date(),
       },
     })
 
     throw error
-  }
-}
-
-/**
- * Sync a single employee
- *
- * Strategy:
- * 1. Try to find employee by externalId (Google user ID - stable)
- * 2. Fallback to email (can change, but still unique)
- * 3. If not found, create new employee
- * 4. Update status based on Google status
- */
-async function syncEmployee(
-  orgId: string,
-  directoryUser: DirectoryUser,
-  stats: { created: number; updated: number; skipped: number; errors: number },
-  helpers: any,
-) {
-  const container = getContainer()
-
-  // Find existing employee by externalId first (more stable), then by email
-  let employee = await container.prisma.employee.findFirst({
-    where: {
-      organizationId: orgId,
-      externalId: directoryUser.externalId,
-    },
-  })
-
-  if (!employee) {
-    // Try to find by email as fallback
-    employee = await container.prisma.employee.findFirst({
-      where: {
-        organizationId: orgId,
-        email: directoryUser.email,
-      },
-    })
-  }
-
-  // Map directory status to employee status
-  const status = mapDirectoryStatusToEmployeeStatus(directoryUser.status)
-
-  if (employee) {
-    // Update existing employee
-    const hasChanges =
-      employee.externalId !== directoryUser.externalId ||
-      employee.email !== directoryUser.email ||
-      employee.name !== directoryUser.fullName ||
-      employee.status !== status
-
-    if (hasChanges) {
-      await container.prisma.employee.update({
-        where: { id: employee.id },
-        data: {
-          externalId: directoryUser.externalId,
-          email: directoryUser.email,
-          name: directoryUser.fullName,
-          title: directoryUser.jobTitle,
-          phone: directoryUser.phoneNumber,
-          hiredAt: directoryUser.startDate,
-          status,
-          offboardedAt: status === 'offboarded' ? new Date() : null,
-          updatedAt: new Date(),
-        },
-      })
-
-      stats.updated++
-      helpers.logger.debug(`Updated employee ${directoryUser.email}`)
-    } else {
-      stats.skipped++
-      helpers.logger.debug(`Skipped employee ${directoryUser.email} (no changes)`)
-    }
-  } else {
-    // Create new employee
-    await container.prisma.employee.create({
-      data: {
-        organizationId: orgId,
-        externalId: directoryUser.externalId,
-        email: directoryUser.email,
-        name: directoryUser.fullName,
-        title: directoryUser.jobTitle,
-        phone: directoryUser.phoneNumber,
-        hiredAt: directoryUser.startDate,
-        status,
-        offboardedAt: status === 'offboarded' ? new Date() : null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    })
-
-    stats.created++
-    helpers.logger.debug(`Created employee ${directoryUser.email}`)
-  }
-}
-
-/**
- * Map directory user status to employee status
- */
-function mapDirectoryStatusToEmployeeStatus(
-  directoryStatus: string,
-): 'active' | 'suspended' | 'offboarded' {
-  switch (directoryStatus) {
-    case 'active':
-      return 'active'
-    case 'suspended':
-      return 'suspended'
-    case 'archived':
-    case 'deleted':
-      return 'offboarded'
-    default:
-      return 'active' // Default to active for unknown statuses
   }
 }
 

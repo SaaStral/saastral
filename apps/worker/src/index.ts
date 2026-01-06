@@ -11,6 +11,8 @@ async function main() {
     taskList: {
       // @ts-ignore - Graphile Worker dynamic import type resolution limitation
       'sync-google-directory': () => import('./tasks/sync-google-directory'),
+      // @ts-ignore - Graphile Worker dynamic import type resolution limitation
+      'sync-employee-batch': () => import('./tasks/sync-employee-batch'),
       // 'poll-okta-events': () => import('./tasks/poll-okta-events'),
       // 'check-renewals': () => import('./tasks/check-renewals'),
       // 'check-unused-licenses': () => import('./tasks/check-unused-licenses'),
