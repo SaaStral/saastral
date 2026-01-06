@@ -2,7 +2,6 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
     "module": "CommonJS",
     "moduleResolution": "node",
     "paths": {
@@ -11,6 +10,6 @@
       "@saastral/shared": ["../../packages/shared/src"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../../packages/**/*"],
   "exclude": ["node_modules", "dist"]
 }

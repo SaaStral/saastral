@@ -145,4 +145,43 @@ export const integrationRouter = router({
         oauthClientId: config?.oauthClientId as string | null,
       }
     }),
+
+  /**
+   * Trigger manual sync for an integration
+   * Enqueues a sync-google-directory job for immediate execution
+   */
+  manualSync: publicProcedure
+    .input(z.object({
+      integrationId: z.string().uuid(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      if (!ctx.userId) {
+        throw new Error('Not authenticated')
+      }
+
+      const container = getContainer()
+
+      // Verify integration exists and is active
+      const integration = await container.integrationRepo.findById(input.integrationId)
+
+      if (!integration) {
+        throw new Error('Integration not found')
+      }
+
+      const props = integration.toObject()
+
+      if (props.status !== 'active') {
+        throw new Error('Integration must be active to sync')
+      }
+
+      // Enqueue sync job using Graphile Worker
+      await container.prisma.$queryRaw`
+        SELECT graphile_worker.add_job('sync-google-directory', '{}', queue_name := 'manual-sync');
+      `
+
+      return {
+        success: true,
+        message: 'Sync job enqueued successfully',
+      }
+    }),
 })

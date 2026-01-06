@@ -2,56 +2,89 @@
  * Google API Client
  *
  * Low-level wrapper for Google Admin SDK API with:
- * - Service Account authentication
- * - Domain-wide delegation
+ * - OAuth2 authentication (user consent flow)
+ * - Token refresh handling
  * - Rate limiting and retry with exponential backoff
  * - Error mapping to domain errors
  */
 
 import { google } from 'googleapis'
 import type { admin_directory_v1 } from 'googleapis'
-import type { ServiceAccountCredentials } from '@saastral/core'
+import type { OAuth2Client } from 'google-auth-library'
+
+export interface OAuthTokens {
+  accessToken: string
+  refreshToken: string
+  expiresAt?: number
+  scope?: string
+  tokenType?: string
+}
 
 export interface GoogleAPIClientConfig {
-  credentials: ServiceAccountCredentials
-  adminEmail: string // Email to impersonate for domain-wide delegation
+  oauthClientId: string
+  oauthClientSecret: string
+  oauthTokens: OAuthTokens
+  onTokensRefreshed?: (tokens: OAuthTokens) => Promise<void> // Callback to save refreshed tokens
   customerId?: string // Optional Google Workspace customer ID
 }
 
 /**
  * Google API Client
  *
- * Handles authentication and API calls to Google Admin SDK.
+ * Handles OAuth2 authentication and API calls to Google Admin SDK.
  */
 export class GoogleAPIClient {
   private admin: admin_directory_v1.Admin
+  private oauth2Client: OAuth2Client
   private config: GoogleAPIClientConfig
 
   constructor(config: GoogleAPIClientConfig) {
     this.config = config
 
-    // Create OAuth2 client with service account credentials
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: config.credentials.clientEmail,
-        private_key: config.credentials.privateKey,
-        client_id: config.credentials.clientId,
-        project_id: config.credentials.projectId,
-      },
-      scopes: [
-        'https://www.googleapis.com/auth/admin.directory.user.readonly',
-        'https://www.googleapis.com/auth/admin.directory.orgunit.readonly',
-      ],
-      // Domain-wide delegation - impersonate admin user
-      clientOptions: {
-        subject: config.adminEmail,
-      },
+    // Create OAuth2 client
+    this.oauth2Client = new google.auth.OAuth2(
+      config.oauthClientId,
+      config.oauthClientSecret,
+    )
+
+    // Set credentials from stored tokens
+    this.oauth2Client.setCredentials({
+      access_token: config.oauthTokens.accessToken,
+      refresh_token: config.oauthTokens.refreshToken,
+      expiry_date: config.oauthTokens.expiresAt,
+      scope: config.oauthTokens.scope,
+      token_type: config.oauthTokens.tokenType || 'Bearer',
     })
 
-    // Initialize Admin SDK client
+    // Listen for token refresh events
+    this.oauth2Client.on('tokens', async (tokens) => {
+      // Update internal config
+      if (tokens.access_token) {
+        this.config.oauthTokens.accessToken = tokens.access_token
+      }
+      if (tokens.refresh_token) {
+        this.config.oauthTokens.refreshToken = tokens.refresh_token
+      }
+      if (tokens.expiry_date) {
+        this.config.oauthTokens.expiresAt = tokens.expiry_date
+      }
+
+      // Notify caller to persist refreshed tokens
+      if (this.config.onTokensRefreshed) {
+        await this.config.onTokensRefreshed({
+          accessToken: tokens.access_token || this.config.oauthTokens.accessToken,
+          refreshToken: tokens.refresh_token || this.config.oauthTokens.refreshToken,
+          expiresAt: tokens.expiry_date || this.config.oauthTokens.expiresAt,
+          scope: tokens.scope || this.config.oauthTokens.scope,
+          tokenType: tokens.token_type || this.config.oauthTokens.tokenType,
+        })
+      }
+    })
+
+    // Initialize Admin SDK client with OAuth2
     this.admin = google.admin({
       version: 'directory_v1',
-      auth,
+      auth: this.oauth2Client,
     })
   }
 
@@ -251,7 +284,7 @@ export class GoogleAPIClient {
     let errorMessage = `${context}: ${message}`
 
     if (code === 401 || code === 403) {
-      errorMessage = `Authentication failed: ${message}. Check service account credentials and domain-wide delegation.`
+      errorMessage = `Authentication failed: ${message}. Check OAuth tokens or re-authorize the integration.`
     } else if (code === 404) {
       errorMessage = `${context}: Resource not found`
     } else if (code === 429) {

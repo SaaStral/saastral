@@ -17,14 +17,15 @@ import type {
   DirectoryListOptions,
   DirectoryListResult,
   DirectoryUserStatus,
-  ServiceAccountCredentials,
 } from '@saastral/core'
-import { GoogleAPIClient } from './google-api.client'
+import { GoogleAPIClient, type OAuthTokens } from './google-api.client'
 import type { admin_directory_v1 } from 'googleapis'
 
 export interface GoogleDirectoryProviderConfig {
-  credentials: ServiceAccountCredentials
-  adminEmail: string // Email to impersonate for domain-wide delegation
+  oauthClientId: string
+  oauthClientSecret: string
+  oauthTokens: OAuthTokens
+  onTokensRefreshed?: (tokens: OAuthTokens) => Promise<void>
   customerId?: string // Optional Google Workspace customer ID
   domain?: string // Optional organization domain
 }
@@ -32,15 +33,17 @@ export interface GoogleDirectoryProviderConfig {
 /**
  * Google Directory Provider
  *
- * Implements DirectoryProvider for Google Workspace using Admin SDK.
+ * Implements DirectoryProvider for Google Workspace using Admin SDK with OAuth2.
  */
 export class GoogleDirectoryProvider implements DirectoryProvider {
   private client: GoogleAPIClient
 
   constructor(config: GoogleDirectoryProviderConfig) {
     this.client = new GoogleAPIClient({
-      credentials: config.credentials,
-      adminEmail: config.adminEmail,
+      oauthClientId: config.oauthClientId,
+      oauthClientSecret: config.oauthClientSecret,
+      oauthTokens: config.oauthTokens,
+      onTokensRefreshed: config.onTokensRefreshed,
       customerId: config.customerId,
     })
   }
