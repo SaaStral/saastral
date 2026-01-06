@@ -117,8 +117,9 @@ export class GoogleAPIClient {
    *
    * @param pageSize - Number of users per page (max 500)
    * @param pageToken - Token for next page
+   * @param includeDeleted - Include deleted users in results
    */
-  async listUsers(pageSize = 500, pageToken?: string): Promise<{
+  async listUsers(pageSize = 500, pageToken?: string, includeDeleted = false): Promise<{
     users: admin_directory_v1.Schema$User[]
     nextPageToken?: string
   }> {
@@ -130,6 +131,7 @@ export class GoogleAPIClient {
           pageToken,
           projection: 'full', // Get all user fields
           orderBy: 'email',
+          showDeleted: includeDeleted ? 'true' : undefined, // Include deleted users if requested
         })
       })
 

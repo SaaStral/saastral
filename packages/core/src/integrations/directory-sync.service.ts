@@ -92,7 +92,10 @@ export class DirectorySyncService {
       }
 
       // Fetch all users from directory provider
-      const result = await this.deps.directoryProvider.listUsers()
+      // Include deleted users to properly detect offboarding events
+      const result = await this.deps.directoryProvider.listUsers({
+        includeDeleted: true,
+      })
       const directoryUsers = result.items
 
       // Process each user

@@ -61,8 +61,9 @@ export class GoogleDirectoryProvider implements DirectoryProvider {
   async listUsers(options?: DirectoryListOptions): Promise<DirectoryListResult<DirectoryUser>> {
     const pageSize = options?.pageSize || 500
     const pageToken = options?.pageToken
+    const includeDeleted = options?.includeDeleted || false
 
-    const response = await this.client.listUsers(pageSize, pageToken)
+    const response = await this.client.listUsers(pageSize, pageToken, includeDeleted)
 
     const users = response.users.map((googleUser) => this.mapUserToDomain(googleUser))
 
@@ -203,8 +204,19 @@ export class GoogleDirectoryProvider implements DirectoryProvider {
 
   /**
    * Map Google user status to domain DirectoryUserStatus
+   *
+   * Google user states:
+   * - deletionTime exists → User is deleted
+   * - archived: true → User is archived
+   * - suspended: true → User is suspended
+   * - Otherwise → User is active
    */
   private mapUserStatus(googleUser: admin_directory_v1.Schema$User): DirectoryUserStatus {
+    // Check if user is deleted (deletionTime field exists)
+    if (googleUser.deletionTime) {
+      return 'deleted'
+    }
+
     if (googleUser.archived) {
       return 'archived'
     }
