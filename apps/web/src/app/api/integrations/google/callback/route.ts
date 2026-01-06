@@ -14,7 +14,6 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { google } from 'googleapis'
-import crypto from 'crypto'
 import { getContainer } from '@saastral/infrastructure'
 import { Integration } from '@saastral/core'
 
@@ -141,41 +140,38 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Create Integration entity directly
-    // Note: For Google Workspace OAuth, we store the tokens in config
-    // The credentials field is required by the entity but won't be used for OAuth flow
-    const integration = Integration.create({
-      id: crypto.randomUUID(),
-      organizationId: orgId,
-      provider: 'google_workspace',
-      credentials: {
-        clientEmail: adminEmail,
-        privateKey: '', // Not used for OAuth
-        clientId: clientId,
-        projectId: '', // Not used for OAuth
-        privateKeyId: '', // Not used for OAuth
-      } as any, // OAuth doesn't use service account credentials
-      config: {
-        adminEmail,
-        oauthTokens: {
-          accessToken: tokens.access_token,
-          refreshToken: tokens.refresh_token,
-          expiresAt: tokens.expiry_date,
-          scope: tokens.scope,
-          tokenType: tokens.token_type || 'Bearer',
-        },
-        scopes: [
-          'https://www.googleapis.com/auth/admin.directory.user.readonly',
-          'https://www.googleapis.com/auth/admin.directory.orgunit.readonly',
-        ],
+    // Update existing integration with OAuth tokens
+    // The integration already exists with OAuth client credentials from the UI
+    // Now we add the OAuth tokens obtained from the authorization flow
+    const integrationData = existingIntegration.toObject()
+    const updatedConfig = {
+      ...integrationData.config,
+      adminEmail,
+      oauthTokens: {
+        accessToken: tokens.access_token,
+        refreshToken: tokens.refresh_token,
+        expiresAt: tokens.expiry_date,
+        scope: tokens.scope,
+        tokenType: tokens.token_type || 'Bearer',
       },
-      createdBy: adminEmail,
+      scopes: [
+        'https://www.googleapis.com/auth/admin.directory.user.readonly',
+        'https://www.googleapis.com/auth/admin.directory.orgunit.readonly',
+      ],
+    }
+
+    // Reconstruct integration with updated config
+    const integration = Integration.fromPersistence({
+      ...integrationData,
+      config: updatedConfig,
+      status: 'active', // Activate the integration
+      updatedAt: new Date(),
     })
 
-    // Activate integration
+    // Activate integration (sets status to active and validates)
     integration.activate()
 
-    // Save integration
+    // Save updated integration
     await container.integrationRepo.save(integration)
 
     // TODO: Enqueue initial sync job

@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import { useParams, useSearchParams } from 'next/navigation'
 import { CheckCircle2, Circle, AlertCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { trpc } from '@/lib/trpc/client'
 
 interface IntegrationCardProps {
   name: string
@@ -98,6 +99,21 @@ export function IntegrationsTab() {
   const [isSaving, setIsSaving] = useState(false)
   const [modalError, setModalError] = useState<string | null>(null)
 
+  // Fetch integrations for this organization
+  const { data: integrations, refetch: refetchIntegrations } = trpc.integration.list.useQuery(
+    { organizationId: orgId },
+    { enabled: !!orgId }
+  )
+
+  // Find Google Workspace integration
+  const googleIntegration = integrations?.find(i => i.provider === 'google_workspace')
+  const isGoogleConnected = googleIntegration?.status === 'active'
+  const googleLastSync = googleIntegration?.lastSyncAt
+    ? t('googleWorkspace.lastSync', {
+        date: new Date(googleIntegration.lastSyncAt).toLocaleString()
+      })
+    : undefined
+
   // Handle OAuth callback status
   useEffect(() => {
     const integration = searchParams?.get('integration')
@@ -106,6 +122,8 @@ export function IntegrationsTab() {
 
     if (integration && status === 'connected') {
       setSuccessMessage(`${integration} successfully connected!`)
+      // Refetch integrations to update UI
+      refetchIntegrations()
       // Clear message after 5 seconds
       setTimeout(() => setSuccessMessage(null), 5000)
     }
@@ -115,7 +133,7 @@ export function IntegrationsTab() {
       // Clear message after 8 seconds
       setTimeout(() => setErrorMessage(null), 8000)
     }
-  }, [searchParams])
+  }, [searchParams, refetchIntegrations, t])
 
   const handleConfigure = (integration: string) => {
     if (integration === 'google-workspace') {
@@ -204,7 +222,8 @@ export function IntegrationsTab() {
         <IntegrationCard
           name={t('googleWorkspace.name')}
           description={t('googleWorkspace.description')}
-          isConnected={false}
+          isConnected={isGoogleConnected}
+          lastSync={googleLastSync}
           onConfigure={() => handleConfigure('google-workspace')}
           onDisconnect={() => handleDisconnect('google-workspace')}
         />
