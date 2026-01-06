@@ -1,10 +1,11 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { CheckCircle2, Circle, AlertCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { trpc } from '@/lib/trpc/client'
+import { useOrganization } from '@/contexts/OrganizationContext'
 
 interface IntegrationCardProps {
   name: string
@@ -87,9 +88,8 @@ function IntegrationCard({
 
 export function IntegrationsTab() {
   const t = useTranslations('settings.integrations')
-  const params = useParams()
+  const { selectedOrgId } = useOrganization()
   const searchParams = useSearchParams()
-  const orgId = params?.orgId as string
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -101,8 +101,8 @@ export function IntegrationsTab() {
 
   // Fetch integrations for this organization
   const { data: integrations, refetch: refetchIntegrations } = trpc.integration.list.useQuery(
-    { organizationId: orgId },
-    { enabled: !!orgId }
+    { organizationId: selectedOrgId || '' },
+    { enabled: !!selectedOrgId }
   )
 
   // Find Google Workspace integration
@@ -150,6 +150,11 @@ export function IntegrationsTab() {
     // Clear previous errors
     setModalError(null)
 
+    if (!selectedOrgId) {
+      setModalError('No organization selected')
+      return
+    }
+
     if (!googleClientId || !googleClientSecret) {
       setModalError(t('oauthModal.errorRequired'))
       return
@@ -163,7 +168,7 @@ export function IntegrationsTab() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          organizationId: orgId,
+          organizationId: selectedOrgId,
           oauthClientId: googleClientId,
           oauthClientSecret: googleClientSecret,
         }),
@@ -181,7 +186,7 @@ export function IntegrationsTab() {
 
       // Now redirect to OAuth authorize endpoint
       const redirectUrl = `/settings`
-      window.location.href = `/api/integrations/google/authorize?orgId=${orgId}&redirectUrl=${encodeURIComponent(redirectUrl)}`
+      window.location.href = `/api/integrations/google/authorize?orgId=${selectedOrgId}&redirectUrl=${encodeURIComponent(redirectUrl)}`
     } catch (error) {
       console.error('Error saving OAuth credentials:', error)
       setModalError(t('oauthModal.errorSave'))
