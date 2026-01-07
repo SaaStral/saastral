@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@saastral/database'
 import { UserRepository, UserData } from '@saastral/core'
 
 /**

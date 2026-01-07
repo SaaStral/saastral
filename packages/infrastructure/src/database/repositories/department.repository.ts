@@ -4,7 +4,7 @@
  * Handles persistence of Department entities with hierarchical support.
  */
 
-import type { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@saastral/database'
 import { Department, type DepartmentRepository } from '@saastral/core'
 
 export class PrismaDepartmentRepository implements DepartmentRepository {

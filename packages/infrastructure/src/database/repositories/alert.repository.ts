@@ -4,7 +4,7 @@
  * Handles persistence of Alert entities with filtering and aggregation support.
  */
 
-import type { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@saastral/database'
 import {
   Alert,
   type AlertRepository,

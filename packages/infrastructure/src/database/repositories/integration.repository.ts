@@ -5,7 +5,7 @@
  * SECURITY-CRITICAL: All credentials must be encrypted before storage.
  */
 
-import { PrismaClient, IntegrationProvider as PrismaIntegrationProvider } from '@prisma/client'
+import { PrismaClient, IntegrationProvider as PrismaIntegrationProvider } from '@saastral/database'
 import {
   Integration,
   type IntegrationRepository,
