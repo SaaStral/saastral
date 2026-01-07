@@ -1,5 +1,5 @@
 // Database
-export { prisma } from './database/client'
+export { prisma } from '@saastral/database'
 export * from './database/repositories/employee.repository'
 export * from './database/repositories/alert.repository'
 export * from './database/repositories/integration.repository'

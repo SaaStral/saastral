@@ -6,13 +6,16 @@
     "composite": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "prisma"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"],
   "references": [
     {
       "path": "../core"
     },
     {
       "path": "../shared"
+    },
+    {
+      "path": "../database"
     }
   ]
 }

@@ -12,10 +12,11 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "clean": "turbo clean && rm -rf node_modules",
-    "db:migrate": "pnpm --filter @saastral/infrastructure prisma migrate dev",
-    "db:seed": "pnpm --filter @saastral/infrastructure prisma db seed",
-    "db:studio": "pnpm --filter @saastral/infrastructure prisma studio",
-    "db:generate": "pnpm --filter @saastral/infrastructure prisma generate"
+    "db:migrate": "pnpm --filter @saastral/database db:migrate",
+    "db:migrate:status": "pnpm --filter @saastral/database db:migrate:status",
+    "db:seed": "pnpm --filter @saastral/database db:seed",
+    "db:studio": "pnpm --filter @saastral/database db:studio",
+    "db:generate": "pnpm --filter @saastral/database db:generate"
   },
   "devDependencies": {
     "@types/node": "^20.10.6",

@@ -1,0 +1,41 @@
+{
+  "name": "@saastral/database",
+  "version": "0.1.0",
+  "description": "SaaStral Database - Prisma client and schema",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "db:generate": "prisma generate --config=./prisma/prisma.config.ts",
+    "db:migrate": "prisma migrate dev --config=./prisma/prisma.config.ts",
+    "db:migrate:status": "prisma migrate status --config=./prisma/prisma.config.ts",
+    "db:deploy": "prisma migrate deploy --config=./prisma/prisma.config.ts",
+    "db:seed": "prisma db seed --config=./prisma/prisma.config.ts",
+    "db:studio": "prisma studio --config=./prisma/prisma.config.ts"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.2.0",
+    "@prisma/client": "^7.2.0",
+    "dotenv": "^16.3.1",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.4.0",
+    "@types/node": "^20.10.6",
+    "@types/pg": "^8.11.10",
+    "bcrypt": "^6.0.0",
+    "dotenv-cli": "^11.0.0",
+    "prisma": "^7.2.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
+}

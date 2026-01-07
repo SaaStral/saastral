@@ -21,6 +21,7 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@saastral/core": ["./packages/core/src"],
+      "@saastral/database": ["./packages/database/src"],
       "@saastral/infrastructure": ["./packages/infrastructure/src"],
       "@saastral/shared": ["./packages/shared/src"]
     }

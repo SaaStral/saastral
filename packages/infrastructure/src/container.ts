@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@saastral/database'
 import { PinoLogger } from './logger/pino.adapter'
 import { PrismaEmployeeRepository } from './database/repositories/employee.repository'
 import { PrismaUserRepository } from './database/repositories/user.repository'
@@ -15,7 +15,7 @@ import {
   AlertService,
   DepartmentService,
 } from '@saastral/core'
-import { prisma } from './database/client'
+import { prisma } from '@saastral/database'
 
 /**
  * Dependency Injection Container
