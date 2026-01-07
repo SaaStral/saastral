@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@saastral/database'
 import { PrismaEmployeeRepository } from './employee.repository'
 import { Employee, Email } from '@saastral/core'
 import { getPrismaClient } from '../../../test/db-setup'

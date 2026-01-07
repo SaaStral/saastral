@@ -4,7 +4,7 @@
  * Creates an isolated test database for each test suite using Prisma.
  * Uses transactions to rollback between tests.
  */
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@saastral/database'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 import { execSync } from 'child_process'

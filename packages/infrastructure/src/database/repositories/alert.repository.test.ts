@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest'
-import { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@saastral/database'
 import { PrismaAlertRepository } from './alert.repository'
 import { Alert } from '@saastral/core'
 import { getPrismaClient } from '../../../test/db-setup'
