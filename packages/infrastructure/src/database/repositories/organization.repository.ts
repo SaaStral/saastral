@@ -14,8 +14,11 @@ export class PrismaOrganizationRepository implements OrganizationRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async findById(id: string): Promise<OrganizationData | null> {
-    const org = await this.prisma.organization.findUnique({
-      where: { id },
+    const org = await this.prisma.organization.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+      },
     })
 
     if (!org) return null
@@ -24,8 +27,11 @@ export class PrismaOrganizationRepository implements OrganizationRepository {
   }
 
   async findBySlug(slug: string): Promise<OrganizationData | null> {
-    const org = await this.prisma.organization.findUnique({
-      where: { slug },
+    const org = await this.prisma.organization.findFirst({
+      where: {
+        slug,
+        deletedAt: null,
+      },
     })
 
     if (!org) return null
