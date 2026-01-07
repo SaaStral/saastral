@@ -65,8 +65,11 @@ export class PrismaIntegrationRepository implements IntegrationRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async findById(id: string): Promise<Integration | null> {
-    const record = await this.prisma.integration.findUnique({
-      where: { id },
+    const record = await this.prisma.integration.findFirst({
+      where: {
+        id,
+        deletedAt: null,
+      },
     })
 
     return record ? await this.toDomain(record) : null

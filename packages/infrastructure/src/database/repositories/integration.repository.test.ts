@@ -370,10 +370,11 @@ describe('PrismaIntegrationRepository', () => {
       activeIntegration.activate()
       await repository.save(activeIntegration)
 
+      // Use okta provider to avoid unique constraint violation
       const pendingIntegration = Integration.create({
         id: `int-pending-${Date.now()}`,
         organizationId: orgId,
-        provider: 'google_workspace',
+        provider: 'okta',
         credentials: testCredentials,
       })
       await repository.save(pendingIntegration)
@@ -517,7 +518,19 @@ describe('PrismaIntegrationRepository', () => {
       await repository.save(integration)
 
       // Record successful sync
-      integration.recordSyncSuccess({ employeesProcessed: 10, departmentsProcessed: 5 })
+      const syncResult = {
+        success: true,
+        startedAt: new Date(),
+        completedAt: new Date(),
+        stats: {
+          created: 7,
+          updated: 4,
+          skipped: 1,
+          errors: 0,
+        },
+        errors: [],
+      }
+      integration.recordSyncSuccess(syncResult)
       await repository.save(integration)
 
       const found = await repository.findById(integration.id)
