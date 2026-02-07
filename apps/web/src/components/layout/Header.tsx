@@ -22,7 +22,18 @@ export function Header() {
   const { selectedOrgId, setSelectedOrgId, clearSelectedOrg } = useOrganization()
 
   // Fetch user's organizations (userId comes from session in tRPC context)
-  const { data: organizations = [] } = trpc.organization.listUserOrganizations.useQuery()
+  const { data: organizations = [], error: orgError } = trpc.organization.listUserOrganizations.useQuery(undefined, {
+    retry: 1, // Only retry once
+  })
+
+  // Handle error redirect after all hooks
+  useEffect(() => {
+    if (orgError) {
+      console.error('Failed to load organizations:', orgError)
+      // Redirect to error page
+      router.push(`/${locale}/error-page`)
+    }
+  }, [orgError, router, locale])
 
   // Validate and set organization when data loads
   useEffect(() => {
@@ -38,6 +49,11 @@ export function Header() {
   }, [organizations, selectedOrgId, setSelectedOrgId])
 
   const selectedOrg = organizations.find(org => org.id === selectedOrgId)
+
+  // Don't render header if there's an error (while redirecting)
+  if (orgError) {
+    return null
+  }
 
   const handleLocaleChange = (newLocale: Locale) => {
     if (newLocale === locale) {

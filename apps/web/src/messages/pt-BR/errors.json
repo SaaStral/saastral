@@ -46,5 +46,22 @@
   "rateLimit": {
     "title": "Muitas requisições",
     "description": "Você atingiu o limite de requisições. Aguarde um momento."
+  },
+
+  "dashboard": {
+    "title": "Erro no Dashboard",
+    "description": "Encontramos um erro ao carregar o dashboard. Por favor, tente novamente."
+  },
+
+  "application": {
+    "title": "Erro na Aplicação",
+    "description": "Ocorreu um erro crítico. Por favor, recarregue a página.",
+    "reload": "Recarregar Aplicação"
+  },
+
+  "actions": {
+    "tryAgain": "Tentar Novamente",
+    "goToDashboard": "Ir para o Dashboard",
+    "support": "Se este problema persistir, entre em contato com o suporte."
   }
 }

@@ -46,5 +46,22 @@
   "rateLimit": {
     "title": "Too many requests",
     "description": "You've hit the rate limit. Please wait a moment."
+  },
+
+  "dashboard": {
+    "title": "Dashboard Error",
+    "description": "We encountered an error while loading the dashboard. Please try again."
+  },
+
+  "application": {
+    "title": "Application Error",
+    "description": "A critical error occurred. Please try reloading the page.",
+    "reload": "Reload Application"
+  },
+
+  "actions": {
+    "tryAgain": "Try Again",
+    "goToDashboard": "Go to Dashboard",
+    "support": "If this problem persists, please contact support."
   }
 }
