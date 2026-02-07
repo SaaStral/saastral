@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Mail, Lock } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
@@ -18,6 +18,7 @@ export interface LoginFormData {
 
 export function LoginForm({ onSuccess }: LoginFormProps) {
   const t = useTranslations('auth.login')
+  const locale = useLocale()
   const router = useRouter()
 
   const [formData, setFormData] = useState<LoginFormData>({
@@ -67,7 +68,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
             if (onSuccess) {
               onSuccess()
             } else {
-              router.push('/dashboard')
+              router.push(`/${locale}/dashboard`)
             }
           },
           onError: (ctx) => {

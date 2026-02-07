@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import createMiddleware from 'next-intl/middleware'
 import { locales, defaultLocale } from './i18n/config'
+import { auth } from '@saastral/infrastructure'
 
 // Create the i18n middleware
 const intlMiddleware = createMiddleware({
@@ -19,11 +20,13 @@ export async function middleware(request: NextRequest) {
   const isDashboardRoute = pathname.includes('/dashboard')
 
   if (isDashboardRoute) {
-    // Check for session cookie (BetterAuth uses 'better-auth.session_token' by default)
-    const sessionToken = request.cookies.get('better-auth.session_token')
+    // Validate session using BetterAuth
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    })
 
-    if (!sessionToken) {
-      // No session, redirect to auth page
+    if (!session || !session.user) {
+      // No valid session, redirect to auth page
       const locale = pathname.split('/')[1]
       const authUrl = new URL(`/${locale}/auth`, request.url)
       return NextResponse.redirect(authUrl)

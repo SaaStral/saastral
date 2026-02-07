@@ -22,16 +22,29 @@ export function Header() {
   const { selectedOrgId, setSelectedOrgId, clearSelectedOrg } = useOrganization()
 
   // Fetch user's organizations (userId comes from session in tRPC context)
-  const { data: organizations = [], error: orgError } = trpc.organization.listUserOrganizations.useQuery(undefined, {
-    retry: 1, // Only retry once
+  const { data: organizations = [], error: orgError, isLoading: isLoadingOrgs } = trpc.organization.listUserOrganizations.useQuery(undefined, {
+    retry: false, // Don't retry on auth errors
+    retryOnMount: false, // Don't retry when component mounts
   })
 
   // Handle error redirect after all hooks
   useEffect(() => {
     if (orgError) {
       console.error('Failed to load organizations:', orgError)
-      // Redirect to error page
-      router.push(`/${locale}/error-page`)
+
+      // Check if it's an authentication error
+      const errorMessage = orgError.message || ''
+      const isAuthError = errorMessage.includes('Not authenticated') ||
+                         errorMessage.includes('UNAUTHORIZED') ||
+                         orgError.data?.code === 'UNAUTHORIZED'
+
+      if (isAuthError) {
+        // Redirect to auth page for authentication errors
+        router.push(`/${locale}/auth`)
+      } else {
+        // Redirect to error page for other errors
+        router.push(`/${locale}/error-page`)
+      }
     }
   }, [orgError, router, locale])
 
@@ -50,8 +63,8 @@ export function Header() {
 
   const selectedOrg = organizations.find(org => org.id === selectedOrgId)
 
-  // Don't render header if there's an error (while redirecting)
-  if (orgError) {
+  // Don't render header if loading or if there's an error (will redirect)
+  if (isLoadingOrgs || orgError) {
     return null
   }
 

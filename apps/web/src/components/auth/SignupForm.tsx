@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Building2, User, Mail, Lock } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
@@ -21,6 +21,7 @@ export interface SignupFormData {
 
 export function SignupForm({ onSuccess }: SignupFormProps) {
   const t = useTranslations('auth.signup')
+  const locale = useLocale()
   const router = useRouter()
 
   const [formData, setFormData] = useState<SignupFormData>({
@@ -97,7 +98,7 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
               if (onSuccess) {
                 onSuccess()
               } else {
-                router.push('/dashboard')
+                router.push(`/${locale}/dashboard`)
               }
             } catch (orgError) {
               setGeneralError(

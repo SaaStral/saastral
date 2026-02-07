@@ -13,6 +13,9 @@ export * from './http/trpc'
 export { createContext, type Context as TRPCContext } from './http/context'
 export * from './http/routers'
 
+// Auth
+export { auth } from './auth/index'
+
 // Providers
 export * from './providers/google/google-directory.provider'
 export * from './providers/google/google-api.client'
