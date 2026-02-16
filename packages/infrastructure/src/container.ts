@@ -126,6 +126,13 @@ export function getContainer(): Container {
 }
 
 /**
+ * Set the global container (useful for testing)
+ */
+export function setContainer(newContainer: Container): void {
+  container = newContainer
+}
+
+/**
  * Reset the global container (useful for testing)
  */
 export function resetContainer(): void {

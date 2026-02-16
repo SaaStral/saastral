@@ -8,14 +8,16 @@
  * - Business logic integration
  */
 
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import type { PrismaClient } from '@saastral/database'
 import { appRouter } from './index'
 import { getPrismaClient } from '../../../test/db-setup'
 import type { Context } from '../trpc'
+import { Container, setContainer, resetContainer } from '../../container'
 
 describe('Employee Router', () => {
   let prisma: PrismaClient
+  let container: Container
   let userId: string
   let otherUserId: string
   let orgId: string
@@ -30,6 +32,10 @@ describe('Employee Router', () => {
 
   beforeEach(async () => {
     prisma = getPrismaClient()
+
+    // Create container with test Prisma client and set it as global
+    container = new Container(prisma)
+    setContainer(container)
 
     // Create test users
     const user = await prisma.user.create({
@@ -105,6 +111,11 @@ describe('Employee Router', () => {
     })
   })
 
+  afterEach(() => {
+    // Reset container after each test
+    resetContainer()
+  })
+
   describe('getKPIs', () => {
     it('should return KPIs for authenticated user with org access', async () => {
       const caller = createCaller({ userId })
@@ -113,8 +124,11 @@ describe('Employee Router', () => {
 
       expect(result).toBeDefined()
       expect(result.totalEmployees).toBeDefined()
-      expect(result.activeEmployees).toBeDefined()
-      expect(result.offboardedEmployees).toBeDefined()
+      expect(result.trend).toBeDefined()
+      expect(result.pendingOffboardings).toBeDefined()
+      expect(result.averageCostPerEmployee).toBeDefined()
+      expect(result.costTrend).toBeDefined()
+      expect(result.licenseUtilization).toBeDefined()
     })
 
     it('should throw UNAUTHORIZED when not authenticated', async () => {
@@ -183,9 +197,9 @@ describe('Employee Router', () => {
 
       expect(result).toBeDefined()
       expect(result.employees).toBeInstanceOf(Array)
-      expect(result.total).toBeGreaterThanOrEqual(2)
-      expect(result.page).toBe(1)
-      expect(result.pageSize).toBe(20)
+      expect(result.pagination.totalCount).toBeGreaterThanOrEqual(2)
+      expect(result.pagination.page).toBe(1)
+      expect(result.pagination.pageSize).toBe(20)
     })
 
     it('should filter by status', async () => {
@@ -221,9 +235,9 @@ describe('Employee Router', () => {
       })
 
       expect(page1.employees).toHaveLength(1)
-      expect(page1.page).toBe(1)
+      expect(page1.pagination.page).toBe(1)
 
-      if (page1.total > 1) {
+      if (page1.pagination.totalCount > 1) {
         const page2 = await caller.employee.list({
           organizationId: orgId,
           page: 2,
@@ -231,7 +245,7 @@ describe('Employee Router', () => {
         })
 
         expect(page2.employees).toHaveLength(1)
-        expect(page2.page).toBe(2)
+        expect(page2.pagination.page).toBe(2)
         expect(page2.employees[0].id).not.toBe(page1.employees[0].id)
       }
     })
@@ -408,8 +422,11 @@ describe('Employee Router', () => {
       expect(result).toBeInstanceOf(Array)
       // Should have at least one department with employees
       if (result.length > 0) {
-        expect(result[0]).toHaveProperty('departmentName')
+        expect(result[0]).toHaveProperty('name')
         expect(result[0]).toHaveProperty('employeeCount')
+        expect(result[0]).toHaveProperty('monthlyCost')
+        expect(result[0]).toHaveProperty('percentage')
+        expect(result[0]).toHaveProperty('color')
       }
     })
 
