@@ -6,6 +6,8 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     setupFiles: ['./test/setup.ts'],
+    hookTimeout: 60000, // 60 seconds for container startup
+    testTimeout: 10000, // 10 seconds for individual tests
     poolOptions: {
       threads: {
         singleThread: true, // Database tests need sequential execution

@@ -1,51 +1,61 @@
 /**
- * Test Database Setup
+ * Test Database Setup with Testcontainers
  *
- * Creates an isolated test database for each test suite using Prisma.
- * Uses transactions to rollback between tests.
+ * Automatically starts a PostgreSQL container for integration tests.
+ * The container is created once per test run and cleaned up automatically.
  */
 import { PrismaClient } from '@saastral/database'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 import { execSync } from 'child_process'
-import { writeFileSync, unlinkSync } from 'fs'
-import { join } from 'path'
+import { PostgreSqlContainer } from '@testcontainers/postgresql'
+import type { StartedPostgreSqlContainer } from '@testcontainers/postgresql'
 
 let prisma: PrismaClient
 let pool: Pool
+let container: StartedPostgreSqlContainer
 
 export async function setupTestDatabase() {
-  // Create test database URL
-  const testDbUrl =
-    process.env.DATABASE_URL?.replace('saastral_dev', 'saastral_test') ||
-    'postgresql://postgres:postgres@localhost:5432/saastral_test'
+  // Start PostgreSQL container
+  console.log('🐳 Starting PostgreSQL container (this may take 30-60 seconds on first run)...')
 
-  process.env.DATABASE_URL = testDbUrl
+  let testDbUrl: string
 
-  // Create temporary .env file for Prisma migration
-  const envPath = join(process.cwd(), '.env.test')
-  writeFileSync(envPath, `DATABASE_URL=${testDbUrl}`)
+  try {
+    container = await new PostgreSqlContainer('postgres:16-alpine')
+      .withExposedPorts(5432)
+      .withDatabase('saastral_test')
+      .withUsername('test_user')
+      .withPassword('test_password')
+      .start()
 
-  // Push schema to test database using db push (from database package)
+    testDbUrl = container.getConnectionUri()
+    process.env.DATABASE_URL = testDbUrl
+
+    console.log(`✅ PostgreSQL container started at ${container.getHost()}:${container.getPort()}`)
+  } catch (error: any) {
+    console.error('❌ Failed to start PostgreSQL container:', error.message)
+    console.error('Make sure Docker is running and you have pulled the postgres:16-alpine image')
+    throw error
+  }
+
+  // Push schema to test database using Prisma
+  console.log('📋 Pushing database schema...')
   try {
     execSync(
-      `cd packages/database && npx prisma db push --config=./prisma/prisma.config.ts`,
+      `cd packages/database && npx prisma db push --config=./prisma/prisma.config.ts --accept-data-loss`,
       {
         env: { ...process.env, DATABASE_URL: testDbUrl },
-        stdio: 'pipe', // Use pipe to suppress output
-        cwd: join(process.cwd(), '../..'), // Go up to monorepo root
+        stdio: 'pipe', // Suppress output
+        cwd: process.cwd().includes('packages/infrastructure')
+          ? '../../'
+          : process.cwd(),
       }
     )
+    console.log('✅ Database schema pushed successfully')
   } catch (error: any) {
-    // If push fails, log but continue (database might already be set up)
-    console.warn('Schema push warning (might be expected):', error.message)
-  } finally {
-    // Clean up temp env file
-    try {
-      unlinkSync(envPath)
-    } catch {
-      // Ignore cleanup errors
-    }
+    console.error('❌ Failed to push schema:', error.message)
+    throw error
   }
 
   // Create Prisma client with PG adapter
@@ -57,15 +67,22 @@ export async function setupTestDatabase() {
   })
   await prisma.$connect()
 
+  console.log('✅ Test database ready')
   return prisma
 }
 
 export async function teardownTestDatabase() {
+  console.log('🧹 Cleaning up test database...')
+
   if (prisma) {
     await prisma.$disconnect()
   }
   if (pool) {
     await pool.end()
+  }
+  if (container) {
+    await container.stop()
+    console.log('✅ PostgreSQL container stopped')
   }
 }
 
