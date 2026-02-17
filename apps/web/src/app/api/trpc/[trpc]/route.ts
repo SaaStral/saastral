@@ -2,6 +2,9 @@ import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
 import { appRouter } from '@saastral/infrastructure'
 import { createContext } from '@saastral/infrastructure'
 
+// Force Node.js runtime (required for pg and crypto modules)
+export const runtime = 'nodejs'
+
 const handler = (req: Request) =>
   fetchRequestHandler({
     endpoint: '/api/trpc',

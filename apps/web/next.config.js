@@ -7,6 +7,11 @@ const withNextIntl = require('next-intl/plugin')(
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@saastral/core', '@saastral/infrastructure', '@saastral/shared'],
+
+  // Prevent Node.js modules from being bundled in Edge Runtime
+  experimental: {
+    serverComponentsExternalPackages: ['pg', 'better-auth', '@prisma/client'],
+  },
 }
 
 module.exports = withNextIntl(nextConfig)

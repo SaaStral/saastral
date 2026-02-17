@@ -17,6 +17,9 @@ import { google } from 'googleapis'
 import { getContainer } from '@saastral/infrastructure'
 import { Integration } from '@saastral/core'
 
+// Force Node.js runtime (required for crypto and pg modules)
+export const runtime = 'nodejs'
+
 /**
  * GET /api/integrations/google/callback
  *
