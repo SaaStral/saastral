@@ -2,7 +2,7 @@ import {
   SubscriptionProps,
   SubscriptionStatus,
   SubscriptionCategory,
-  BillingCycle,
+  SubscriptionBillingCycle,
   PricingModel,
   LicenseType,
   PaymentMethod,
@@ -106,7 +106,7 @@ export class Subscription {
     return this.props.contractType
   }
 
-  get billingCycle(): BillingCycle {
+  get billingCycle(): SubscriptionBillingCycle {
     return this.props.billingCycle
   }
 
@@ -457,7 +457,7 @@ export class Subscription {
     website?: string
     logoUrl?: string
     tags?: string[]
-    billingCycle?: BillingCycle
+    billingCycle?: SubscriptionBillingCycle
     pricingModel?: PricingModel
     licenseType?: LicenseType
     paymentMethod?: PaymentMethod

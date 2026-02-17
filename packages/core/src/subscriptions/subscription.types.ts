@@ -16,7 +16,7 @@ export type SubscriptionCategory =
   | 'support'
   | 'other'
 
-export type BillingCycle =
+export type SubscriptionBillingCycle =
   | 'monthly'
   | 'quarterly'
   | 'semiannual'
@@ -71,7 +71,7 @@ export interface SubscriptionProps {
   // Contract & Billing
   readonly status: SubscriptionStatus
   readonly contractType?: ContractType
-  readonly billingCycle: BillingCycle
+  readonly billingCycle: SubscriptionBillingCycle
   readonly pricingModel: PricingModel
   readonly currency: string
 
@@ -144,7 +144,7 @@ export interface CreateSubscriptionInput {
   readonly tags?: string[]
   readonly status?: SubscriptionStatus
   readonly contractType?: ContractType
-  readonly billingCycle: BillingCycle
+  readonly billingCycle: SubscriptionBillingCycle
   readonly pricingModel: PricingModel
   readonly currency?: string
   readonly pricePerUnit?: bigint
@@ -184,7 +184,7 @@ export interface UpdateSubscriptionInput {
   readonly tags?: string[]
   readonly status?: SubscriptionStatus
   readonly contractType?: ContractType
-  readonly billingCycle?: BillingCycle
+  readonly billingCycle?: SubscriptionBillingCycle
   readonly pricingModel?: PricingModel
   readonly pricePerUnit?: bigint
   readonly totalMonthlyCost?: bigint

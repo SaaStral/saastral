@@ -3,7 +3,7 @@ import { Subscription } from '../../src/subscriptions/subscription.entity'
 import type {
   SubscriptionProps,
   SubscriptionCategory,
-  BillingCycle,
+  SubscriptionBillingCycle,
   PricingModel,
 } from '../../src/subscriptions/subscription.types'
 
