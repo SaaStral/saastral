@@ -252,8 +252,8 @@ export class SubscriptionService {
       )
     }
 
-    // Update general details
-    subscription.updateDetails({
+    // Update general details (only if at least one detail field is provided)
+    const detailUpdates = {
       name: input.name,
       vendor: input.vendor,
       category: input.category,
@@ -270,7 +270,11 @@ export class SubscriptionService {
       costCenter: input.costCenter,
       budgetCode: input.budgetCode,
       notes: input.notes,
-    })
+    }
+    const hasDetailUpdates = Object.values(detailUpdates).some(v => v !== undefined)
+    if (hasDetailUpdates) {
+      subscription.updateDetails(detailUpdates)
+    }
 
     return this.subscriptionRepo.save(subscription)
   }
