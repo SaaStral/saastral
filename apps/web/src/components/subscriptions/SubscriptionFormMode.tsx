@@ -11,23 +11,62 @@ import {
   User,
   FileText,
   ChevronDown,
+  Loader2,
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import type { Subscription } from '@/lib/mockData'
+import type { SubscriptionDisplay } from '@/lib/subscription-helpers'
 
 interface SubscriptionFormModeProps {
   mode: 'create' | 'edit'
-  subscription?: Subscription
+  subscription?: SubscriptionDisplay
   onSave?: (data: any) => void
+  isSaving?: boolean
 }
+
+interface FormData {
+  name: string
+  vendor: string
+  website: string
+  category: string
+  billingCycle: string
+  pricingModel: string
+  totalMonthlyCost: string
+  currency: string
+  totalSeats: string
+  usedSeats: string
+  licenseType: string
+  startDate: string
+  renewalDate: string
+  cancellationDeadline: string
+  paymentMethod: string
+  billingEmail: string
+  costCenter: string
+  notes: string
+  autoRenew: boolean
+}
+
+const CATEGORY_VALUES = [
+  'productivity',
+  'development',
+  'design',
+  'infrastructure',
+  'sales_marketing',
+  'communication',
+  'finance',
+  'hr',
+  'security',
+  'analytics',
+  'support',
+  'other',
+] as const
 
 export function SubscriptionFormMode({
   mode,
   subscription,
   onSave,
+  isSaving,
 }: SubscriptionFormModeProps) {
   const t = useTranslations('subscriptions')
-  const [pricingModel, setPricingModel] = useState('seat')
   const [expandedSections, setExpandedSections] = useState<string[]>([
     'basic',
     'costs',
@@ -35,12 +74,65 @@ export function SubscriptionFormMode({
     'renewal',
   ])
 
+  const [form, setForm] = useState<FormData>({
+    name: subscription?.name ?? '',
+    vendor: '',
+    website: '',
+    category: subscription?.category ?? '',
+    billingCycle: 'annual',
+    pricingModel: 'per_seat',
+    totalMonthlyCost: subscription ? (subscription.monthlyCostCents / 100).toFixed(2) : '',
+    currency: 'BRL',
+    totalSeats: subscription?.totalSeats?.toString() ?? '',
+    usedSeats: subscription?.usedSeats?.toString() ?? '',
+    licenseType: 'named',
+    startDate: '',
+    renewalDate: '',
+    cancellationDeadline: '',
+    paymentMethod: 'credit_card',
+    billingEmail: '',
+    costCenter: '',
+    notes: '',
+    autoRenew: true,
+  })
+
+  const updateField = (field: keyof FormData, value: string | boolean) => {
+    setForm((prev) => ({ ...prev, [field]: value }))
+  }
+
   const toggleSection = (section: string) => {
     setExpandedSections((prev) =>
       prev.includes(section)
         ? prev.filter((s) => s !== section)
         : [...prev, section]
     )
+  }
+
+  const handleSubmit = () => {
+    if (!form.name || !form.category || !form.totalMonthlyCost || !form.startDate || !form.renewalDate) return
+
+    const costInCents = Math.round(parseFloat(form.totalMonthlyCost.replace(',', '.')) * 100)
+
+    onSave?.({
+      name: form.name,
+      vendor: form.vendor || undefined,
+      website: form.website || undefined,
+      category: form.category,
+      billingCycle: form.billingCycle,
+      pricingModel: form.pricingModel,
+      totalMonthlyCost: costInCents,
+      currency: form.currency,
+      totalSeats: form.totalSeats ? parseInt(form.totalSeats, 10) : undefined,
+      licenseType: form.licenseType || undefined,
+      startDate: new Date(form.startDate).toISOString(),
+      renewalDate: new Date(form.renewalDate).toISOString(),
+      cancellationDeadline: form.cancellationDeadline ? new Date(form.cancellationDeadline).toISOString() : undefined,
+      paymentMethod: form.paymentMethod || undefined,
+      billingEmail: form.billingEmail || undefined,
+      costCenter: form.costCenter || undefined,
+      autoRenew: form.autoRenew,
+      notes: form.notes || undefined,
+    })
   }
 
   const toolSuggestions = [
@@ -64,12 +156,15 @@ export function SubscriptionFormMode({
               type="text"
               className="w-full pl-10 pr-4 py-2.5 bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-xl text-[#f0fdf4] text-sm placeholder:text-[#6ee7b7] focus:outline-none focus:border-[#059669] transition-all"
               placeholder={t('drawer.searchToolPlaceholder')}
+              value={form.name}
+              onChange={(e) => updateField('name', e.target.value)}
             />
           </div>
           <div className="flex flex-wrap gap-2">
             {toolSuggestions.map((tool) => (
               <button
                 key={tool}
+                onClick={() => updateField('name', tool)}
                 className="px-3 py-1.5 text-xs font-medium bg-[#033a2d] border border-[rgba(16,185,129,0.15)] text-[#a7f3d0] rounded-lg hover:border-[#059669] hover:bg-[rgba(5,150,105,0.08)] transition-all"
               >
                 {tool}
@@ -91,7 +186,8 @@ export function SubscriptionFormMode({
             type="text"
             className="form-input"
             placeholder={t('drawer.form.toolNamePlaceholder')}
-            defaultValue={subscription?.name}
+            value={form.name}
+            onChange={(e) => updateField('name', e.target.value)}
           />
         </FormGroup>
         <div className="grid grid-cols-2 gap-4">
@@ -100,6 +196,8 @@ export function SubscriptionFormMode({
               type="text"
               className="form-input"
               placeholder={t('drawer.form.vendorPlaceholder')}
+              value={form.vendor}
+              onChange={(e) => updateField('vendor', e.target.value)}
             />
           </FormGroup>
           <FormGroup label={t('drawer.form.website')}>
@@ -107,19 +205,23 @@ export function SubscriptionFormMode({
               type="text"
               className="form-input"
               placeholder="https://..."
+              value={form.website}
+              onChange={(e) => updateField('website', e.target.value)}
             />
           </FormGroup>
         </div>
         <FormGroup label={t('drawer.form.category')} required>
-          <select className="form-select">
-            <option>{t('drawer.form.selectCategory')}</option>
-            <option>{t('categories.productivity')}</option>
-            <option>{t('categories.infrastructure')}</option>
-            <option>{t('categories.development')}</option>
-            <option>{t('categories.design')}</option>
-            <option>{t('categories.communication')}</option>
-            <option>{t('categories.sales')}</option>
-            <option>{t('categories.other')}</option>
+          <select
+            className="form-select"
+            value={form.category}
+            onChange={(e) => updateField('category', e.target.value)}
+          >
+            <option value="">{t('drawer.form.selectCategory')}</option>
+            {CATEGORY_VALUES.map((cat) => (
+              <option key={cat} value={cat}>
+                {t(`categories.${cat}`)}
+              </option>
+            ))}
           </select>
         </FormGroup>
       </FormSection>
@@ -134,13 +236,13 @@ export function SubscriptionFormMode({
         <FormGroup label={t('drawer.form.pricingModel')} required>
           <RadioGroup
             options={[
-              { value: 'seat', label: t('drawer.form.perUserSeat') },
-              { value: 'flat', label: t('drawer.form.flatRate') },
-              { value: 'usage', label: t('drawer.form.perUsage') },
+              { value: 'per_seat', label: t('drawer.form.perUserSeat') },
+              { value: 'flat_rate', label: t('drawer.form.flatRate') },
+              { value: 'usage_based', label: t('drawer.form.perUsage') },
               { value: 'freemium', label: t('drawer.form.freemium') },
             ]}
-            value={pricingModel}
-            onChange={setPricingModel}
+            value={form.pricingModel}
+            onChange={(v) => updateField('pricingModel', v)}
           />
         </FormGroup>
         <div className="grid grid-cols-2 gap-4">
@@ -149,18 +251,19 @@ export function SubscriptionFormMode({
               type="text"
               className="form-input"
               placeholder="R$ 0,00"
-              defaultValue={
-                subscription
-                  ? `R$ ${(subscription.monthlyCostCents / 100).toFixed(2)}`
-                  : ''
-              }
+              value={form.totalMonthlyCost}
+              onChange={(e) => updateField('totalMonthlyCost', e.target.value)}
             />
           </FormGroup>
           <FormGroup label={t('drawer.form.currency')}>
-            <select className="form-select">
-              <option>BRL 🇧🇷</option>
-              <option>USD 🇺🇸</option>
-              <option>EUR 🇪🇺</option>
+            <select
+              className="form-select"
+              value={form.currency}
+              onChange={(e) => updateField('currency', e.target.value)}
+            >
+              <option value="BRL">BRL 🇧🇷</option>
+              <option value="USD">USD 🇺🇸</option>
+              <option value="EUR">EUR 🇪🇺</option>
             </select>
           </FormGroup>
         </div>
@@ -171,12 +274,15 @@ export function SubscriptionFormMode({
               { value: 'annual', label: t('billingCycles.annual') },
               { value: 'quarterly', label: t('billingCycles.quarterly') },
             ]}
-            defaultChecked={['annual']}
+            selected={form.billingCycle}
+            onChange={(v) => updateField('billingCycle', v)}
           />
         </FormGroup>
-        <div className="p-3 bg-[rgba(16,185,129,0.08)] border border-[rgba(16,185,129,0.15)] rounded-xl text-sm text-[#6ee7b7]">
-          💡 {t('drawer.form.annualCost')}: R$ 28.080,00
-        </div>
+        {form.totalMonthlyCost && (
+          <div className="p-3 bg-[rgba(16,185,129,0.08)] border border-[rgba(16,185,129,0.15)] rounded-xl text-sm text-[#6ee7b7]">
+            💡 {t('drawer.form.annualCost')}: R$ {(parseFloat(form.totalMonthlyCost.replace(',', '.') || '0') * 12).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+          </div>
+        )}
       </FormSection>
 
       {/* Licenses Section */}
@@ -192,14 +298,19 @@ export function SubscriptionFormMode({
               type="number"
               className="form-input"
               placeholder="50"
-              defaultValue={subscription?.totalSeats}
+              value={form.totalSeats}
+              onChange={(e) => updateField('totalSeats', e.target.value)}
             />
           </FormGroup>
           <FormGroup label={t('drawer.form.pricePerLicense')}>
             <input
               type="text"
               className="form-input"
-              value="R$ 46,80 (calculado)"
+              value={
+                form.totalMonthlyCost && form.totalSeats
+                  ? `R$ ${(parseFloat(form.totalMonthlyCost.replace(',', '.')) / parseInt(form.totalSeats)).toFixed(2)}`
+                  : ''
+              }
               disabled
               style={{ opacity: 0.7 }}
             />
@@ -210,17 +321,22 @@ export function SubscriptionFormMode({
             type="number"
             className="form-input"
             placeholder="42"
-            defaultValue={subscription?.usedSeats}
+            value={form.usedSeats}
+            onChange={(e) => updateField('usedSeats', e.target.value)}
           />
           <div className="mt-2 text-xs text-[#6ee7b7]">
             ℹ️ {t('drawer.form.autoUpdatedViaOkta')}
           </div>
         </FormGroup>
         <FormGroup label={t('drawer.form.licenseType')}>
-          <select className="form-select">
-            <option>{t('drawer.form.namedLicense')}</option>
-            <option>{t('drawer.form.concurrentLicense')}</option>
-            <option>{t('drawer.form.deviceLicense')}</option>
+          <select
+            className="form-select"
+            value={form.licenseType}
+            onChange={(e) => updateField('licenseType', e.target.value)}
+          >
+            <option value="named">{t('drawer.form.namedLicense')}</option>
+            <option value="concurrent">{t('drawer.form.concurrentLicense')}</option>
+            <option value="floating">{t('drawer.form.deviceLicense')}</option>
           </select>
         </FormGroup>
       </FormSection>
@@ -234,28 +350,51 @@ export function SubscriptionFormMode({
       >
         <div className="grid grid-cols-2 gap-4">
           <FormGroup label={t('drawer.form.startDate')} required>
-            <input type="date" className="form-input" />
+            <input
+              type="date"
+              className="form-input"
+              value={form.startDate}
+              onChange={(e) => updateField('startDate', e.target.value)}
+            />
           </FormGroup>
           <FormGroup label={t('drawer.form.renewalDate')} required>
-            <input type="date" className="form-input" />
+            <input
+              type="date"
+              className="form-input"
+              value={form.renewalDate}
+              onChange={(e) => updateField('renewalDate', e.target.value)}
+            />
           </FormGroup>
         </div>
         <FormGroup label={t('drawer.form.cancelDeadlineDate')}>
-          <input type="date" className="form-input" />
+          <input
+            type="date"
+            className="form-input"
+            value={form.cancellationDeadline}
+            onChange={(e) => updateField('cancellationDeadline', e.target.value)}
+          />
           <div className="mt-2 text-xs text-[#6ee7b7]">
             ℹ️ {t('drawer.form.usually30DaysBefore')}
           </div>
         </FormGroup>
-        <FormGroup label={t('drawer.form.remindBeforeRenewal')}>
-          <CheckboxRow
-            options={[
-              { value: '30', label: t('drawer.form.days30') },
-              { value: '15', label: t('drawer.form.days15') },
-              { value: '7', label: t('drawer.form.days7') },
-              { value: '1', label: t('drawer.form.days1') },
-            ]}
-            defaultChecked={['30', '15', '7']}
-          />
+        <FormGroup label={t('drawer.form.autoRenew')}>
+          <label className="flex items-center gap-3 cursor-pointer">
+            <div
+              onClick={() => updateField('autoRenew', !form.autoRenew)}
+              className={`w-10 h-5 rounded-full transition-colors relative ${
+                form.autoRenew ? 'bg-[#059669]' : 'bg-[#033a2d] border border-[rgba(16,185,129,0.3)]'
+              }`}
+            >
+              <div
+                className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
+                  form.autoRenew ? 'translate-x-5' : 'translate-x-0.5'
+                }`}
+              />
+            </div>
+            <span className="text-sm text-[#f0fdf4]">
+              {form.autoRenew ? t('drawer.form.yes') : t('drawer.form.no')}
+            </span>
+          </label>
         </FormGroup>
       </FormSection>
 
@@ -267,12 +406,16 @@ export function SubscriptionFormMode({
         onToggle={() => toggleSection('payment')}
       >
         <FormGroup label={t('drawer.form.paymentMethod')}>
-          <select className="form-select">
-            <option>💳 {t('drawer.form.creditCard')}</option>
-            <option>📄 {t('drawer.form.invoice')}</option>
-            <option>🏦 {t('drawer.form.bankTransfer')}</option>
-            <option>📱 PIX</option>
-            <option>🅿️ PayPal</option>
+          <select
+            className="form-select"
+            value={form.paymentMethod}
+            onChange={(e) => updateField('paymentMethod', e.target.value)}
+          >
+            <option value="credit_card">💳 {t('drawer.form.creditCard')}</option>
+            <option value="invoice">📄 {t('drawer.form.invoice')}</option>
+            <option value="bank_transfer">🏦 {t('drawer.form.bankTransfer')}</option>
+            <option value="pix">📱 PIX</option>
+            <option value="paypal">🅿️ PayPal</option>
           </select>
         </FormGroup>
         <FormGroup label={t('drawer.form.invoiceEmail')}>
@@ -280,6 +423,8 @@ export function SubscriptionFormMode({
             type="email"
             className="form-input"
             placeholder="financeiro@empresa.com"
+            value={form.billingEmail}
+            onChange={(e) => updateField('billingEmail', e.target.value)}
           />
         </FormGroup>
         <FormGroup label={t('drawer.form.costCenterOptional')}>
@@ -287,6 +432,8 @@ export function SubscriptionFormMode({
             type="text"
             className="form-input"
             placeholder={t('drawer.form.costCenterPlaceholder')}
+            value={form.costCenter}
+            onChange={(e) => updateField('costCenter', e.target.value)}
           />
         </FormGroup>
       </FormSection>
@@ -329,6 +476,8 @@ export function SubscriptionFormMode({
             className="w-full px-4 py-2.5 bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-xl text-[#f0fdf4] text-sm placeholder:text-[#6ee7b7] focus:outline-none focus:border-[#059669] transition-all resize-none"
             rows={4}
             placeholder={t('drawer.form.notesPlaceholder')}
+            value={form.notes}
+            onChange={(e) => updateField('notes', e.target.value)}
           />
         </FormGroup>
       </FormSection>
@@ -336,13 +485,18 @@ export function SubscriptionFormMode({
       {/* Footer Actions */}
       <div className="sticky bottom-0 -mx-6 px-6 py-4 bg-[#022c22] border-t border-[rgba(16,185,129,0.15)] mt-8">
         <div className="flex justify-end gap-3">
-          <button className="px-4 py-2.5 text-sm font-semibold text-[#a7f3d0] border border-[rgba(16,185,129,0.15)] rounded-xl hover:bg-[rgba(5,150,105,0.08)] transition-all">
+          <button
+            className="px-4 py-2.5 text-sm font-semibold text-[#a7f3d0] border border-[rgba(16,185,129,0.15)] rounded-xl hover:bg-[rgba(5,150,105,0.08)] transition-all"
+            disabled={isSaving}
+          >
             {t('drawer.form.cancel')}
           </button>
           <button
-            onClick={() => onSave?.({})}
-            className="px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[#059669] to-[#0d9488] rounded-xl hover:shadow-[0_0_20px_rgba(5,150,105,0.3)] transition-all"
+            onClick={handleSubmit}
+            disabled={isSaving || !form.name || !form.category || !form.totalMonthlyCost || !form.startDate || !form.renewalDate}
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[#059669] to-[#0d9488] rounded-xl hover:shadow-[0_0_20px_rgba(5,150,105,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
+            {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
             {t('drawer.form.save')}
           </button>
         </div>
@@ -446,39 +600,33 @@ function RadioGroup({
 
 function CheckboxRow({
   options,
-  defaultChecked = [],
+  selected,
+  onChange,
 }: {
   options: { value: string; label: string }[]
-  defaultChecked?: string[]
+  selected: string
+  onChange: (value: string) => void
 }) {
-  const [checked, setChecked] = useState<string[]>(defaultChecked)
-
-  const toggle = (value: string) => {
-    setChecked((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
-    )
-  }
-
   return (
     <div className="flex flex-wrap gap-3">
       {options.map((option) => (
         <button
           key={option.value}
-          onClick={() => toggle(option.value)}
+          onClick={() => onChange(option.value)}
           className={`flex items-center gap-2 px-3 py-2 border rounded-lg transition-all ${
-            checked.includes(option.value)
+            selected === option.value
               ? 'bg-[rgba(5,150,105,0.08)] border-[#059669]'
               : 'bg-[#033a2d] border-[rgba(16,185,129,0.15)] hover:border-[rgba(16,185,129,0.3)]'
           }`}
         >
           <div
             className={`w-4 h-4 rounded border flex items-center justify-center ${
-              checked.includes(option.value)
+              selected === option.value
                 ? 'bg-[#059669] border-[#059669]'
                 : 'border-[rgba(16,185,129,0.3)]'
             }`}
           >
-            {checked.includes(option.value) && (
+            {selected === option.value && (
               <svg
                 width="12"
                 height="12"

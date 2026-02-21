@@ -71,6 +71,8 @@
     "security": "Security",
     "analytics": "Analytics",
     "infrastructure": "Infrastructure",
+    "sales_marketing": "Sales & Marketing",
+    "support": "Support",
     "video": "Video",
     "other": "Other"
   },
@@ -125,7 +127,8 @@
     "next30Days": "Next 30 days",
     "moreRenewals": "+{count} renewals until {month}",
     "review": "Review",
-    "inDays": "in {count} days"
+    "inDays": "in {count} days",
+    "noUpcomingRenewals": "No upcoming renewals"
   },
 
   "subscriptionList": {
@@ -248,6 +251,9 @@
       "notesAndDocuments": "Notes and Documents",
       "internalNotes": "Internal notes",
       "notesPlaceholder": "Add notes about the contract, negotiations, etc.",
+      "autoRenew": "Auto-renew",
+      "yes": "Yes",
+      "no": "No",
       "cancel": "Cancel",
       "save": "Save subscription"
     }

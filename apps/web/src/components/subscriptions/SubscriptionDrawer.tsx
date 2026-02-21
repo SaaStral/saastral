@@ -3,7 +3,7 @@
 import { X, ChevronLeft } from 'lucide-react'
 import { useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import type { Subscription } from '@/lib/mockData'
+import type { SubscriptionDisplay } from '@/lib/subscription-helpers'
 import { SubscriptionViewMode } from './SubscriptionViewMode'
 import { SubscriptionFormMode } from './SubscriptionFormMode'
 
@@ -11,9 +11,10 @@ export type DrawerMode = 'view' | 'create' | 'edit' | null
 
 interface SubscriptionDrawerProps {
   mode: DrawerMode
-  subscription?: Subscription
+  subscription?: SubscriptionDisplay
   onClose: () => void
   onSave?: (data: any) => void
+  isSaving?: boolean
 }
 
 export function SubscriptionDrawer({
@@ -21,6 +22,7 @@ export function SubscriptionDrawer({
   subscription,
   onClose,
   onSave,
+  isSaving,
 }: SubscriptionDrawerProps) {
   const t = useTranslations('subscriptions')
 
@@ -95,6 +97,7 @@ export function SubscriptionDrawer({
               mode={mode as 'create' | 'edit'}
               subscription={subscription}
               onSave={onSave}
+              isSaving={isSaving}
             />
           )}
         </div>

@@ -2,11 +2,11 @@
 
 import { Users } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { formatCurrency, type Subscription } from '@/lib/mockData'
+import { formatCurrency, type SubscriptionDisplay } from '@/lib/subscription-helpers'
 
 interface SubscriptionsGridProps {
-  subscriptions: Subscription[]
-  onSubscriptionClick?: (subscription: Subscription) => void
+  subscriptions: SubscriptionDisplay[]
+  onSubscriptionClick?: (subscription: SubscriptionDisplay) => void
 }
 
 export function SubscriptionsGrid({ subscriptions, onSubscriptionClick }: SubscriptionsGridProps) {
@@ -31,7 +31,7 @@ function SubscriptionCard({
   t,
   onClick,
 }: {
-  subscription: Subscription
+  subscription: SubscriptionDisplay
   t: ReturnType<typeof useTranslations>
   onClick: () => void
 }) {
