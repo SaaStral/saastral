@@ -173,10 +173,17 @@ export function toCategorySpendingDisplay(item: {
 // Formatting
 // ============================================================================
 
-export function formatCurrency(cents: number): string {
-  return new Intl.NumberFormat('pt-BR', {
+const CURRENCY_LOCALES: Record<string, string> = {
+  BRL: 'pt-BR',
+  USD: 'en-US',
+  EUR: 'de-DE',
+}
+
+export function formatCurrency(cents: number, currency: string = 'BRL'): string {
+  const locale = CURRENCY_LOCALES[currency] ?? 'en-US'
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'BRL',
+    currency,
   }).format(cents / 100)
 }
 
