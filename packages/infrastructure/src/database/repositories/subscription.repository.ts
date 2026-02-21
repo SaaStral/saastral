@@ -253,8 +253,8 @@ export class PrismaSubscriptionRepository implements SubscriptionRepository {
     const data = this.toPersistence(subscription)
     const record = await this.prisma.subscription.upsert({
       where: { id: subscription.id },
-      create: data as Prisma.SubscriptionCreateInput,
-      update: data as Prisma.SubscriptionUpdateInput,
+      create: data as Prisma.SubscriptionUncheckedCreateInput,
+      update: data as Prisma.SubscriptionUncheckedUpdateInput,
     })
     return this.toDomain(record)
   }
@@ -337,7 +337,7 @@ export class PrismaSubscriptionRepository implements SubscriptionRepository {
     })
   }
 
-  private toPersistence(subscription: Subscription): Record<string, unknown> {
+  private toPersistence(subscription: Subscription): Prisma.SubscriptionUncheckedCreateInput {
     const props = subscription.toJSON()
     return {
       id: props.id,
