@@ -268,13 +268,13 @@ export function SubscriptionFormMode({
           </FormGroup>
         </div>
         <FormGroup label={t('drawer.form.billingCycle')} required>
-          <CheckboxRow
+          <RadioGroup
             options={[
               { value: 'monthly', label: t('billingCycles.monthly') },
               { value: 'annual', label: t('billingCycles.annual') },
               { value: 'quarterly', label: t('billingCycles.quarterly') },
             ]}
-            selected={form.billingCycle}
+            value={form.billingCycle}
             onChange={(v) => updateField('billingCycle', v)}
           />
         </FormGroup>
@@ -598,50 +598,3 @@ function RadioGroup({
   )
 }
 
-function CheckboxRow({
-  options,
-  selected,
-  onChange,
-}: {
-  options: { value: string; label: string }[]
-  selected: string
-  onChange: (value: string) => void
-}) {
-  return (
-    <div className="flex flex-wrap gap-3">
-      {options.map((option) => (
-        <button
-          key={option.value}
-          onClick={() => onChange(option.value)}
-          className={`flex items-center gap-2 px-3 py-2 border rounded-lg transition-all ${
-            selected === option.value
-              ? 'bg-[rgba(5,150,105,0.08)] border-[#059669]'
-              : 'bg-[#033a2d] border-[rgba(16,185,129,0.15)] hover:border-[rgba(16,185,129,0.3)]'
-          }`}
-        >
-          <div
-            className={`w-4 h-4 rounded border flex items-center justify-center ${
-              selected === option.value
-                ? 'bg-[#059669] border-[#059669]'
-                : 'border-[rgba(16,185,129,0.3)]'
-            }`}
-          >
-            {selected === option.value && (
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="white"
-                strokeWidth="3"
-              >
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            )}
-          </div>
-          <span className="text-sm text-[#f0fdf4]">{option.label}</span>
-        </button>
-      ))}
-    </div>
-  )
-}
