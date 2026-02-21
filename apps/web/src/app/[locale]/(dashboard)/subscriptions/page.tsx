@@ -33,14 +33,16 @@ import {
 } from '@/lib/subscription-helpers'
 
 type ViewMode = 'grid' | 'table'
+type CategoryFilter = 'all' | 'productivity' | 'development' | 'design' | 'infrastructure' | 'sales_marketing' | 'communication' | 'finance' | 'hr' | 'security' | 'analytics' | 'support' | 'other'
+type StatusFilter = 'all' | 'active' | 'trial' | 'suspended' | 'cancelled' | 'expired'
 
 export default function SubscriptionsPage() {
   const { selectedOrgId } = useOrganization()
   const t = useTranslations('subscriptions')
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [searchQuery, setSearchQuery] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState('all')
-  const [statusFilter, setStatusFilter] = useState('all')
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [drawerMode, setDrawerMode] = useState<DrawerMode>(null)
   const [selectedSubscription, setSelectedSubscription] =
     useState<SubscriptionDisplay | undefined>(undefined)
@@ -56,8 +58,8 @@ export default function SubscriptionsPage() {
     {
       organizationId: selectedOrgId || '',
       search: searchQuery || undefined,
-      category: categoryFilter === 'all' ? undefined : categoryFilter as any,
-      status: statusFilter === 'all' ? undefined : statusFilter as any,
+      category: categoryFilter === 'all' ? undefined : categoryFilter,
+      status: statusFilter === 'all' ? undefined : statusFilter,
     },
     { enabled: !!selectedOrgId }
   )
@@ -204,7 +206,7 @@ export default function SubscriptionsPage() {
           <select
             className="px-4 py-2.5 bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-xl text-[#f0fdf4] text-sm focus:outline-none focus:border-[#059669] appearance-none cursor-pointer transition-all"
             value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
+            onChange={(e) => setCategoryFilter(e.target.value as CategoryFilter)}
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236ee7b7' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
               backgroundRepeat: 'no-repeat',
@@ -224,7 +226,7 @@ export default function SubscriptionsPage() {
           <select
             className="px-4 py-2.5 bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-xl text-[#f0fdf4] text-sm focus:outline-none focus:border-[#059669] appearance-none cursor-pointer transition-all"
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236ee7b7' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
               backgroundRepeat: 'no-repeat',
