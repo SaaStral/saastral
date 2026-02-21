@@ -467,11 +467,22 @@ export class Subscription {
     budgetCode?: string
     notes?: string
   }): void {
-    Object.entries(updates).forEach(([key, value]) => {
-      if (value !== undefined) {
-        ;(this.props as Record<string, unknown>)[key] = value
-      }
-    })
+    if (updates.name !== undefined) this.props.name = updates.name
+    if (updates.vendor !== undefined) this.props.vendor = updates.vendor
+    if (updates.category !== undefined) this.props.category = updates.category
+    if (updates.description !== undefined) this.props.description = updates.description
+    if (updates.website !== undefined) this.props.website = updates.website
+    if (updates.logoUrl !== undefined) this.props.logoUrl = updates.logoUrl
+    if (updates.tags !== undefined) this.props.tags = updates.tags
+    if (updates.billingCycle !== undefined) this.props.billingCycle = updates.billingCycle
+    if (updates.pricingModel !== undefined) this.props.pricingModel = updates.pricingModel
+    if (updates.licenseType !== undefined) this.props.licenseType = updates.licenseType
+    if (updates.paymentMethod !== undefined) this.props.paymentMethod = updates.paymentMethod
+    if (updates.billingEmail !== undefined) this.props.billingEmail = updates.billingEmail
+    if (updates.autoRenew !== undefined) this.props.autoRenew = updates.autoRenew
+    if (updates.costCenter !== undefined) this.props.costCenter = updates.costCenter
+    if (updates.budgetCode !== undefined) this.props.budgetCode = updates.budgetCode
+    if (updates.notes !== undefined) this.props.notes = updates.notes
     this.props.updatedAt = new Date()
   }
 
@@ -480,6 +491,19 @@ export class Subscription {
   // ============================================================================
 
   toJSON(): SubscriptionProps {
-    return { ...this.props }
+    return {
+      ...this.props,
+      tags: [...this.props.tags],
+      reminderDays: [...this.props.reminderDays],
+      startDate: new Date(this.props.startDate),
+      renewalDate: new Date(this.props.renewalDate),
+      createdAt: new Date(this.props.createdAt),
+      updatedAt: new Date(this.props.updatedAt),
+      cancellationDeadline: this.props.cancellationDeadline ? new Date(this.props.cancellationDeadline) : undefined,
+      trialEndDate: this.props.trialEndDate ? new Date(this.props.trialEndDate) : undefined,
+      lastUsageCalculatedAt: this.props.lastUsageCalculatedAt ? new Date(this.props.lastUsageCalculatedAt) : undefined,
+      vendorContact: this.props.vendorContact ? { ...this.props.vendorContact } : undefined,
+      metadata: { ...this.props.metadata },
+    }
   }
 }

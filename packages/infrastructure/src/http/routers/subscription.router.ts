@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { router, publicProcedure } from '../trpc'
+import { router, protectedProcedure } from '../trpc'
 import { getContainer } from '../../container'
 import { TRPCError } from '@trpc/server'
 import { SubscriptionNotFoundError } from '@saastral/core'
@@ -122,7 +122,7 @@ const updateSubscriptionSchema = z.object({
   website: z.string().url().optional().or(z.literal('')),
   logoUrl: z.string().url().optional().or(z.literal('')),
   tags: z.array(z.string()).optional(),
-  status: subscriptionStatusSchema.optional(),
+  // status is intentionally excluded — use dedicated cancel/suspend/reactivate endpoints
   contractType: contractTypeSchema.optional(),
   billingCycle: billingCycleSchema.optional(),
   pricingModel: pricingModelSchema.optional(),
@@ -176,13 +176,9 @@ export const subscriptionRouter = router({
   /**
    * Get KPI statistics for subscription dashboard
    */
-  getKPIs: publicProcedure
+  getKPIs: protectedProcedure
     .input(z.object({ organizationId: z.string().uuid() }))
     .query(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       await validateOrganizationAccess(ctx.userId, input.organizationId)
 
       const container = getContainer()
@@ -192,11 +188,7 @@ export const subscriptionRouter = router({
   /**
    * List subscriptions with pagination, filters, and sorting
    */
-  list: publicProcedure.input(listSubscriptionsSchema).query(async ({ input, ctx }) => {
-    if (!ctx.userId) {
-      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-    }
-
+  list: protectedProcedure.input(listSubscriptionsSchema).query(async ({ input, ctx }) => {
     await validateOrganizationAccess(ctx.userId, input.organizationId)
 
     const container = getContainer()
@@ -206,13 +198,9 @@ export const subscriptionRouter = router({
   /**
    * Get a single subscription by ID
    */
-  getById: publicProcedure
+  getById: protectedProcedure
     .input(z.object({ id: z.string().uuid(), organizationId: z.string().uuid() }))
     .query(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       await validateOrganizationAccess(ctx.userId, input.organizationId)
 
       try {
@@ -236,7 +224,7 @@ export const subscriptionRouter = router({
   /**
    * Get upcoming renewal alerts
    */
-  getUpcomingRenewals: publicProcedure
+  getUpcomingRenewals: protectedProcedure
     .input(
       z.object({
         organizationId: z.string().uuid(),
@@ -245,10 +233,6 @@ export const subscriptionRouter = router({
       })
     )
     .query(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       await validateOrganizationAccess(ctx.userId, input.organizationId)
 
       const container = getContainer()
@@ -262,13 +246,9 @@ export const subscriptionRouter = router({
   /**
    * Get spending breakdown by category
    */
-  getCategoryBreakdown: publicProcedure
+  getCategoryBreakdown: protectedProcedure
     .input(z.object({ organizationId: z.string().uuid() }))
     .query(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       await validateOrganizationAccess(ctx.userId, input.organizationId)
 
       const container = getContainer()
@@ -278,11 +258,7 @@ export const subscriptionRouter = router({
   /**
    * Create a new subscription
    */
-  create: publicProcedure.input(createSubscriptionSchema).mutation(async ({ input, ctx }) => {
-    if (!ctx.userId) {
-      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-    }
-
+  create: protectedProcedure.input(createSubscriptionSchema).mutation(async ({ input, ctx }) => {
     await validateOrganizationAccess(ctx.userId, input.organizationId)
 
     const container = getContainer()
@@ -303,11 +279,7 @@ export const subscriptionRouter = router({
   /**
    * Update an existing subscription
    */
-  update: publicProcedure.input(updateSubscriptionSchema).mutation(async ({ input, ctx }) => {
-    if (!ctx.userId) {
-      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-    }
-
+  update: protectedProcedure.input(updateSubscriptionSchema).mutation(async ({ input, ctx }) => {
     await validateOrganizationAccess(ctx.userId, input.organizationId)
 
     const { id, organizationId, ...updateData } = input
@@ -333,13 +305,9 @@ export const subscriptionRouter = router({
   /**
    * Cancel a subscription
    */
-  cancel: publicProcedure
+  cancel: protectedProcedure
     .input(z.object({ id: z.string().uuid(), organizationId: z.string().uuid() }))
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       await validateOrganizationAccess(ctx.userId, input.organizationId)
 
       const container = getContainer()
@@ -353,13 +321,9 @@ export const subscriptionRouter = router({
   /**
    * Suspend a subscription
    */
-  suspend: publicProcedure
+  suspend: protectedProcedure
     .input(z.object({ id: z.string().uuid(), organizationId: z.string().uuid() }))
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       await validateOrganizationAccess(ctx.userId, input.organizationId)
 
       const container = getContainer()
@@ -373,13 +337,9 @@ export const subscriptionRouter = router({
   /**
    * Reactivate a subscription
    */
-  reactivate: publicProcedure
+  reactivate: protectedProcedure
     .input(z.object({ id: z.string().uuid(), organizationId: z.string().uuid() }))
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       await validateOrganizationAccess(ctx.userId, input.organizationId)
 
       const container = getContainer()
@@ -393,13 +353,9 @@ export const subscriptionRouter = router({
   /**
    * Delete a subscription (soft delete)
    */
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(z.object({ id: z.string().uuid(), organizationId: z.string().uuid() }))
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       await validateOrganizationAccess(ctx.userId, input.organizationId)
 
       const container = getContainer()

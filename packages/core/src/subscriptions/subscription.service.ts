@@ -39,6 +39,7 @@ export class SubscriptionService {
       seatsStats,
       upcomingRenewals,
       expiringTrials,
+      potentialSavings,
     ] = await Promise.all([
       this.subscriptionRepo.countByStatus(organizationId, 'active'),
       this.subscriptionRepo.getTotalMonthlyCost(organizationId),
@@ -46,6 +47,7 @@ export class SubscriptionService {
       this.subscriptionRepo.getSeatsStats(organizationId),
       this.subscriptionRepo.getUpcomingRenewals(organizationId, 30),
       this.subscriptionRepo.getExpiringTrials(organizationId, 7),
+      this.subscriptionRepo.getPotentialSavings(organizationId),
     ])
 
     const avgCost = activeCount > 0 ? Number(totalMonthlyCost) / activeCount : 0
@@ -64,6 +66,8 @@ export class SubscriptionService {
       overallUtilization: utilization,
       upcomingRenewals: upcomingRenewals.length,
       expiringTrials,
+      potentialSavings,
+      unusedSeats: seatsStats.total - seatsStats.used,
     }
   }
 
@@ -252,8 +256,8 @@ export class SubscriptionService {
       )
     }
 
-    // Update general details
-    subscription.updateDetails({
+    // Update general details (only if at least one detail field is provided)
+    const detailUpdates = {
       name: input.name,
       vendor: input.vendor,
       category: input.category,
@@ -270,7 +274,11 @@ export class SubscriptionService {
       costCenter: input.costCenter,
       budgetCode: input.budgetCode,
       notes: input.notes,
-    })
+    }
+    const hasDetailUpdates = Object.values(detailUpdates).some(v => v !== undefined)
+    if (hasDetailUpdates) {
+      subscription.updateDetails(detailUpdates)
+    }
 
     return this.subscriptionRepo.save(subscription)
   }

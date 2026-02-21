@@ -174,6 +174,7 @@ export class PrismaSubscriptionRepository implements SubscriptionRepository {
         id: true,
         name: true,
         logoUrl: true,
+        category: true,
         renewalDate: true,
         totalMonthlyCost: true,
         autoRenew: true,
@@ -192,6 +193,7 @@ export class PrismaSubscriptionRepository implements SubscriptionRepository {
         id: sub.id,
         name: sub.name,
         logoUrl: sub.logoUrl || undefined,
+        category: sub.category as UpcomingRenewal['category'],
         renewalDate: sub.renewalDate.toISOString().split('T')[0]!,
         daysUntilRenewal,
         totalMonthlyCost: Number(sub.totalMonthlyCost),
@@ -249,12 +251,41 @@ export class PrismaSubscriptionRepository implements SubscriptionRepository {
     }))
   }
 
+  async getPotentialSavings(organizationId: string): Promise<number> {
+    const subs = await this.prisma.subscription.findMany({
+      where: {
+        organizationId,
+        status: 'active',
+        deletedAt: null,
+        pricingModel: { in: ['per_seat', 'per_active_user'] },
+        seatsUnlimited: false,
+        totalSeats: { gt: 0 },
+      },
+      select: {
+        totalSeats: true,
+        usedSeats: true,
+        totalMonthlyCost: true,
+      },
+    })
+
+    let savings = 0
+    for (const sub of subs) {
+      const totalSeats = sub.totalSeats ?? 0
+      if (totalSeats <= 0) continue
+      const unusedSeats = totalSeats - sub.usedSeats
+      if (unusedSeats <= 0) continue
+      const costPerSeat = Number(sub.totalMonthlyCost) / totalSeats
+      savings += Math.round(unusedSeats * costPerSeat)
+    }
+    return savings
+  }
+
   async save(subscription: Subscription): Promise<Subscription> {
     const data = this.toPersistence(subscription)
     const record = await this.prisma.subscription.upsert({
       where: { id: subscription.id },
-      create: data as Prisma.SubscriptionCreateInput,
-      update: data as Prisma.SubscriptionUpdateInput,
+      create: data as Prisma.SubscriptionUncheckedCreateInput,
+      update: data as Prisma.SubscriptionUncheckedUpdateInput,
     })
     return this.toDomain(record)
   }
@@ -337,7 +368,7 @@ export class PrismaSubscriptionRepository implements SubscriptionRepository {
     })
   }
 
-  private toPersistence(subscription: Subscription): Record<string, unknown> {
+  private toPersistence(subscription: Subscription): Prisma.SubscriptionUncheckedCreateInput {
     const props = subscription.toJSON()
     return {
       id: props.id,

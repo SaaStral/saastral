@@ -182,7 +182,7 @@ export interface UpdateSubscriptionInput {
   readonly website?: string
   readonly logoUrl?: string
   readonly tags?: string[]
-  readonly status?: SubscriptionStatus
+  // status is intentionally excluded — use dedicated cancel/suspend/reactivate methods
   readonly contractType?: ContractType
   readonly billingCycle?: SubscriptionBillingCycle
   readonly pricingModel?: PricingModel
@@ -265,12 +265,15 @@ export interface SubscriptionKPIsOutput {
   readonly overallUtilization: number
   readonly upcomingRenewals: number
   readonly expiringTrials: number
+  readonly potentialSavings: number
+  readonly unusedSeats: number
 }
 
 export interface UpcomingRenewal {
   readonly id: string
   readonly name: string
   readonly logoUrl?: string
+  readonly category: SubscriptionCategory
   readonly renewalDate: string
   readonly daysUntilRenewal: number
   readonly totalMonthlyCost: number
