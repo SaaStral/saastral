@@ -491,6 +491,19 @@ export class Subscription {
   // ============================================================================
 
   toJSON(): SubscriptionProps {
-    return { ...this.props }
+    return {
+      ...this.props,
+      tags: [...this.props.tags],
+      reminderDays: [...this.props.reminderDays],
+      startDate: new Date(this.props.startDate),
+      renewalDate: new Date(this.props.renewalDate),
+      createdAt: new Date(this.props.createdAt),
+      updatedAt: new Date(this.props.updatedAt),
+      cancellationDeadline: this.props.cancellationDeadline ? new Date(this.props.cancellationDeadline) : undefined,
+      trialEndDate: this.props.trialEndDate ? new Date(this.props.trialEndDate) : undefined,
+      lastUsageCalculatedAt: this.props.lastUsageCalculatedAt ? new Date(this.props.lastUsageCalculatedAt) : undefined,
+      vendorContact: this.props.vendorContact ? { ...this.props.vendorContact } : undefined,
+      metadata: { ...this.props.metadata },
+    }
   }
 }
