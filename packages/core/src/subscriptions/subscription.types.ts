@@ -182,7 +182,7 @@ export interface UpdateSubscriptionInput {
   readonly website?: string
   readonly logoUrl?: string
   readonly tags?: string[]
-  readonly status?: SubscriptionStatus
+  // status is intentionally excluded — use dedicated cancel/suspend/reactivate methods
   readonly contractType?: ContractType
   readonly billingCycle?: SubscriptionBillingCycle
   readonly pricingModel?: PricingModel

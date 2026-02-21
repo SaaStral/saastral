@@ -122,7 +122,7 @@ const updateSubscriptionSchema = z.object({
   website: z.string().url().optional().or(z.literal('')),
   logoUrl: z.string().url().optional().or(z.literal('')),
   tags: z.array(z.string()).optional(),
-  status: subscriptionStatusSchema.optional(),
+  // status is intentionally excluded — use dedicated cancel/suspend/reactivate endpoints
   contractType: contractTypeSchema.optional(),
   billingCycle: billingCycleSchema.optional(),
   pricingModel: pricingModelSchema.optional(),
