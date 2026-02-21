@@ -76,14 +76,23 @@ export default function SubscriptionsPage() {
     { enabled: !!selectedOrgId }
   )
 
-  // Create mutation
+  // Mutations
   const utils = trpc.useUtils()
+  const invalidateAll = () => {
+    utils.subscription.list.invalidate()
+    utils.subscription.getKPIs.invalidate()
+    utils.subscription.getCategoryBreakdown.invalidate()
+    utils.subscription.getUpcomingRenewals.invalidate()
+  }
   const createMutation = trpc.subscription.create.useMutation({
     onSuccess: () => {
-      utils.subscription.list.invalidate()
-      utils.subscription.getKPIs.invalidate()
-      utils.subscription.getCategoryBreakdown.invalidate()
-      utils.subscription.getUpcomingRenewals.invalidate()
+      invalidateAll()
+      handleCloseDrawer()
+    },
+  })
+  const updateMutation = trpc.subscription.update.useMutation({
+    onSuccess: () => {
+      invalidateAll()
       handleCloseDrawer()
     },
   })
@@ -105,10 +114,18 @@ export default function SubscriptionsPage() {
 
   const handleSave = (data: any) => {
     if (!selectedOrgId) return
-    createMutation.mutate({
-      ...data,
-      organizationId: selectedOrgId,
-    })
+    if (drawerMode === 'edit' && selectedSubscription) {
+      updateMutation.mutate({
+        ...data,
+        id: selectedSubscription.id,
+        organizationId: selectedOrgId,
+      })
+    } else {
+      createMutation.mutate({
+        ...data,
+        organizationId: selectedOrgId,
+      })
+    }
   }
 
   if (!selectedOrgId) {
@@ -300,7 +317,7 @@ export default function SubscriptionsPage() {
         subscription={selectedSubscription}
         onClose={handleCloseDrawer}
         onSave={handleSave}
-        isSaving={createMutation.isPending}
+        isSaving={createMutation.isPending || updateMutation.isPending}
       />
     </div>
   )
