@@ -139,12 +139,8 @@ export default function SubscriptionsPage() {
           />
           <KPICard
             title={t('kpis.potentialSavings')}
-            value={formatCurrency(
-              kpis.totalSeats > 0
-                ? Math.round(((kpis.totalSeats - kpis.usedSeats) / kpis.totalSeats) * kpis.totalMonthlyCost)
-                : 0
-            )}
-            subtitle={`${kpis.totalSeats - kpis.usedSeats} ${t('kpis.opportunities')}`}
+            value={formatCurrency(kpis.potentialSavings)}
+            subtitle={`${kpis.unusedSeats} ${t('kpis.opportunities')}`}
             highlight
             icon={Lightbulb}
             trend={{

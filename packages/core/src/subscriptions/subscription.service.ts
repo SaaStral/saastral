@@ -39,6 +39,7 @@ export class SubscriptionService {
       seatsStats,
       upcomingRenewals,
       expiringTrials,
+      potentialSavings,
     ] = await Promise.all([
       this.subscriptionRepo.countByStatus(organizationId, 'active'),
       this.subscriptionRepo.getTotalMonthlyCost(organizationId),
@@ -46,6 +47,7 @@ export class SubscriptionService {
       this.subscriptionRepo.getSeatsStats(organizationId),
       this.subscriptionRepo.getUpcomingRenewals(organizationId, 30),
       this.subscriptionRepo.getExpiringTrials(organizationId, 7),
+      this.subscriptionRepo.getPotentialSavings(organizationId),
     ])
 
     const avgCost = activeCount > 0 ? Number(totalMonthlyCost) / activeCount : 0
@@ -64,6 +66,8 @@ export class SubscriptionService {
       overallUtilization: utilization,
       upcomingRenewals: upcomingRenewals.length,
       expiringTrials,
+      potentialSavings,
+      unusedSeats: seatsStats.total - seatsStats.used,
     }
   }
 

@@ -265,6 +265,8 @@ export interface SubscriptionKPIsOutput {
   readonly overallUtilization: number
   readonly upcomingRenewals: number
   readonly expiringTrials: number
+  readonly potentialSavings: number
+  readonly unusedSeats: number
 }
 
 export interface UpcomingRenewal {

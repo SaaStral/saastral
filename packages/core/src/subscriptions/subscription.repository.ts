@@ -85,6 +85,13 @@ export interface SubscriptionRepository {
   delete(id: string, organizationId: string): Promise<void>
 
   /**
+   * Calculate potential savings from unused per-seat subscriptions.
+   * Only per-seat/per-active-user pricing models with finite seats contribute.
+   * Returns the sum of (unusedSeats * costPerSeat) across qualifying subscriptions, in cents.
+   */
+  getPotentialSavings(organizationId: string): Promise<number>
+
+  /**
    * Bulk update usage statistics
    * Used by background jobs to recalculate usage from login events
    */

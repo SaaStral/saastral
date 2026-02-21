@@ -249,6 +249,35 @@ export class PrismaSubscriptionRepository implements SubscriptionRepository {
     }))
   }
 
+  async getPotentialSavings(organizationId: string): Promise<number> {
+    const subs = await this.prisma.subscription.findMany({
+      where: {
+        organizationId,
+        status: 'active',
+        deletedAt: null,
+        pricingModel: { in: ['per_seat', 'per_active_user'] },
+        seatsUnlimited: false,
+        totalSeats: { gt: 0 },
+      },
+      select: {
+        totalSeats: true,
+        usedSeats: true,
+        totalMonthlyCost: true,
+      },
+    })
+
+    let savings = 0
+    for (const sub of subs) {
+      const totalSeats = sub.totalSeats ?? 0
+      if (totalSeats <= 0) continue
+      const unusedSeats = totalSeats - sub.usedSeats
+      if (unusedSeats <= 0) continue
+      const costPerSeat = Number(sub.totalMonthlyCost) / totalSeats
+      savings += Math.round(unusedSeats * costPerSeat)
+    }
+    return savings
+  }
+
   async save(subscription: Subscription): Promise<Subscription> {
     const data = this.toPersistence(subscription)
     const record = await this.prisma.subscription.upsert({
