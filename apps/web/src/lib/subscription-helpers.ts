@@ -141,11 +141,12 @@ export function toRenewalDisplay(item: {
   id: string
   name: string
   logoUrl?: string | null
+  category: string
   renewalDate: string
   daysUntilRenewal: number
   totalMonthlyCost: number
 }): RenewalDisplay {
-  const gradient = getGradientForCategory('other') // renewals don't carry category
+  const gradient = getGradientForCategory(item.category)
   return {
     id: item.id,
     name: item.name,

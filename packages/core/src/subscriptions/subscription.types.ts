@@ -273,6 +273,7 @@ export interface UpcomingRenewal {
   readonly id: string
   readonly name: string
   readonly logoUrl?: string
+  readonly category: SubscriptionCategory
   readonly renewalDate: string
   readonly daysUntilRenewal: number
   readonly totalMonthlyCost: number
