@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { formatCurrency, type CategorySpending } from '@/lib/mockData'
+import { formatCurrency, type CategorySpendingDisplay } from '@/lib/subscription-helpers'
 
 interface SpendingByCategoryCardProps {
-  categories: CategorySpending[]
+  categories: CategorySpendingDisplay[]
 }
 
 type PeriodType = 'month' | '3months' | 'year'
@@ -102,7 +102,7 @@ function DonutChart({
   categories,
   total,
 }: {
-  categories: CategorySpending[]
+  categories: CategorySpendingDisplay[]
   total: number
 }) {
   const radius = 70

@@ -71,6 +71,8 @@
     "security": "Segurança",
     "analytics": "Analytics",
     "infrastructure": "Infraestrutura",
+    "sales_marketing": "Vendas e Marketing",
+    "support": "Suporte",
     "video": "Vídeo",
     "other": "Outros"
   },
@@ -125,7 +127,8 @@
     "next30Days": "Próximos 30 dias",
     "moreRenewals": "+{count} renovações até {month}",
     "review": "Revisar",
-    "inDays": "em {count} dias"
+    "inDays": "em {count} dias",
+    "noUpcomingRenewals": "Sem renovações pendentes"
   },
 
   "subscriptionList": {
@@ -248,6 +251,9 @@
       "notesAndDocuments": "Notas e Documentos",
       "internalNotes": "Notas internas",
       "notesPlaceholder": "Adicione notas sobre o contrato, negociações, etc.",
+      "autoRenew": "Renovação automática",
+      "yes": "Sim",
+      "no": "Não",
       "cancel": "Cancelar",
       "save": "Salvar assinatura"
     }

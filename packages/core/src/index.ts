@@ -8,8 +8,7 @@ export * from './organizations'
 export * from './employees'
 
 // Subscriptions
-// TODO: Uncomment when subscription module is implemented
-// export * from './subscriptions'
+export * from './subscriptions'
 
 // Departments
 export * from './departments'

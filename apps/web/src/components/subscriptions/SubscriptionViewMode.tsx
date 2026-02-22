@@ -2,10 +2,10 @@
 
 import { Edit, Calendar, Users, FileText, MoreVertical, AlertTriangle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { formatCurrency, type Subscription } from '@/lib/mockData'
+import { formatCurrency, type SubscriptionDisplay } from '@/lib/subscription-helpers'
 
 interface SubscriptionViewModeProps {
-  subscription: Subscription
+  subscription: SubscriptionDisplay
   onEdit: () => void
 }
 
@@ -15,7 +15,7 @@ export function SubscriptionViewMode({
 }: SubscriptionViewModeProps) {
   const t = useTranslations('subscriptions')
 
-  // Mock data for view mode
+  // Mock data for view mode - subscription members aren't implemented yet
   const mockUsers = [
     {
       id: '1',
