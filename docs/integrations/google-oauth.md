@@ -219,7 +219,7 @@ GOOGLE_REDIRECT_URI="http://localhost:3000/api/integrations/google/callback"
 - [Google Cloud Console](https://console.cloud.google.com/)
 - [Google Workspace Admin SDK Documentation](https://developers.google.com/admin-sdk)
 - [OAuth 2.0 for Web Server Applications](https://developers.google.com/identity/protocols/oauth2/web-server)
-- [SaaStral Architecture Guide](../ARCHITECTURE-GUIDE.md)
+- [SaaStral Architecture Guide](../architecture/overview.md)
 
 ---
 
