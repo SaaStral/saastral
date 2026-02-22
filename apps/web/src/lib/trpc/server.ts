@@ -1,4 +1,5 @@
 import { cache } from 'react'
+import { headers } from 'next/headers'
 import { appRouter, createContext } from '@saastral/infrastructure'
 import { QueryClient } from '@tanstack/react-query'
 
@@ -20,10 +21,15 @@ export const createQueryClient = cache(
 
 /**
  * Server-side tRPC caller
- * Uses React cache() to deduplicate calls within a single request
- * In tRPC v11, use router.createCaller() instead of createCallerFactory
+ * Uses React cache() to deduplicate calls within a single request.
+ * Passes the incoming request headers so that the session cookie
+ * is forwarded and the caller is authenticated.
  */
 export const getServerCaller = cache(async () => {
-  const context = await createContext()
+  const headersList = await headers()
+  const context = await createContext({
+    req: new Request('https://localhost', { headers: headersList }),
+    resHeaders: new Headers(),
+  })
   return appRouter.createCaller(context)
 })

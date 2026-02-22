@@ -3,6 +3,7 @@ import { router, protectedProcedure } from '../trpc'
 import { getContainer } from '../../container'
 import { TRPCError } from '@trpc/server'
 import { SubscriptionNotFoundError } from '@saastral/core'
+import { validateOrganizationAccess } from '../middleware/validate-org-access'
 
 // ============================================================================
 // Input Schemas
@@ -146,27 +147,6 @@ const updateSubscriptionSchema = z.object({
   approverId: z.string().uuid().nullable().optional(),
   notes: z.string().optional(),
 })
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/**
- * Validates that the authenticated user has access to the specified organization
- */
-async function validateOrganizationAccess(userId: string, organizationId: string) {
-  const container = getContainer()
-  const userOrgs = await container.organizationService.listUserOrganizations(userId)
-
-  const hasAccess = userOrgs.some(org => org.id === organizationId)
-
-  if (!hasAccess) {
-    throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: 'You do not have access to this organization',
-    })
-  }
-}
 
 // ============================================================================
 // Subscription Router

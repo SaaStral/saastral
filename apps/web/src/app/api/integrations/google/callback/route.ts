@@ -14,7 +14,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { google } from 'googleapis'
-import { getContainer } from '@saastral/infrastructure'
+import { getContainer, auth } from '@saastral/infrastructure'
 import { Integration } from '@saastral/core'
 
 // Force Node.js runtime (required for crypto and pg modules)
@@ -30,6 +30,15 @@ export const runtime = 'nodejs'
  */
 export async function GET(request: NextRequest) {
   try {
+    // Authenticate the user — the callback should only be processed for logged-in users
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    })
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+
     const searchParams = request.nextUrl.searchParams
     const code = searchParams.get('code')
     const state = searchParams.get('state')
@@ -69,8 +78,12 @@ export async function GET(request: NextRequest) {
 
     const { orgId, redirectUrl } = stateData
 
-    // Get container for database access
+    // Validate user has access to this organization
     const container = getContainer()
+    const userOrgs = await container.organizationService.listUserOrganizations(session.user.id)
+    if (!userOrgs.some(org => org.id === orgId)) {
+      return NextResponse.json({ error: 'You do not have access to this organization' }, { status: 403 })
+    }
 
     // Get OAuth credentials from database (required)
     const existingIntegration = await container.integrationRepo.findByOrganizationAndProvider(

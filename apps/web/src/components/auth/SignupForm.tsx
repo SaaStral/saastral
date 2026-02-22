@@ -86,12 +86,12 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
           name: formData.fullName,
         },
         {
-          onSuccess: async (ctx) => {
+          onSuccess: async () => {
             // Create organization for the new user
+            // userId is taken from the session on the backend (protectedProcedure)
             try {
               await createOrganization.mutateAsync({
                 name: formData.organizationName,
-                userId: ctx.data.user.id,
               })
 
               // Redirect to dashboard after successful organization creation

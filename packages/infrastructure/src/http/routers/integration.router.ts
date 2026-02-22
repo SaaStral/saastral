@@ -1,34 +1,14 @@
 import { z } from 'zod'
-import { router, publicProcedure } from '../trpc'
+import { router, protectedProcedure } from '../trpc'
 import { getContainer } from '../../container'
 import { Integration } from '@saastral/core'
 import { TRPCError } from '@trpc/server'
+import { validateOrganizationAccess } from '../middleware/validate-org-access'
 
 /**
  * Integration Router
  * Handles integration configuration and management
  */
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/**
- * Validates that the authenticated user has access to the specified organization
- */
-async function validateOrganizationAccess(userId: string, organizationId: string) {
-  const container = getContainer()
-  const userOrgs = await container.organizationService.listUserOrganizations(userId)
-
-  const hasAccess = userOrgs.some(org => org.id === organizationId)
-
-  if (!hasAccess) {
-    throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: 'You do not have access to this organization',
-    })
-  }
-}
 
 // ============================================================================
 // Input Schemas
@@ -51,16 +31,11 @@ export const integrationRouter = router({
    * Save Google OAuth credentials for an organization
    * Creates or updates the integration with OAuth client credentials
    */
-  saveGoogleOAuthCredentials: publicProcedure
+  saveGoogleOAuthCredentials: protectedProcedure
     .input(saveGoogleOAuthCredentialsSchema)
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       const { organizationId, oauthClientId, oauthClientSecret } = input
 
-      // Validate user has access to this organization
       await validateOrganizationAccess(ctx.userId, organizationId)
 
       const container = getContainer()
@@ -123,14 +98,9 @@ export const integrationRouter = router({
   /**
    * List all integrations for an organization
    */
-  list: publicProcedure
+  list: protectedProcedure
     .input(listIntegrationsSchema)
     .query(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
-      // Validate user has access to this organization
       await validateOrganizationAccess(ctx.userId, input.organizationId)
 
       const container = getContainer()
@@ -160,14 +130,9 @@ export const integrationRouter = router({
    * Get OAuth client ID for an organization's Google integration
    * Returns only the client ID (not the secret) for use in OAuth flow
    */
-  getGoogleOAuthClientId: publicProcedure
+  getGoogleOAuthClientId: protectedProcedure
     .input(z.object({ organizationId: z.string().uuid() }))
     .query(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
-      // Validate user has access to this organization
       await validateOrganizationAccess(ctx.userId, input.organizationId)
 
       const container = getContainer()
@@ -189,13 +154,9 @@ export const integrationRouter = router({
   /**
    * Get integration by ID
    */
-  get: publicProcedure
+  get: protectedProcedure
     .input(z.object({ integrationId: z.string().uuid() }))
     .query(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       const container = getContainer()
       const integration = await container.integrationRepo.findById(input.integrationId)
 
@@ -205,7 +166,6 @@ export const integrationRouter = router({
 
       const props = integration.toObject()
 
-      // Validate user has access to the integration's organization
       await validateOrganizationAccess(ctx.userId, props.organizationId)
 
       const config = props.config || {}
@@ -229,13 +189,9 @@ export const integrationRouter = router({
    * Disable an integration
    * Sets status to 'disabled' and stops syncing
    */
-  disable: publicProcedure
+  disable: protectedProcedure
     .input(z.object({ integrationId: z.string().uuid() }))
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       const container = getContainer()
       const integration = await container.integrationRepo.findById(input.integrationId)
 
@@ -243,7 +199,6 @@ export const integrationRouter = router({
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Integration not found' })
       }
 
-      // Validate user has access to the integration's organization
       await validateOrganizationAccess(ctx.userId, integration.toObject().organizationId)
 
       // Use domain method to disable
@@ -261,13 +216,9 @@ export const integrationRouter = router({
    * Test connection to Google Workspace
    * Validates OAuth credentials by attempting to list users
    */
-  testConnection: publicProcedure
+  testConnection: protectedProcedure
     .input(z.object({ integrationId: z.string().uuid() }))
     .query(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       const container = getContainer()
       const integration = await container.integrationRepo.findById(input.integrationId)
 
@@ -277,7 +228,6 @@ export const integrationRouter = router({
 
       const props = integration.toObject()
 
-      // Validate user has access to the integration's organization
       await validateOrganizationAccess(ctx.userId, props.organizationId)
 
       const config = props.config || {}
@@ -333,26 +283,20 @@ export const integrationRouter = router({
    * Get sync history for an integration
    * Returns recent sync attempts from graphile_worker._private_jobs table
    */
-  getSyncHistory: publicProcedure
+  getSyncHistory: protectedProcedure
     .input(z.object({
       integrationId: z.string().uuid(),
       limit: z.number().int().positive().max(50).optional().default(10),
     }))
     .query(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       const container = getContainer()
 
-      // Verify integration exists
       const integration = await container.integrationRepo.findById(input.integrationId)
 
       if (!integration) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'Integration not found' })
       }
 
-      // Validate user has access to the integration's organization
       await validateOrganizationAccess(ctx.userId, integration.toObject().organizationId)
 
       // Query Graphile Worker jobs table for sync history
@@ -396,18 +340,13 @@ export const integrationRouter = router({
    * Trigger manual sync for an integration
    * Enqueues a sync-google-directory job for immediate execution
    */
-  manualSync: publicProcedure
+  manualSync: protectedProcedure
     .input(z.object({
       integrationId: z.string().uuid(),
     }))
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.userId) {
-        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' })
-      }
-
       const container = getContainer()
 
-      // Verify integration exists and is active
       const integration = await container.integrationRepo.findById(input.integrationId)
 
       if (!integration) {
@@ -416,7 +355,6 @@ export const integrationRouter = router({
 
       const props = integration.toObject()
 
-      // Validate user has access to the integration's organization
       await validateOrganizationAccess(ctx.userId, props.organizationId)
 
       if (props.status !== 'active') {
