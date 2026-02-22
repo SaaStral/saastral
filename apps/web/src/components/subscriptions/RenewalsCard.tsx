@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Calendar } from 'lucide-react'
-import { formatCurrency, type RenewalItem } from '@/lib/mockData'
+import { formatCurrency, type RenewalDisplay } from '@/lib/subscription-helpers'
 
 interface RenewalsCardProps {
-  renewals: RenewalItem[]
+  renewals: RenewalDisplay[]
 }
 
 type ViewType = 'list' | 'calendar'
@@ -19,7 +19,6 @@ export function RenewalsCard({ renewals }: RenewalsCardProps) {
   const next30Days = renewals.filter(
     (r) => r.daysUntilRenewal > 7 && r.daysUntilRenewal <= 30
   )
-  const totalRenewals = 34 // Mock total for "more renewals" message
 
   return (
     <div className="bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-2xl overflow-hidden">
@@ -67,7 +66,7 @@ export function RenewalsCard({ renewals }: RenewalsCardProps) {
                 {t('charts.next7Days')}
               </div>
               {next7Days.map((renewal) => (
-                <RenewalItem
+                <RenewalItemRow
                   key={renewal.id}
                   renewal={renewal}
                   t={t}
@@ -91,7 +90,7 @@ export function RenewalsCard({ renewals }: RenewalsCardProps) {
                 {t('charts.next30Days')}
               </div>
               {next30Days.map((renewal) => (
-                <RenewalItem
+                <RenewalItemRow
                   key={renewal.id}
                   renewal={renewal}
                   t={t}
@@ -100,25 +99,24 @@ export function RenewalsCard({ renewals }: RenewalsCardProps) {
             </div>
           )}
 
-          {/* More renewals */}
-          <div className="text-sm text-[#6ee7b7] px-4 py-2">
-            <Calendar className="inline w-3.5 h-3.5 mr-1.5 align-middle" />
-            {t('charts.moreRenewals', {
-              count: totalRenewals - renewals.length,
-              month: 'Jun 2025',
-            })}
-          </div>
+          {/* Empty state */}
+          {renewals.length === 0 && (
+            <div className="text-sm text-[#6ee7b7] px-4 py-2">
+              <Calendar className="inline w-3.5 h-3.5 mr-1.5 align-middle" />
+              {t('charts.noUpcomingRenewals', { defaultMessage: 'No upcoming renewals' })}
+            </div>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
-function RenewalItem({
+function RenewalItemRow({
   renewal,
   t,
 }: {
-  renewal: RenewalItem
+  renewal: RenewalDisplay
   t: ReturnType<typeof useTranslations>
 }) {
   return (

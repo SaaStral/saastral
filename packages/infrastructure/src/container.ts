@@ -7,6 +7,7 @@ import { PrismaOrganizationMemberRepository } from './database/repositories/orga
 import { PrismaIntegrationRepository } from './database/repositories/integration.repository'
 import { PrismaAlertRepository } from './database/repositories/alert.repository'
 import { PrismaDepartmentRepository } from './database/repositories/department.repository'
+import { PrismaSubscriptionRepository } from './database/repositories/subscription.repository'
 import { EncryptionService } from './utils/encryption.service'
 import {
   EmployeeService,
@@ -14,6 +15,7 @@ import {
   OrganizationService,
   AlertService,
   DepartmentService,
+  SubscriptionService,
 } from '@saastral/core'
 import { prisma } from '@saastral/database'
 
@@ -66,6 +68,10 @@ export class Container {
     return this.singleton('departmentRepo', () => new PrismaDepartmentRepository(this.prisma))
   }
 
+  get subscriptionRepo(): PrismaSubscriptionRepository {
+    return this.singleton('subscriptionRepo', () => new PrismaSubscriptionRepository(this.prisma))
+  }
+
   // Utilities
   get encryptionService(): EncryptionService {
     return this.singleton('encryptionService', () => new EncryptionService())
@@ -95,6 +101,10 @@ export class Container {
     return this.singleton('departmentService', () => new DepartmentService({
       departmentRepository: this.departmentRepo,
     }))
+  }
+
+  get subscriptionService(): SubscriptionService {
+    return this.singleton('subscriptionService', () => new SubscriptionService(this.subscriptionRepo, this.logger))
   }
 
   // Note: IntegrationService and DirectorySyncService require DirectoryProvider

@@ -2,11 +2,11 @@
 
 import { MoreVertical } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { formatCurrency, type Subscription } from '@/lib/mockData'
+import { formatCurrency, type SubscriptionDisplay } from '@/lib/subscription-helpers'
 
 interface SubscriptionsTableProps {
-  subscriptions: Subscription[]
-  onSubscriptionClick?: (subscription: Subscription) => void
+  subscriptions: SubscriptionDisplay[]
+  onSubscriptionClick?: (subscription: SubscriptionDisplay) => void
 }
 
 export function SubscriptionsTable({ subscriptions, onSubscriptionClick }: SubscriptionsTableProps) {
@@ -63,7 +63,7 @@ function SubscriptionRow({
   isLast,
   onClick,
 }: {
-  subscription: Subscription
+  subscription: SubscriptionDisplay
   t: ReturnType<typeof useTranslations>
   isLast: boolean
   onClick: () => void
