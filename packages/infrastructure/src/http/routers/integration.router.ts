@@ -30,6 +30,8 @@ export const integrationRouter = router({
   /**
    * Save Google OAuth credentials for an organization
    * Creates or updates the integration with OAuth client credentials
+   *
+   * TODO: Enforce role-based access — require 'admin' or 'owner' role
    */
   saveGoogleOAuthCredentials: protectedProcedure
     .input(saveGoogleOAuthCredentialsSchema)
@@ -188,6 +190,8 @@ export const integrationRouter = router({
   /**
    * Disable an integration
    * Sets status to 'disabled' and stops syncing
+   *
+   * TODO: Enforce role-based access — require 'admin' or 'owner' role
    */
   disable: protectedProcedure
     .input(z.object({ integrationId: z.string().uuid() }))
@@ -339,6 +343,8 @@ export const integrationRouter = router({
   /**
    * Trigger manual sync for an integration
    * Enqueues a sync-google-directory job for immediate execution
+   *
+   * TODO: Enforce role-based access — require 'admin' or 'owner' role
    */
   manualSync: protectedProcedure
     .input(z.object({
