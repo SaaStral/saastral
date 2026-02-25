@@ -3,6 +3,7 @@ import { router, protectedProcedure } from '../trpc'
 import { getContainer } from '../../container'
 import { TRPCError } from '@trpc/server'
 import { SubscriptionNotFoundError } from '@saastral/core'
+import { validateOrganizationAccess } from '../middleware/validate-org-access'
 
 // ============================================================================
 // Input Schemas
@@ -148,27 +149,6 @@ const updateSubscriptionSchema = z.object({
 })
 
 // ============================================================================
-// Helper Functions
-// ============================================================================
-
-/**
- * Validates that the authenticated user has access to the specified organization
- */
-async function validateOrganizationAccess(userId: string, organizationId: string) {
-  const container = getContainer()
-  const userOrgs = await container.organizationService.listUserOrganizations(userId)
-
-  const hasAccess = userOrgs.some(org => org.id === organizationId)
-
-  if (!hasAccess) {
-    throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: 'You do not have access to this organization',
-    })
-  }
-}
-
-// ============================================================================
 // Subscription Router
 // ============================================================================
 
@@ -257,6 +237,9 @@ export const subscriptionRouter = router({
 
   /**
    * Create a new subscription
+   *
+   * TODO: Enforce role-based access — require 'admin' or 'owner' role via
+   * validateOrganizationAccess(ctx.userId, input.organizationId, 'admin')
    */
   create: protectedProcedure.input(createSubscriptionSchema).mutation(async ({ input, ctx }) => {
     await validateOrganizationAccess(ctx.userId, input.organizationId)
@@ -278,6 +261,8 @@ export const subscriptionRouter = router({
 
   /**
    * Update an existing subscription
+   *
+   * TODO: Enforce role-based access — require 'admin' or 'owner' role
    */
   update: protectedProcedure.input(updateSubscriptionSchema).mutation(async ({ input, ctx }) => {
     await validateOrganizationAccess(ctx.userId, input.organizationId)
@@ -304,6 +289,8 @@ export const subscriptionRouter = router({
 
   /**
    * Cancel a subscription
+   *
+   * TODO: Enforce role-based access — require 'admin' or 'owner' role
    */
   cancel: protectedProcedure
     .input(z.object({ id: z.string().uuid(), organizationId: z.string().uuid() }))
@@ -320,6 +307,8 @@ export const subscriptionRouter = router({
 
   /**
    * Suspend a subscription
+   *
+   * TODO: Enforce role-based access — require 'admin' or 'owner' role
    */
   suspend: protectedProcedure
     .input(z.object({ id: z.string().uuid(), organizationId: z.string().uuid() }))
@@ -352,6 +341,8 @@ export const subscriptionRouter = router({
 
   /**
    * Delete a subscription (soft delete)
+   *
+   * TODO: Enforce role-based access — require 'admin' or 'owner' role
    */
   delete: protectedProcedure
     .input(z.object({ id: z.string().uuid(), organizationId: z.string().uuid() }))

@@ -1,33 +1,35 @@
 import { z } from 'zod'
-import { router, publicProcedure } from '../trpc'
+import { router, protectedProcedure } from '../trpc'
 import { getContainer } from '../../container'
 
 // Input schema for creating an organization
 const createOrganizationSchema = z.object({
   name: z.string().min(2).max(100),
-  userId: z.string().uuid(), // BetterAuth now generates UUIDs
 })
 
 export const organizationRouter = router({
   /**
-   * Create a new organization and make the user an owner
+   * Create a new organization and make the user an owner.
+   *
+   * Uses protectedProcedure — userId comes from the authenticated session,
+   * not from client input (prevents creating orgs on behalf of other users).
    */
-  create: publicProcedure
+  create: protectedProcedure
     .input(createOrganizationSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const container = getContainer()
-      return await container.organizationService.createOrganization(input)
+      return await container.organizationService.createOrganization({
+        name: input.name,
+        userId: ctx.userId,
+      })
     }),
 
   /**
-   * List all organizations the user has access to
-   * Uses authenticated user from context
+   * List all organizations the user has access to.
+   * Uses authenticated user from context.
    */
-  listUserOrganizations: publicProcedure
+  listUserOrganizations: protectedProcedure
     .query(async ({ ctx }) => {
-      if (!ctx.userId) {
-        throw new Error('Not authenticated')
-      }
       const container = getContainer()
       return await container.organizationService.listUserOrganizations(ctx.userId)
     }),
