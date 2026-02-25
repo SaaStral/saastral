@@ -78,6 +78,7 @@ docker compose up -d postgres               # Start PostgreSQL
 | [docs/testing/guide.md](docs/testing/guide.md) | Testing patterns, setup, and best practices |
 | [docs/integrations/google-oauth.md](docs/integrations/google-oauth.md) | Google OAuth setup guide |
 | [docs/getting-started/setup.md](docs/getting-started/setup.md) | Initial project setup |
+| [docs/getting-started/preview-mode.md](docs/getting-started/preview-mode.md) | Running the project in preview/dev mode (AI agent guide) |
 
 ## When to Ask Questions
 

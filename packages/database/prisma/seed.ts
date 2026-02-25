@@ -15,7 +15,7 @@
  * - SaaS catalog entries
  */
 
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../generated/prisma'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 import { createAuth } from '@saastral/shared'
