@@ -308,8 +308,16 @@ async function main() {
   // ============================================================================
   console.log('👤 Seeding users...')
 
-  // Create 1-2 users per organization
+  // Create 1-2 users per organization, plus a fixed test user
   const usersData: Array<{ email: string; name: string; orgIndex: number; role: 'owner' | 'admin' }> = []
+
+  // Always create a fixed test user as owner of the first organization
+  usersData.push({
+    email: 'test@saastral.com',
+    name: 'Test User',
+    orgIndex: 0,
+    role: 'owner'
+  })
 
   organizations.forEach((org, index) => {
     const domain = org.domain || 'example.com'
@@ -318,7 +326,7 @@ async function main() {
       email: generateEmail(name1, domain),
       name: name1.fullName,
       orgIndex: index,
-      role: 'owner'
+      role: index === 0 ? 'admin' : 'owner'
     })
 
     // Larger orgs get a second admin user
