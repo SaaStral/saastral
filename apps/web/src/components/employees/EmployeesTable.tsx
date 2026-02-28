@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Search, Download, MoreHorizontal, AlertCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { Tooltip } from '@/components/ui'
+import { Tooltip, DropdownMenu } from '@/components/ui'
 import { trpc } from '@/lib/trpc/client'
 import { formatCurrency } from '@/lib/format'
 
@@ -51,6 +51,8 @@ export function EmployeesTable({ initialData, organizationId }: EmployeesTablePr
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'offboarding' | 'offboarded'>('all')
   const [page, setPage] = useState(1)
 
+  const utils = trpc.useUtils()
+
   // Use tRPC query with initial data from server
   const { data, isLoading, isFetching } = trpc.employee.list.useQuery(
     {
@@ -69,6 +71,84 @@ export function EmployeesTable({ initialData, organizationId }: EmployeesTablePr
 
   const employees = data?.employees ?? []
   const pagination = data?.pagination
+
+  // Mutations
+  const invalidateAll = () => {
+    utils.employee.list.invalidate()
+    utils.employee.getKPIs.invalidate()
+    utils.employee.getOffboardingAlerts.invalidate()
+    utils.employee.getDepartmentBreakdown.invalidate()
+  }
+
+  const offboardMutation = trpc.employee.offboard.useMutation({ onSuccess: invalidateAll })
+  const suspendMutation = trpc.employee.suspend.useMutation({ onSuccess: invalidateAll })
+  const reactivateMutation = trpc.employee.reactivate.useMutation({ onSuccess: invalidateAll })
+
+  function getActionsForEmployee(employee: EmployeeListItem) {
+    const items: Array<{ label: string; onClick: () => void; variant?: 'default' | 'danger' }> = []
+    const mutationInput = { id: employee.id, organizationId }
+
+    if (employee.status === 'active') {
+      items.push({
+        label: t('actions.suspend'),
+        onClick: () => suspendMutation.mutate(mutationInput),
+      })
+      items.push({
+        label: t('actions.offboard'),
+        variant: 'danger',
+        onClick: () => {
+          if (window.confirm(t('actions.confirmOffboard', { name: employee.name }))) {
+            offboardMutation.mutate(mutationInput)
+          }
+        },
+      })
+    } else if (employee.status === 'suspended') {
+      items.push({
+        label: t('actions.reactivate'),
+        onClick: () => reactivateMutation.mutate(mutationInput),
+      })
+      items.push({
+        label: t('actions.offboard'),
+        variant: 'danger',
+        onClick: () => {
+          if (window.confirm(t('actions.confirmOffboard', { name: employee.name }))) {
+            offboardMutation.mutate(mutationInput)
+          }
+        },
+      })
+    } else {
+      // offboarded
+      items.push({
+        label: t('actions.reactivate'),
+        onClick: () => reactivateMutation.mutate(mutationInput),
+      })
+    }
+
+    return items
+  }
+
+  function handleExport() {
+    if (employees.length === 0) return
+
+    const headers = ['Name', 'Email', 'Department', 'Status', 'Licenses', 'Cost/Month']
+    const rows = employees.map((e) => [
+      e.name,
+      e.email,
+      e.department,
+      e.status,
+      e.licenseCount.toString(),
+      (e.monthlyCost / 100).toFixed(2),
+    ])
+
+    const csv = [headers, ...rows].map((row) => row.map((v) => `"${v}"`).join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'employees.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <div className="bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-2xl overflow-hidden">
@@ -140,7 +220,10 @@ export function EmployeesTable({ initialData, organizationId }: EmployeesTablePr
           </div>
 
           {/* Export Button */}
-          <button className="flex items-center gap-2 px-3.5 py-2 border border-[rgba(16,185,129,0.15)] text-[#a7f3d0] text-sm rounded-lg hover:bg-[rgba(5,150,105,0.08)] transition-all">
+          <button
+            onClick={handleExport}
+            className="flex items-center gap-2 px-3.5 py-2 border border-[rgba(16,185,129,0.15)] text-[#a7f3d0] text-sm rounded-lg hover:bg-[rgba(5,150,105,0.08)] transition-all"
+          >
             <Download className="w-4 h-4" />
             {t('table.export')}
           </button>
@@ -233,9 +316,10 @@ export function EmployeesTable({ initialData, organizationId }: EmployeesTablePr
                 {/* Department */}
                 <td className="px-5 py-4">
                   <span
-                    className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${getDepartmentStyle(employee.department)}`}
+                    className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium"
+                    style={getDepartmentStyle(employee.department)}
                   >
-                    {getDepartmentLabel(employee.department)}
+                    {employee.department}
                   </span>
                 </td>
 
@@ -326,9 +410,14 @@ export function EmployeesTable({ initialData, organizationId }: EmployeesTablePr
                 {/* Actions */}
                 <td className="px-5 py-4">
                   <div className="flex gap-1">
-                    <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#055540] text-[#6ee7b7] hover:text-[#f0fdf4] transition-all">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </button>
+                    <DropdownMenu
+                      trigger={
+                        <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#055540] text-[#6ee7b7] hover:text-[#f0fdf4] transition-all">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </button>
+                      }
+                      items={getActionsForEmployee(employee)}
+                    />
                   </div>
                 </td>
               </tr>
@@ -386,27 +475,23 @@ export function EmployeesTable({ initialData, organizationId }: EmployeesTablePr
   )
 }
 
-// Helper functions
-function getDepartmentStyle(department: string) {
-  const styles: Record<string, string> = {
-    engineering: 'bg-[rgba(59,130,246,0.15)] text-[#60a5fa]',
-    product: 'bg-[rgba(139,92,246,0.15)] text-[#c084fc]',
-    marketing: 'bg-[rgba(236,72,153,0.15)] text-[#f472b6]',
-    sales: 'bg-[rgba(249,115,22,0.15)] text-[#fb923c]',
-    design: 'bg-[rgba(20,184,166,0.15)] text-[#2dd4bf]',
-    admin: 'bg-[rgba(107,114,128,0.15)] text-[#9ca3af]',
-  }
-  return styles[department] || styles.admin
-}
+// Color palette for department badges - deterministic hash-based selection
+const DEPARTMENT_COLORS = [
+  { bg: 'rgba(59,130,246,0.15)', text: '#60a5fa' },   // blue
+  { bg: 'rgba(139,92,246,0.15)', text: '#c084fc' },   // purple
+  { bg: 'rgba(236,72,153,0.15)', text: '#f472b6' },   // pink
+  { bg: 'rgba(249,115,22,0.15)', text: '#fb923c' },   // orange
+  { bg: 'rgba(20,184,166,0.15)', text: '#2dd4bf' },    // teal
+  { bg: 'rgba(234,179,8,0.15)', text: '#facc15' },     // yellow
+  { bg: 'rgba(99,102,241,0.15)', text: '#818cf8' },    // indigo
+  { bg: 'rgba(107,114,128,0.15)', text: '#9ca3af' },   // gray
+]
 
-function getDepartmentLabel(department: string) {
-  const labels: Record<string, string> = {
-    engineering: 'Engineering',
-    product: 'Product',
-    marketing: 'Marketing',
-    sales: 'Sales',
-    design: 'Design',
-    admin: 'Admin',
+function getDepartmentStyle(department: string): React.CSSProperties {
+  let hash = 0
+  for (let i = 0; i < department.length; i++) {
+    hash = ((hash << 5) - hash + department.charCodeAt(i)) | 0
   }
-  return labels[department] || 'Admin'
+  const color = DEPARTMENT_COLORS[Math.abs(hash) % DEPARTMENT_COLORS.length]
+  return { backgroundColor: color.bg, color: color.text }
 }

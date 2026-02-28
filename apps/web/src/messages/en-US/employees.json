@@ -98,6 +98,13 @@
     "admin": "Admin"
   },
 
+  "actions": {
+    "suspend": "Suspend",
+    "offboard": "Offboard",
+    "reactivate": "Reactivate",
+    "confirmOffboard": "Are you sure you want to offboard {name}? This will mark them as offboarded and create alerts to revoke access."
+  },
+
   "table": {
     "title": "All Employees",
     "export": "Export",

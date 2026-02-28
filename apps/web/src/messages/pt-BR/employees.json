@@ -98,6 +98,13 @@
     "admin": "Admin"
   },
 
+  "actions": {
+    "suspend": "Suspender",
+    "offboard": "Desligar",
+    "reactivate": "Reativar",
+    "confirmOffboard": "Tem certeza que deseja desligar {name}? Isso irá marcar como desligado e criar alertas para revogar acessos."
+  },
+
   "table": {
     "title": "Todos os Funcionários",
     "export": "Exportar",
