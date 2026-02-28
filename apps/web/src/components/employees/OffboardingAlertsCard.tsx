@@ -1,5 +1,15 @@
 import { useTranslations } from 'next-intl'
-import { formatCurrency, type OffboardingAlert } from '@/lib/mockData'
+import { formatCurrency } from '@/lib/format'
+
+interface OffboardingAlert {
+  id: string
+  name: string
+  email: string
+  offboardingDate: string
+  timeAgo: string
+  licenses: Array<{ name: string; icon: string; color: string }>
+  totalCost: number
+}
 
 interface OffboardingAlertsCardProps {
   alerts: OffboardingAlert[]

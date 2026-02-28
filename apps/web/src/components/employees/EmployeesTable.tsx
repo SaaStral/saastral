@@ -5,6 +5,7 @@ import { Search, Download, MoreHorizontal, AlertCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Tooltip } from '@/components/ui'
 import { trpc } from '@/lib/trpc/client'
+import { formatCurrency } from '@/lib/format'
 
 type EmployeeStatus = 'active' | 'suspended' | 'offboarded'
 
@@ -68,13 +69,6 @@ export function EmployeesTable({ initialData, organizationId }: EmployeesTablePr
 
   const employees = data?.employees ?? []
   const pagination = data?.pagination
-
-  const formatCurrency = (cents: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(cents / 100)
-  }
 
   return (
     <div className="bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-2xl overflow-hidden">
