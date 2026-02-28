@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { formatCurrency } from '@/lib/format'
-import { trpc } from '@/lib/trpc/client'
 
 interface OffboardingAlert {
   id: string
@@ -20,26 +19,13 @@ interface OffboardingAlertsCardProps {
   organizationId: string
 }
 
-export function OffboardingAlertsCard({ alerts, organizationId }: OffboardingAlertsCardProps) {
+export function OffboardingAlertsCard({ alerts }: OffboardingAlertsCardProps) {
   const t = useTranslations('employees.offboardingAlerts')
   const [expandedAlertId, setExpandedAlertId] = useState<string | null>(null)
 
-  const utils = trpc.useUtils()
-
-  const offboardMutation = trpc.employee.offboard.useMutation({
-    onSuccess: () => {
-      utils.employee.list.invalidate()
-      utils.employee.getKPIs.invalidate()
-      utils.employee.getOffboardingAlerts.invalidate()
-      utils.employee.getDepartmentBreakdown.invalidate()
-    },
-  })
-
-  function handleRevokeAccess(alert: OffboardingAlert) {
-    if (window.confirm(t('confirmRevoke', { name: alert.name }))) {
-      offboardMutation.mutate({ id: alert.id, organizationId })
-    }
-  }
+  // TODO: Wire to a dedicated `revokeLicenses` endpoint once it exists.
+  // These employees are already offboarded — the intent is to deactivate
+  // their SaaS subscriptions, not change their employment status.
 
   return (
     <div className="bg-[#033a2d] border border-[rgba(16,185,129,0.15)] rounded-2xl overflow-hidden">
@@ -123,9 +109,9 @@ export function OffboardingAlertsCard({ alerts, organizationId }: OffboardingAle
                   {t('viewLicenses')}
                 </button>
                 <button
-                  onClick={() => handleRevokeAccess(alert)}
-                  disabled={offboardMutation.isPending}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[rgba(239,68,68,0.15)] border border-[rgba(239,68,68,0.3)] text-[#ef4444] text-sm font-semibold rounded-lg hover:bg-[#ef4444] hover:text-white transition-all disabled:opacity-50"
+                  disabled
+                  title="Coming soon — requires revokeLicenses endpoint"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[rgba(239,68,68,0.15)] border border-[rgba(239,68,68,0.3)] text-[#ef4444] text-sm font-semibold rounded-lg hover:bg-[#ef4444] hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('revokeAccess')}
                 </button>
