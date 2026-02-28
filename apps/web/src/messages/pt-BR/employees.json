@@ -84,7 +84,8 @@
     "activeLicenses": "em licenças ativas",
     "perMonth": "/mês",
     "viewLicenses": "Ver licenças",
-    "revokeAccess": "Revogar acessos"
+    "revokeAccess": "Revogar acessos",
+    "confirmRevoke": "Tem certeza que deseja revogar todos os acessos de {name}?"
   },
 
   "departments": {
