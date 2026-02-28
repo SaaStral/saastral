@@ -89,4 +89,53 @@ export const employeeRouter = router({
         organizationId: input.organizationId,
       })
     }),
+
+  // ============================================================================
+  // Mutations
+  // ============================================================================
+
+  /**
+   * Offboard an employee
+   */
+  offboard: protectedProcedure
+    .input(z.object({ id: z.string().uuid(), organizationId: z.string().uuid() }))
+    .mutation(async ({ input, ctx }) => {
+      await validateOrganizationAccess(ctx.userId, input.organizationId)
+
+      const container = getContainer()
+      const employeeService = container.employeeService
+
+      const employee = await employeeService.offboardEmployee(input.id, input.organizationId)
+      return employee.toJSON()
+    }),
+
+  /**
+   * Suspend an employee
+   */
+  suspend: protectedProcedure
+    .input(z.object({ id: z.string().uuid(), organizationId: z.string().uuid() }))
+    .mutation(async ({ input, ctx }) => {
+      await validateOrganizationAccess(ctx.userId, input.organizationId)
+
+      const container = getContainer()
+      const employeeService = container.employeeService
+
+      const employee = await employeeService.suspendEmployee(input.id, input.organizationId)
+      return employee.toJSON()
+    }),
+
+  /**
+   * Reactivate an employee
+   */
+  reactivate: protectedProcedure
+    .input(z.object({ id: z.string().uuid(), organizationId: z.string().uuid() }))
+    .mutation(async ({ input, ctx }) => {
+      await validateOrganizationAccess(ctx.userId, input.organizationId)
+
+      const container = getContainer()
+      const employeeService = container.employeeService
+
+      const employee = await employeeService.reactivateEmployee(input.id, input.organizationId)
+      return employee.toJSON()
+    }),
 })
