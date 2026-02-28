@@ -83,7 +83,8 @@
     "terminationDate": "Termination",
     "activeLicenses": "in active licenses",
     "perMonth": "/month",
-    "viewLicenses": "View licenses",
+    "viewLicenses": "View all licenses",
+    "hideLicenses": "Show less",
     "revokeAccess": "Revoke access",
     "confirmRevoke": "Are you sure you want to revoke all access for {name}?"
   },

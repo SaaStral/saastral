@@ -100,14 +100,16 @@ export function OffboardingAlertsCard({ alerts }: OffboardingAlertsCardProps) {
                 {t('activeLicenses')}
               </div>
               <div className="flex gap-2">
-                <button
-                  onClick={() =>
-                    setExpandedAlertId(isExpanded ? null : alert.id)
-                  }
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-transparent border border-[rgba(16,185,129,0.15)] text-[#a7f3d0] text-sm font-semibold rounded-lg hover:bg-[rgba(5,150,105,0.08)] hover:border-[rgba(16,185,129,0.3)] transition-all"
-                >
-                  {t('viewLicenses')}
-                </button>
+                {alert.licenses.length > 4 && (
+                  <button
+                    onClick={() =>
+                      setExpandedAlertId(isExpanded ? null : alert.id)
+                    }
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-transparent border border-[rgba(16,185,129,0.15)] text-[#a7f3d0] text-sm font-semibold rounded-lg hover:bg-[rgba(5,150,105,0.08)] hover:border-[rgba(16,185,129,0.3)] transition-all"
+                  >
+                    {isExpanded ? t('hideLicenses') : t('viewLicenses')}
+                  </button>
+                )}
                 <button
                   disabled
                   title="Coming soon — requires revokeLicenses endpoint"

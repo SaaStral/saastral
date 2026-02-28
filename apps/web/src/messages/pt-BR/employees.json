@@ -83,7 +83,8 @@
     "terminationDate": "Desligamento",
     "activeLicenses": "em licenças ativas",
     "perMonth": "/mês",
-    "viewLicenses": "Ver licenças",
+    "viewLicenses": "Ver todas as licenças",
+    "hideLicenses": "Mostrar menos",
     "revokeAccess": "Revogar acessos",
     "confirmRevoke": "Tem certeza que deseja revogar todos os acessos de {name}?"
   },
