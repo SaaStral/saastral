@@ -80,9 +80,16 @@ export function EmployeesTable({ initialData, organizationId }: EmployeesTablePr
     utils.employee.getDepartmentBreakdown.invalidate()
   }
 
-  const offboardMutation = trpc.employee.offboard.useMutation({ onSuccess: invalidateAll })
-  const suspendMutation = trpc.employee.suspend.useMutation({ onSuccess: invalidateAll })
-  const reactivateMutation = trpc.employee.reactivate.useMutation({ onSuccess: invalidateAll })
+  const mutationOptions = {
+    onSuccess: invalidateAll,
+    onError: (error: { message: string }) => {
+      alert(error.message)
+    },
+  }
+
+  const offboardMutation = trpc.employee.offboard.useMutation(mutationOptions)
+  const suspendMutation = trpc.employee.suspend.useMutation(mutationOptions)
+  const reactivateMutation = trpc.employee.reactivate.useMutation(mutationOptions)
 
   function getActionsForEmployee(employee: EmployeeListItem) {
     const items: Array<{ label: string; onClick: () => void; variant?: 'default' | 'danger' }> = []
@@ -116,13 +123,8 @@ export function EmployeesTable({ initialData, organizationId }: EmployeesTablePr
           }
         },
       })
-    } else {
-      // offboarded
-      items.push({
-        label: t('actions.reactivate'),
-        onClick: () => reactivateMutation.mutate(mutationInput),
-      })
     }
+    // offboarded employees have no available actions (reactivate only works on suspended)
 
     return items
   }
@@ -140,7 +142,9 @@ export function EmployeesTable({ initialData, organizationId }: EmployeesTablePr
       (e.monthlyCost / 100).toFixed(2),
     ])
 
-    const csv = [headers, ...rows].map((row) => row.map((v) => `"${v}"`).join(',')).join('\n')
+    const csv = [headers, ...rows]
+      .map((row) => row.map((v) => `"${v.replace(/"/g, '""')}"`).join(','))
+      .join('\n')
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')

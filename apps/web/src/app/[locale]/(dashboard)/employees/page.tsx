@@ -92,7 +92,7 @@ export default function EmployeesPage() {
 
       {/* Two Column Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <OffboardingAlertsCard alerts={alerts} organizationId={selectedOrgId} />
+        <OffboardingAlertsCard alerts={alerts} />
         <DepartmentBreakdownCard departments={departments} />
       </div>
 

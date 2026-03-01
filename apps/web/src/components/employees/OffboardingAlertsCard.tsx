@@ -16,7 +16,6 @@ interface OffboardingAlert {
 
 interface OffboardingAlertsCardProps {
   alerts: OffboardingAlert[]
-  organizationId: string
 }
 
 export function OffboardingAlertsCard({ alerts }: OffboardingAlertsCardProps) {
