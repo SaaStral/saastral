@@ -1,7 +1,13 @@
 import { z } from 'zod'
+import { TRPCError } from '@trpc/server'
 import { router, protectedProcedure } from '../trpc'
 import { getContainer } from '../../container'
 import { validateOrganizationAccess } from '../middleware/validate-org-access'
+import {
+  EmployeeNotFoundError,
+  EmployeeAlreadyOffboardedError,
+  InvalidEmployeeStatusError,
+} from '@saastral/core'
 
 // ============================================================================
 // Input Schemas
@@ -14,6 +20,28 @@ const listEmployeesSchema = z.object({
   page: z.number().int().positive().optional().default(1),
   pageSize: z.number().int().positive().max(100).optional().default(20),
 })
+
+const employeeActionSchema = z.object({
+  id: z.string().uuid(),
+  organizationId: z.string().uuid(),
+})
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+function mapEmployeeError(error: unknown): never {
+  if (error instanceof EmployeeNotFoundError) {
+    throw new TRPCError({ code: 'NOT_FOUND', message: error.message })
+  }
+  if (error instanceof EmployeeAlreadyOffboardedError || error instanceof InvalidEmployeeStatusError) {
+    throw new TRPCError({ code: 'BAD_REQUEST', message: error.message })
+  }
+  if (error instanceof Error && error.message.includes('not found')) {
+    throw new TRPCError({ code: 'NOT_FOUND', message: error.message })
+  }
+  throw error
+}
 
 // ============================================================================
 // Employee Router
@@ -88,5 +116,60 @@ export const employeeRouter = router({
       return await employeeService.getDepartmentBreakdown({
         organizationId: input.organizationId,
       })
+    }),
+
+  // ============================================================================
+  // Mutations
+  // ============================================================================
+
+  /**
+   * Offboard an employee
+   */
+  offboard: protectedProcedure
+    .input(employeeActionSchema)
+    .mutation(async ({ input, ctx }) => {
+      await validateOrganizationAccess(ctx.userId, input.organizationId)
+
+      const container = getContainer()
+      try {
+        const employee = await container.employeeService.offboardEmployee(input.id, input.organizationId)
+        return employee.toJSON()
+      } catch (error) {
+        mapEmployeeError(error)
+      }
+    }),
+
+  /**
+   * Suspend an employee
+   */
+  suspend: protectedProcedure
+    .input(employeeActionSchema)
+    .mutation(async ({ input, ctx }) => {
+      await validateOrganizationAccess(ctx.userId, input.organizationId)
+
+      const container = getContainer()
+      try {
+        const employee = await container.employeeService.suspendEmployee(input.id, input.organizationId)
+        return employee.toJSON()
+      } catch (error) {
+        mapEmployeeError(error)
+      }
+    }),
+
+  /**
+   * Reactivate an employee
+   */
+  reactivate: protectedProcedure
+    .input(employeeActionSchema)
+    .mutation(async ({ input, ctx }) => {
+      await validateOrganizationAccess(ctx.userId, input.organizationId)
+
+      const container = getContainer()
+      try {
+        const employee = await container.employeeService.reactivateEmployee(input.id, input.organizationId)
+        return employee.toJSON()
+      } catch (error) {
+        mapEmployeeError(error)
+      }
     }),
 })

@@ -83,8 +83,10 @@
     "terminationDate": "Termination",
     "activeLicenses": "in active licenses",
     "perMonth": "/month",
-    "viewLicenses": "View licenses",
-    "revokeAccess": "Revoke access"
+    "viewLicenses": "View all licenses",
+    "hideLicenses": "Show less",
+    "revokeAccess": "Revoke access",
+    "confirmRevoke": "Are you sure you want to revoke all access for {name}?"
   },
 
   "departments": {
@@ -96,6 +98,13 @@
     "sales": "Sales",
     "design": "Design",
     "admin": "Admin"
+  },
+
+  "actions": {
+    "suspend": "Suspend",
+    "offboard": "Offboard",
+    "reactivate": "Reactivate",
+    "confirmOffboard": "Are you sure you want to offboard {name}? This will mark them as offboarded and create alerts to revoke access."
   },
 
   "table": {

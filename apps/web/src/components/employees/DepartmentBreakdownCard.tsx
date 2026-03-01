@@ -1,5 +1,13 @@
 import { useTranslations } from 'next-intl'
-import { formatCurrency, type DepartmentBreakdown } from '@/lib/mockData'
+import { formatCurrency } from '@/lib/format'
+
+interface DepartmentBreakdown {
+  name: string
+  employeeCount: number
+  monthlyCost: number
+  percentage: number
+  color: string
+}
 
 interface DepartmentBreakdownCardProps {
   departments: DepartmentBreakdown[]

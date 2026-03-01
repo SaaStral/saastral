@@ -889,6 +889,18 @@ async function main() {
     })
   }
 
+  // First offboarded employee still has GitHub, Figma, Notion, Zoom, and HubSpot (orphaned licenses)
+  for (const subIdx of [1, 2, 4, 3, 6]) {
+    assignments.push({
+      subscriptionId: createdAcmeSubscriptions[subIdx].id,
+      employeeId: acmeOffboarded[0].id,
+      status: 'active' as const,
+      assignedBy: users[0].id,
+      lastUsedAt: randomPastDate(30),
+      usageCount: 10,
+    })
+  }
+
   // GitHub - only engineering team (8 people out of 20 seats)
   for (const emp of acmeEmployees.filter((_, i) => i < 3)) {
     assignments.push({

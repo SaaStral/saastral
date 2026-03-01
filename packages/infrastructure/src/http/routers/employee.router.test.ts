@@ -491,4 +491,315 @@ describe('Employee Router', () => {
       })
     })
   })
+
+  // ==========================================================================
+  // Mutation Tests
+  // ==========================================================================
+
+  describe('offboard', () => {
+    let employeeId: string
+
+    beforeEach(async () => {
+      const employee = await prisma.employee.create({
+        data: {
+          id: crypto.randomUUID(),
+          organizationId: orgId,
+          name: 'Active Employee',
+          email: `active-offboard-${Date.now()}@example.com`,
+          status: 'active',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      })
+      employeeId = employee.id
+    })
+
+    it('should offboard an active employee', async () => {
+      const caller = createCaller({ userId })
+
+      const result = await caller.employee.offboard({
+        id: employeeId,
+        organizationId: orgId,
+      })
+
+      expect(result.status).toBe('offboarded')
+      expect(result.offboardedAt).toBeDefined()
+    })
+
+    it('should throw NOT_FOUND for non-existent employee', async () => {
+      const caller = createCaller({ userId })
+
+      await expect(
+        caller.employee.offboard({
+          id: crypto.randomUUID(),
+          organizationId: orgId,
+        })
+      ).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      })
+    })
+
+    it('should throw BAD_REQUEST when already offboarded', async () => {
+      const caller = createCaller({ userId })
+
+      // Offboard first
+      await caller.employee.offboard({
+        id: employeeId,
+        organizationId: orgId,
+      })
+
+      // Try again
+      await expect(
+        caller.employee.offboard({
+          id: employeeId,
+          organizationId: orgId,
+        })
+      ).rejects.toMatchObject({
+        code: 'BAD_REQUEST',
+      })
+    })
+
+    it('should throw UNAUTHORIZED when not authenticated', async () => {
+      const caller = createCaller({})
+
+      await expect(
+        caller.employee.offboard({
+          id: employeeId,
+          organizationId: orgId,
+        })
+      ).rejects.toMatchObject({
+        code: 'UNAUTHORIZED',
+      })
+    })
+
+    it('should throw FORBIDDEN for unauthorized org', async () => {
+      const caller = createCaller({ userId })
+
+      await expect(
+        caller.employee.offboard({
+          id: employeeId,
+          organizationId: otherOrgId,
+        })
+      ).rejects.toMatchObject({
+        code: 'FORBIDDEN',
+      })
+    })
+
+    it('should validate UUID format for id', async () => {
+      const caller = createCaller({ userId })
+
+      await expect(
+        caller.employee.offboard({
+          id: 'not-a-uuid',
+          organizationId: orgId,
+        })
+      ).rejects.toThrow()
+    })
+  })
+
+  describe('suspend', () => {
+    let employeeId: string
+
+    beforeEach(async () => {
+      const employee = await prisma.employee.create({
+        data: {
+          id: crypto.randomUUID(),
+          organizationId: orgId,
+          name: 'Active Employee',
+          email: `active-suspend-${Date.now()}@example.com`,
+          status: 'active',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      })
+      employeeId = employee.id
+    })
+
+    it('should suspend an active employee', async () => {
+      const caller = createCaller({ userId })
+
+      const result = await caller.employee.suspend({
+        id: employeeId,
+        organizationId: orgId,
+      })
+
+      expect(result.status).toBe('suspended')
+    })
+
+    it('should throw NOT_FOUND for non-existent employee', async () => {
+      const caller = createCaller({ userId })
+
+      await expect(
+        caller.employee.suspend({
+          id: crypto.randomUUID(),
+          organizationId: orgId,
+        })
+      ).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      })
+    })
+
+    it('should throw BAD_REQUEST when employee is offboarded', async () => {
+      const caller = createCaller({ userId })
+
+      // Offboard first
+      await caller.employee.offboard({
+        id: employeeId,
+        organizationId: orgId,
+      })
+
+      // Try to suspend
+      await expect(
+        caller.employee.suspend({
+          id: employeeId,
+          organizationId: orgId,
+        })
+      ).rejects.toMatchObject({
+        code: 'BAD_REQUEST',
+      })
+    })
+
+    it('should throw UNAUTHORIZED when not authenticated', async () => {
+      const caller = createCaller({})
+
+      await expect(
+        caller.employee.suspend({
+          id: employeeId,
+          organizationId: orgId,
+        })
+      ).rejects.toMatchObject({
+        code: 'UNAUTHORIZED',
+      })
+    })
+
+    it('should throw FORBIDDEN for unauthorized org', async () => {
+      const caller = createCaller({ userId })
+
+      await expect(
+        caller.employee.suspend({
+          id: employeeId,
+          organizationId: otherOrgId,
+        })
+      ).rejects.toMatchObject({
+        code: 'FORBIDDEN',
+      })
+    })
+  })
+
+  describe('reactivate', () => {
+    let suspendedEmployeeId: string
+    let offboardedEmployeeId: string
+
+    beforeEach(async () => {
+      const suspended = await prisma.employee.create({
+        data: {
+          id: crypto.randomUUID(),
+          organizationId: orgId,
+          name: 'Suspended Employee',
+          email: `suspended-${Date.now()}@example.com`,
+          status: 'suspended',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      })
+      suspendedEmployeeId = suspended.id
+
+      const offboarded = await prisma.employee.create({
+        data: {
+          id: crypto.randomUUID(),
+          organizationId: orgId,
+          name: 'Offboarded Employee',
+          email: `offboarded-react-${Date.now()}@example.com`,
+          status: 'offboarded',
+          offboardedAt: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      })
+      offboardedEmployeeId = offboarded.id
+    })
+
+    it('should reactivate a suspended employee', async () => {
+      const caller = createCaller({ userId })
+
+      const result = await caller.employee.reactivate({
+        id: suspendedEmployeeId,
+        organizationId: orgId,
+      })
+
+      expect(result.status).toBe('active')
+    })
+
+    it('should throw BAD_REQUEST when reactivating an offboarded employee', async () => {
+      const caller = createCaller({ userId })
+
+      await expect(
+        caller.employee.reactivate({
+          id: offboardedEmployeeId,
+          organizationId: orgId,
+        })
+      ).rejects.toMatchObject({
+        code: 'BAD_REQUEST',
+      })
+    })
+
+    it('should throw NOT_FOUND for non-existent employee', async () => {
+      const caller = createCaller({ userId })
+
+      await expect(
+        caller.employee.reactivate({
+          id: crypto.randomUUID(),
+          organizationId: orgId,
+        })
+      ).rejects.toMatchObject({
+        code: 'NOT_FOUND',
+      })
+    })
+
+    it('should throw BAD_REQUEST when employee is already active', async () => {
+      const caller = createCaller({ userId })
+
+      // Reactivate suspended first
+      await caller.employee.reactivate({
+        id: suspendedEmployeeId,
+        organizationId: orgId,
+      })
+
+      // Try again on now-active employee
+      await expect(
+        caller.employee.reactivate({
+          id: suspendedEmployeeId,
+          organizationId: orgId,
+        })
+      ).rejects.toMatchObject({
+        code: 'BAD_REQUEST',
+      })
+    })
+
+    it('should throw UNAUTHORIZED when not authenticated', async () => {
+      const caller = createCaller({})
+
+      await expect(
+        caller.employee.reactivate({
+          id: suspendedEmployeeId,
+          organizationId: orgId,
+        })
+      ).rejects.toMatchObject({
+        code: 'UNAUTHORIZED',
+      })
+    })
+
+    it('should throw FORBIDDEN for unauthorized org', async () => {
+      const caller = createCaller({ userId })
+
+      await expect(
+        caller.employee.reactivate({
+          id: suspendedEmployeeId,
+          organizationId: otherOrgId,
+        })
+      ).rejects.toMatchObject({
+        code: 'FORBIDDEN',
+      })
+    })
+  })
 })

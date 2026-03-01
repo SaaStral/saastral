@@ -83,8 +83,10 @@
     "terminationDate": "Desligamento",
     "activeLicenses": "em licenças ativas",
     "perMonth": "/mês",
-    "viewLicenses": "Ver licenças",
-    "revokeAccess": "Revogar acessos"
+    "viewLicenses": "Ver todas as licenças",
+    "hideLicenses": "Mostrar menos",
+    "revokeAccess": "Revogar acessos",
+    "confirmRevoke": "Tem certeza que deseja revogar todos os acessos de {name}?"
   },
 
   "departments": {
@@ -96,6 +98,13 @@
     "sales": "Sales",
     "design": "Design",
     "admin": "Admin"
+  },
+
+  "actions": {
+    "suspend": "Suspender",
+    "offboard": "Desligar",
+    "reactivate": "Reativar",
+    "confirmOffboard": "Tem certeza que deseja desligar {name}? Isso irá marcar como desligado e criar alertas para revogar acessos."
   },
 
   "table": {

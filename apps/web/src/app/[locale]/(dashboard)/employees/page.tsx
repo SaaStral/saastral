@@ -11,6 +11,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { useOrganization } from '@/contexts/OrganizationContext'
 import { trpc } from '@/lib/trpc/client'
+import { formatCurrency } from '@/lib/format'
 
 /**
  * Employees Page - Client Component
@@ -37,13 +38,6 @@ export default function EmployeesPage() {
     { organizationId: selectedOrgId || '' },
     { enabled: !!selectedOrgId }
   )
-
-  const formatCurrency = (cents: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(cents / 100)
-  }
 
   if (!selectedOrgId) {
     return (
