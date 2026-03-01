@@ -6,7 +6,7 @@ const withNextIntl = require('next-intl/plugin')(
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ['@saastral/core', '@saastral/infrastructure', '@saastral/shared'],
+  transpilePackages: ['@saastral/core', '@saastral/infrastructure', '@saastral/shared', '@saastral/cloud'],
 
   // Prevent Node.js modules from being bundled in Edge Runtime
   experimental: {
